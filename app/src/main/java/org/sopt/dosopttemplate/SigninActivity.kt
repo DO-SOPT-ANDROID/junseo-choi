@@ -1,16 +1,20 @@
 package org.sopt.dosopttemplate
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
 import org.sopt.dosopttemplate.databinding.ActivitySigninBinding
+
+object SharedPreferencesKeys {
+    const val USER_INFO = "UserInfo"
+    const val USER_ID = "UserId"
+    const val PASSWORD = "Password"
+    const val NICK_NAME = "NickName"
+    const val MBTI = "MBTI"
+}
 
 class SigninActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySigninBinding
@@ -21,10 +25,10 @@ class SigninActivity : AppCompatActivity() {
         binding = ActivitySigninBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences(SharedPreferencesKeys.USER_INFO, MODE_PRIVATE)
 
         val isAutoLogin = sharedPreferences.getBoolean("AutoLogin", false)
-        binding.tvSignInAutologin.isChecked = isAutoLogin
+        binding.chkSignInAutologin.isChecked = isAutoLogin
 
         if (isAutoLogin) {
             val userInfo = getUserInfo()
@@ -32,14 +36,14 @@ class SigninActivity : AppCompatActivity() {
         }
 
         binding.root.setOnClickListener {
-            hideKeyboard()
+            hideKeyboard(this, binding.root)
         }
 
-        binding.tvSignInInbutton.setOnClickListener {
+        binding.btnSignInInbutton.setOnClickListener {
             performSignin()
         }
 
-        binding.tvSignInInputpw.setOnEditorActionListener { _, actionId, _ ->
+        binding.etSignInInputpw.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 performSignin()
                 true
@@ -48,7 +52,7 @@ class SigninActivity : AppCompatActivity() {
             }
         }
 
-        binding.tvSignUpButton.setOnClickListener{
+        binding.tvSignUpButton.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
             finish()
@@ -57,15 +61,15 @@ class SigninActivity : AppCompatActivity() {
     }
 
     private fun performAutoLogin(userInfo: UserInfo) {
-        val autoLogin = binding.tvSignInAutologin.isChecked
+        val autoLogin = binding.chkSignInAutologin.isChecked
 
         if (autoLogin) {
-            val savedUserId = sharedPreferences.getString("UserId", "")
-            val savedPassword = sharedPreferences.getString("Password", "")
+            val savedUserId = sharedPreferences.getString(SharedPreferencesKeys.USER_ID, "")
+            val savedPassword = sharedPreferences.getString(SharedPreferencesKeys.PASSWORD, "")
 
             if (!savedUserId.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
-                binding.tvSignInInputid.setText(savedUserId)
-                binding.tvSignInInputpw.setText(savedPassword)
+                binding.etSignInInputid.setText(savedUserId)
+                binding.etSignInInputpw.setText(savedPassword)
                 performSignin()
             }
         }
@@ -74,75 +78,61 @@ class SigninActivity : AppCompatActivity() {
     private fun performSignin() {
         val userInfo = getUserInfo()
 
-        if (binding.tvSignInInputid.length() < 6) {
-            Snackbar.make(
-                binding.root,
-                "아이디가 잘못되었습니다.",
-                Snackbar.LENGTH_SHORT
-            ).show()
-            hideKeyboard()
-        } else if (binding.tvSignInInputpw.length() !in 6..10) {
-            Snackbar.make(
-                binding.root,
-                "비밀번호가 잘못되었습니다.",
-                Snackbar.LENGTH_SHORT
-            ).show()
-            hideKeyboard()
-        } else if (binding.tvSignInInputid.text.toString() == userInfo.userId &&
-            binding.tvSignInInputpw.text.toString() == userInfo.password) {
+        val inputId = binding.etSignInInputid.text.toString()
+        val inputPw = binding.etSignInInputpw.text.toString()
 
-            val autoLogin = binding.tvSignInAutologin.isChecked
+        val idValid = inputId.length >= 6
+        val pwValid = inputPw.length in 6..10
 
-            if (autoLogin) {
-                saveAutoLoginInfo(userInfo)
+        when {
+            !idValid -> {
+                binding.root.showSnackbar(getString(R.string.invalid_id))
             }
 
-            Snackbar.make(
-                binding.root,
-                "성공적으로 로그인되었습니다!",
-                Snackbar.LENGTH_SHORT
-            ).show()
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish()
-        } else {
-            Snackbar.make(
-                binding.root,
-                "회원님의 정보가 일치하지 않습니다.",
-                Snackbar.LENGTH_SHORT
-            ).show()
-            hideKeyboard()
+            !pwValid -> {
+                binding.root.showSnackbar(getString(R.string.invalid_password))
+            }
+
+            inputId == userInfo.userId && inputPw == userInfo.password -> {
+                val autoLogin = binding.chkSignInAutologin.isChecked
+
+                if (autoLogin) {
+                    saveAutoLoginInfo(userInfo)
+                }
+
+                binding.root.showSnackbar(getString(R.string.login_success))
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
+            else -> {
+                binding.root.showSnackbar(getString(R.string.login_failed))
+            }
         }
+
+        hideKeyboard(this, binding.root)
     }
 
     private fun saveAutoLoginInfo(userInfo: UserInfo) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("AutoLogin", true)
-        editor.putString("UserId", userInfo.userId)
-        editor.putString("Password", userInfo.password)
-        editor.putString("NickName", userInfo.nickName)
-        editor.putString("MBTI", userInfo.MBTI)
+        editor.putString(SharedPreferencesKeys.USER_ID, userInfo.userId)
+        editor.putString(SharedPreferencesKeys.PASSWORD, userInfo.password)
+        editor.putString(SharedPreferencesKeys.NICK_NAME, userInfo.nickName)
+        editor.putString(SharedPreferencesKeys.MBTI, userInfo.MBTI)
         editor.apply()
     }
 
     private fun getUserInfo(): UserInfo {
-        val sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
-
-        val userId = sharedPreferences.getString("UserId", "") ?: ""
-        val password = sharedPreferences.getString("Password", "") ?: ""
-        val nickName = sharedPreferences.getString("NickName", "") ?: ""
-        val MBTI = sharedPreferences.getString("MBTI", "") ?: ""
+        val userId = sharedPreferences.getString(SharedPreferencesKeys.USER_ID, "") ?: ""
+        val password = sharedPreferences.getString(SharedPreferencesKeys.PASSWORD, "") ?: ""
+        val nickName = sharedPreferences.getString(SharedPreferencesKeys.NICK_NAME, "") ?: ""
+        val MBTI = sharedPreferences.getString(SharedPreferencesKeys.MBTI, "") ?: ""
 
         return UserInfo(userId, password, nickName, MBTI)
     }
 
-    private fun hideKeyboard() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        val view = currentFocus
-        if (view != null) {
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
-    }
     private var backPressedTime = 0L
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
@@ -151,11 +141,10 @@ class SigninActivity : AppCompatActivity() {
                 finish()
             } else {
                 backPressedTime = System.currentTimeMillis()
-                Toast.makeText(this@SigninActivity, "뒤로가기를 한 번 더 누르면 종료합니다.", Toast.LENGTH_SHORT).show()
+                showToast(getString(R.string.double_back_to_exit))
             }
         }
     }
-
 }
 
 

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import org.sopt.dosopttemplate.databinding.ActivityMainBinding
@@ -22,17 +21,33 @@ class MainActivity : AppCompatActivity() {
 
         userInfo = getUserInfo()
 
-        binding.tvMainViewid.text = "${userInfo.userId}"
-        binding.tvMainViewnickname.text = "${userInfo.nickName}"
-        binding.tvMainViewMBTI.text = "${userInfo.MBTI}"
+        displayUserInfo(userInfo)
 
+        setupSignOutButton()
+        setupOnBackPressedCallback()
+    }
+
+    private fun displayUserInfo(userInfo: UserInfo) {
+        binding.tvMainViewid.text = userInfo.userId
+        binding.tvMainViewnickname.text = userInfo.nickName
+        binding.tvMainViewMBTI.text = userInfo.MBTI
+    }
+
+    private fun setupSignOutButton() {
         binding.tvMainSignout.setOnClickListener {
-            saveAutoLogin(false)
-
-            val intent = Intent(this, SigninActivity::class.java)
-            startActivity(intent)
-            finish()
+            handleSignOut()
         }
+    }
+
+    private fun handleSignOut() {
+        saveAutoLogin(false)
+
+        val intent = Intent(this, SigninActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun setupOnBackPressedCallback() {
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
@@ -59,8 +74,7 @@ class MainActivity : AppCompatActivity() {
                 finish()
             } else {
                 backPressedTime = System.currentTimeMillis()
-                Toast.makeText(this@MainActivity, "뒤로가기를 한 번 더 누르면 종료합니다.", Toast.LENGTH_SHORT)
-                    .show()
+                showToast(getString(R.string.double_back_to_exit))
             }
         }
     }

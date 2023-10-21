@@ -3,11 +3,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/tv_main_profile_frame"
+        android:id="@+id/cv_main_profile_frame"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_marginTop="13dp"
@@ -17,7 +16,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_main_viewnickname">
 
         <ImageView
-            android:id="@+id/tv_main_profile_picture"
+            android:id="@+id/iv_main_profile_picture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
@@ -28,11 +27,11 @@
         android:id="@+id/tv_main_signout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="15sp"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="3dp"
-        android:text="LogOut"
+        android:text="@string/logout"
         android:textColor="#808080"
+        android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -40,13 +39,12 @@
         android:id="@+id/tv_main_viewnickname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="25sp"
-        android:text="Test"
-        android:textStyle="bold"
         android:gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tv_main_intromg"
-    />
+        android:text="@string/test_nickname"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/tv_main_introduce"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_main_id"
@@ -54,61 +52,56 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="5dp"
-        android:text="Your ID"
-        android:textSize="20sp"
         android:gravity="center"
-        app:layout_constraintTop_toBottomOf="@id/tv_main_profile_frame"
+        android:text="@string/your_id"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/tv_main_viewid"
-        />
+        app:layout_constraintTop_toBottomOf="@id/cv_main_profile_frame" />
 
     <TextView
         android:id="@+id/tv_main_viewid"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:layout_marginBottom="25dp"
-        android:text="Test"
+        android:layout_marginBottom="20dp"
         android:gravity="center"
+        android:text="@string/test_nickname"
         android:textColor="#808080"
-        app:layout_constraintTop_toBottomOf="@id/tv_main_id"
+        android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@id/tv_main_MBTI"
-        />
+        app:layout_constraintTop_toBottomOf="@id/tv_main_id" />
 
     <TextView
         android:id="@+id/tv_main_MBTI"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:text="Your MBTI"
         android:gravity="center"
+        android:text="@string/your_mbti"
         android:textSize="20sp"
-        app:layout_constraintTop_toBottomOf="@id/tv_main_MBTI"
         app:layout_constraintBottom_toTopOf="@id/tv_main_viewMBTI"
-        />
+        app:layout_constraintTop_toBottomOf="@id/tv_main_MBTI" />
 
     <TextView
         android:id="@+id/tv_main_viewMBTI"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:layout_marginBottom="40dp"
-        android:text="Test"
+        android:layout_marginBottom="20dp"
         android:gravity="center"
+        android:text="@string/test_nickname"
         android:textColor="#808080"
-        app:layout_constraintTop_toBottomOf="@id/tv_main_MBTI"
-        app:layout_constraintBottom_toTopOf="@id/tv_main_intromg"
-        />
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/tv_main_introduce"
+        app:layout_constraintTop_toBottomOf="@id/tv_main_MBTI" />
 
     <TextView
-        android:id="@+id/tv_main_intromg"
+        android:id="@+id/tv_main_introduce"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:text="&quot;\n산책이 가고싶은 기분이네요\n\n&quot;"
         android:gravity="center"
+        android:text="@string/test_text"
         android:textColor="#808080"
-        app:layout_constraintTop_toBottomOf="@id/tv_main_viewnickname"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@id/tv_main_viewnickname" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
