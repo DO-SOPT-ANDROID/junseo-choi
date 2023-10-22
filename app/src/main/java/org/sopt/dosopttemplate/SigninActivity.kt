@@ -31,8 +31,10 @@ class SigninActivity : AppCompatActivity() {
         binding.chkSignInAutologin.isChecked = isAutoLogin
 
         if (isAutoLogin) {
-            val userInfo = getUserInfo()
-            performAutoLogin(userInfo)
+            val userInfoJson = "user_info.json".getUserInfoFromJson(this)
+            if (userInfoJson != null) {
+                performAutoLogin(userInfoJson)
+            }
         }
 
         binding.root.setOnClickListener {
@@ -40,12 +42,18 @@ class SigninActivity : AppCompatActivity() {
         }
 
         binding.btnSignInInbutton.setOnClickListener {
-            performSignin()
+            val userInfoJson = "user_info.json".getUserInfoFromJson(this)
+            if (userInfoJson != null) {
+                performSignin(userInfoJson)
+            }
         }
 
         binding.etSignInInputpw.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                performSignin()
+                val userInfoJson = "user_info.json".getUserInfoFromJson(this)
+                if (userInfoJson != null) {
+                    performSignin(userInfoJson)
+                }
                 true
             } else {
                 false
@@ -70,14 +78,17 @@ class SigninActivity : AppCompatActivity() {
             if (!savedUserId.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
                 binding.etSignInInputid.setText(savedUserId)
                 binding.etSignInInputpw.setText(savedPassword)
-                performSignin()
+
+                val userInfoJson = "user_info.json".getUserInfoFromJson(this)
+                if (userInfoJson != null) {
+                    performSignin(userInfoJson)
+                }
             }
         }
     }
 
-    private fun performSignin() {
-        val userInfo = getUserInfo()
-
+    private fun performSignin(userInfo: UserInfo) {
+        // getUserInfo 함수를 getUserInfoFromJson 함수로 변경한 것을 반영
         val inputId = binding.etSignInInputid.text.toString()
         val inputPw = binding.etSignInInputpw.text.toString()
 
@@ -114,6 +125,7 @@ class SigninActivity : AppCompatActivity() {
         hideKeyboard(this, binding.root)
     }
 
+
     private fun saveAutoLoginInfo(userInfo: UserInfo) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("AutoLogin", true)
@@ -124,14 +136,6 @@ class SigninActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun getUserInfo(): UserInfo {
-        val userId = sharedPreferences.getString(SharedPreferencesKeys.USER_ID, "") ?: ""
-        val password = sharedPreferences.getString(SharedPreferencesKeys.PASSWORD, "") ?: ""
-        val nickName = sharedPreferences.getString(SharedPreferencesKeys.NICK_NAME, "") ?: ""
-        val MBTI = sharedPreferences.getString(SharedPreferencesKeys.MBTI, "") ?: ""
-
-        return UserInfo(userId, password, nickName, MBTI)
-    }
 
     private var backPressedTime = 0L
 

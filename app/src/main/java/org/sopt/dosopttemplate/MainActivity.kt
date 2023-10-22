@@ -1,7 +1,6 @@
 package org.sopt.dosopttemplate
 
 
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -19,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        userInfo = getUserInfo()
+        userInfo = "user_info.json".getUserInfoFromJson(this) ?: UserInfo("", "", "", "")
 
         displayUserInfo(userInfo)
 
@@ -49,15 +48,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupOnBackPressedCallback() {
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
-    }
-
-    private fun getUserInfo(): UserInfo {
-        sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
-        val userId = sharedPreferences.getString("UserId", "") ?: ""
-        val password = sharedPreferences.getString("Password", "") ?: ""
-        val nickName = sharedPreferences.getString("NickName", "") ?: ""
-        val MBTI = sharedPreferences.getString("MBTI", "") ?: ""
-        return UserInfo(userId, password, nickName, MBTI)
     }
 
     private fun saveAutoLogin(autoLogin: Boolean) {

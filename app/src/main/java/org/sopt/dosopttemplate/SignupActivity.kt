@@ -7,13 +7,14 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.annotations.SerializedName
 import org.sopt.dosopttemplate.databinding.ActivitySignupBinding
 
 data class UserInfo(
-    val userId: String,
-    val password: String,
-    val nickName: String,
-    val MBTI: String,
+    @SerializedName("userId") val userId: String,
+    @SerializedName("password") val password: String,
+    @SerializedName("nickName") val nickName: String,
+    @SerializedName("MBTI") val MBTI: String,
 )
 
 enum class MBTIType {
@@ -56,7 +57,11 @@ class SignupActivity : AppCompatActivity() {
             if (errorMessage != null) {
                 Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
             } else {
-                saveUserInfo(userId, password, nickName, MBTI)
+                val userInfo = UserInfo(userId, password, nickName, MBTI)
+                val userInfoJson = userInfo.toJson()
+
+                userInfoJson.saveAsJsonFile("user_info.json", this)
+
                 binding.root.showSnackbar(getString(R.string.signup_success_message))
                 val intent = Intent(this, SigninActivity::class.java)
                 startActivity(intent)
