@@ -6,16 +6,16 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
-import org.sopt.dosopttemplate.databinding.ActivityMainBinding
+import org.sopt.dosopttemplate.databinding.ActivityMyPageBinding
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityMainBinding
+    private lateinit var binding: ActivityMyPageBinding
     private lateinit var userInfo: UserInfo
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
+        binding = ActivityMyPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         userInfo = "user_info.json".getUserInfoFromJson(this) ?: UserInfo("", "", "", "")
