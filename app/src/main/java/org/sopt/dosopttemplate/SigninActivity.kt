@@ -88,7 +88,6 @@ class SigninActivity : AppCompatActivity() {
     }
 
     private fun performSignin(userInfo: UserInfo) {
-        // getUserInfo 함수를 getUserInfoFromJson 함수로 변경한 것을 반영
         val inputId = binding.etSignInInputid.text.toString()
         val inputPw = binding.etSignInInputpw.text.toString()
 
@@ -112,7 +111,7 @@ class SigninActivity : AppCompatActivity() {
                 }
 
                 binding.root.showSnackbar(getString(R.string.login_success))
-                val intent = Intent(this, MainActivity::class.java)
+                val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
                 finish()
             }

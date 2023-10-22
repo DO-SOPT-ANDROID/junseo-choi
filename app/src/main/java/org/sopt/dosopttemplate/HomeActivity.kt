@@ -18,6 +18,8 @@ class HomeActivity : AppCompatActivity() {
                 .add(R.id.fcv_home, HomeFragment())
                 .commit()
         }
+
+        clickBottomNavigation()
     }
 
     private fun clickBottomNavigation() {
@@ -48,6 +50,5 @@ class HomeActivity : AppCompatActivity() {
             .replace(R.id.fcv_home, fragment)
             .commit()
     }
-
 }
 
