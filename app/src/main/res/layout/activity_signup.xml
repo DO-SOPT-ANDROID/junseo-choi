@@ -100,7 +100,6 @@
         android:layout_marginTop="25dp"
         android:text="@string/mbti_label"
         android:textSize="20sp"
-        android:inputType="textCapCharacters"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_sign_up_inputNick" />
 
@@ -112,6 +111,7 @@
         android:layout_marginHorizontal="20dp"
         android:hint="@string/signup_mbti_hint"
         android:imeOptions="actionDone"
+        android:inputType="textCapCharacters"
         android:lines="1"
         android:singleLine="true"
         android:textSize="20sp"
