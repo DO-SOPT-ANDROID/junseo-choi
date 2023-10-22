@@ -2,6 +2,7 @@ package org.sopt.dosopttemplate
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import org.sopt.dosopttemplate.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {
@@ -18,4 +19,35 @@ class HomeActivity : AppCompatActivity() {
                 .commit()
         }
     }
+
+    private fun clickBottomNavigation() {
+        binding.bnvHome.setOnItemSelectedListener {
+            when (it.itemId) {
+                R.id.menu_home -> {
+                    replaceFragment(HomeFragment())
+                    true
+                }
+
+                R.id.menu_do_android -> {
+                    replaceFragment(DoAndroidFragment())
+                    true
+                }
+
+                R.id.menu_mypage -> {
+                    replaceFragment(MyPageFragment())
+                    true
+                }
+
+                else -> false
+            }
+        }
+    }
+
+    private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fcv_home, fragment)
+            .commit()
+    }
+
 }
+
