@@ -60,6 +60,7 @@ class MyPageFragment : Fragment() {
         binding.tvMypageViewid.text = userInfo.userId
         binding.tvMypageViewnickname.text = userInfo.nickName
         binding.tvMypageViewMBTI.text = userInfo.MBTI
+        binding.tvMypageSelfDescription.text = userInfo.self_description
     }
 
 
