@@ -1,6 +1,7 @@
 package org.sopt.dosopttemplate
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import org.sopt.dosopttemplate.databinding.ActivityHomeBinding
@@ -31,6 +32,7 @@ class HomeActivity : AppCompatActivity() {
         }
 
         clickBottomNavigation()
+        setupOnBackPressedCallback()
     }
 
     private fun clickBottomNavigation() {
@@ -60,6 +62,23 @@ class HomeActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fcv_home, fragment)
             .commit()
+    }
+
+    private fun setupOnBackPressedCallback() {
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+    }
+
+    private var backPressedTime = 0L
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (System.currentTimeMillis() - backPressedTime <= 2000) {
+                finish()
+            } else {
+                backPressedTime = System.currentTimeMillis()
+                showToast(getString(R.string.double_back_to_exit))
+            }
+        }
     }
 }
 
