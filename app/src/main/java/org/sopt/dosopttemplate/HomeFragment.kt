@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
 
-class HomeFragment : Fragment() {
+class HomeFragment(private val userInfo: UserInfo) : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -27,8 +27,8 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val friendAdapter = FriendAdapter(requireContext())
+        val friendAdapter = FriendAdapter(requireContext(), userInfo)
         binding.rvFriends.adapter = friendAdapter
-        friendAdapter.setFriendList(viewModel.mockFriendList)
+        friendAdapter.setPersonList(viewModel.mockFriendList)
     }
 }

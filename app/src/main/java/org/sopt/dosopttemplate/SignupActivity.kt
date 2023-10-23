@@ -1,6 +1,5 @@
 package org.sopt.dosopttemplate
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
@@ -9,12 +8,15 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.annotations.SerializedName
 import org.sopt.dosopttemplate.databinding.ActivitySignupBinding
+import java.time.LocalDate
 
 data class UserInfo(
     @SerializedName("userId") val userId: String,
     @SerializedName("password") val password: String,
     @SerializedName("nickName") val nickName: String,
     @SerializedName("MBTI") val MBTI: String,
+    @SerializedName("birthday") val birthday: LocalDate,
+    @SerializedName("self_description") val self_description: String,
 )
 
 enum class MBTIType {
@@ -39,6 +41,8 @@ class SignupActivity : AppCompatActivity() {
             val password = binding.etSignUpInputpw.text.toString()
             val nickName = binding.etSignUpInputNick.text.toString()
             val MBTI = binding.etSignUpInputMBTI.text.toString().uppercase()
+            val birthday = LocalDate.now() // 임시 생일 데이터
+            val self_description = binding.root.context.getString(R.string.test_text) // 임시 상메 데이터
 
             if (userId.isEmpty() || password.isEmpty() || nickName.isEmpty() || MBTI.isEmpty()) {
                 showEmptyFieldDialog()
@@ -57,7 +61,8 @@ class SignupActivity : AppCompatActivity() {
             if (errorMessage != null) {
                 Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
             } else {
-                val userInfo = UserInfo(userId, password, nickName, MBTI)
+                val userInfo =
+                    UserInfo(userId, password, nickName, MBTI, birthday, self_description)
                 val userInfoJson = userInfo.toJson()
 
                 userInfoJson.saveAsJsonFile("user_info.json", this)
@@ -101,18 +106,6 @@ class SignupActivity : AppCompatActivity() {
         val alert = dialogBuilder.create()
         alert.setTitle("알림")
         alert.show()
-    }
-
-    private fun saveUserInfo(userId: String, password: String, nickName: String, MBTI: String) {
-        val sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-
-        editor.putString("UserId", userId)
-        editor.putString("Password", password)
-        editor.putString("NickName", nickName)
-        editor.putString("MBTI", MBTI)
-
-        editor.apply()
     }
 
 

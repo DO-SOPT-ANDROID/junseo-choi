@@ -4,18 +4,29 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import org.sopt.dosopttemplate.databinding.ActivityHomeBinding
+import java.time.LocalDate
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
+    private lateinit var userInfo: UserInfo
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        userInfo = "user_info.json".getUserInfoFromJson(this) ?: UserInfo(
+            "",
+            "",
+            "",
+            "",
+            LocalDate.of(0, 0, 0),
+            ""
+        )
+
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
         if (currentFragment == null) {
             supportFragmentManager.beginTransaction()
-                .add(R.id.fcv_home, HomeFragment())
+                .add(R.id.fcv_home, HomeFragment(userInfo)) // HomeFragment 생성 시 userInfo 전달
                 .commit()
         }
 
@@ -26,7 +37,7 @@ class HomeActivity : AppCompatActivity() {
         binding.bnvHome.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.menu_home -> {
-                    replaceFragment(HomeFragment())
+                    replaceFragment(HomeFragment(userInfo))
                     true
                 }
 

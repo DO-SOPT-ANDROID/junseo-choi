@@ -7,8 +7,9 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import org.sopt.dosopttemplate.databinding.ActivityMyPageBinding
+import java.time.LocalDate
 
-class MainActivity : AppCompatActivity() {
+class MyPageActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMyPageBinding
     private lateinit var userInfo: UserInfo
     private lateinit var sharedPreferences: SharedPreferences
@@ -18,7 +19,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMyPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        userInfo = "user_info.json".getUserInfoFromJson(this) ?: UserInfo("", "", "", "")
+        userInfo = "user_info.json".getUserInfoFromJson(this) ?: UserInfo(
+            "",
+            "",
+            "",
+            "",
+            LocalDate.of(0, 0, 0),
+            ""
+        )
 
         displayUserInfo(userInfo)
 
@@ -27,13 +35,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayUserInfo(userInfo: UserInfo) {
-        binding.tvMainViewid.text = userInfo.userId
-        binding.tvMainViewnickname.text = userInfo.nickName
-        binding.tvMainViewMBTI.text = userInfo.MBTI
+        binding.tvMypageViewid.text = userInfo.userId
+        binding.tvMypageViewnickname.text = userInfo.nickName
+        binding.tvMypageViewMBTI.text = userInfo.MBTI
     }
 
     private fun setupSignOutButton() {
-        binding.tvMainSignout.setOnClickListener {
+        binding.tvMypageSignout.setOnClickListener {
             handleSignOut()
         }
     }

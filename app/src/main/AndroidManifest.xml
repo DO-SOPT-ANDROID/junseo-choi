@@ -24,7 +24,7 @@
             android:name=".SignupActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".MyPageActivity"
             android:exported="false" />
         <activity android:name=".HomeActivity"
             android:exported="false" />
