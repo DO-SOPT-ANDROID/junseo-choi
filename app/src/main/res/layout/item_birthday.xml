@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:id="@id/cv_mypage_profile_frame"
+        android:id="@id/cv_profile_frame"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginStart="10dp"
@@ -17,7 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@id/iv_mypage_profile_picture"
+            android:id="@id/iv_profile_picture"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
@@ -42,9 +42,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/cv_mypage_profile_frame"
-        app:layout_constraintStart_toEndOf="@id/cv_mypage_profile_frame"
-        app:layout_constraintTop_toTopOf="@id/cv_mypage_profile_frame"
+        app:layout_constraintBottom_toBottomOf="@id/cv_profile_frame"
+        app:layout_constraintStart_toEndOf="@id/cv_profile_frame"
+        app:layout_constraintTop_toTopOf="@id/cv_profile_frame"
         tools:text="testname" />
 
     <TextView

@@ -57,15 +57,15 @@ class MyPageFragment : Fragment() {
     }
 
     private fun displayUserInfo(userInfo: UserInfo) {
-        binding.tvMypageViewid.text = userInfo.userId
-        binding.tvMypageViewnickname.text = userInfo.nickName
-        binding.tvMypageViewMBTI.text = userInfo.MBTI
-        binding.tvMypageSelfDescription.text = userInfo.self_description
+        binding.tvId.text = userInfo.userId
+        binding.tvName.text = userInfo.nickName
+        binding.tvMBTI.text = userInfo.MBTI
+        binding.tvSelfDescription.text = userInfo.self_description
     }
 
 
     private fun setupSignOutButton() {
-        binding.tvMypageSignout.setOnClickListener {
+        binding.tvSignout.setOnClickListener {
             handleSignOut()
         }
     }
