@@ -7,7 +7,7 @@
     <string name="your_mbti">Your MBTI</string>
     <string name="logout">LogOut</string>
     <string name="test_nickname">Test</string>
-    <string name="test_text">"산책이 가고싶은 기분이네요"</string>
+    <string name="test_text">산책이 가고싶은 기분이네요</string>
 
     // activity_signup.xml
     <string name="signup_title">Sign Up SOPT</string>
