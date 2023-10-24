@@ -74,7 +74,9 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
     }
 
     fun setPersonList(personList: List<Person>) {
-        val sortedList = sortFriendsByBirthday(personList)
+
+        val sortedFriendList = personList.filterIsInstance<Friend>().sortedBy { it.name }
+        val (birthdayFriends, otherFriends) = partitionFriendsByBirthday(sortedFriendList)
 
         this.personList = listOf(
             Mine(
@@ -83,9 +85,17 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
                 self_description = userInfo.self_description,
                 birthday = userInfo.birthday
             )
-        ) + sortedList
+        ) + birthdayFriends + otherFriends
 
         notifyDataSetChanged()
+    }
+
+    private fun partitionFriendsByBirthday(friendList: List<Friend>): Pair<List<Friend>, List<Friend>> {
+        val today = LocalDate.now()
+        val (birthdayFriends, otherFriends) = friendList.partition {
+            it.birthday != null && it.birthday.monthValue == today.monthValue && it.birthday.dayOfMonth == today.dayOfMonth
+        }
+        return Pair(birthdayFriends, otherFriends)
     }
 
     private fun sortFriendsByBirthday(personList: List<Person>): List<Person> {

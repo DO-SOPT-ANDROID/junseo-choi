@@ -50,8 +50,8 @@ class HomeViewModel : ViewModel() {
         Friend(
             profileImage = R.drawable.ic_ex2,
             name = "박강희",
-            self_description = "등산 ㄱ?",
-            birthday = LocalDate.of(1999, 10, 27),
+            self_description = "너도 곧 생일이니까 생일하자",
+            birthday = LocalDate.of(1999, 10, 25),
         ),
         Friend(
             profileImage = R.drawable.ic_ex1,
