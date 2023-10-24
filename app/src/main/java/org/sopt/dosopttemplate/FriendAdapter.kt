@@ -78,7 +78,7 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
 
         this.personList = listOf(
             Mine(
-                profileImage = R.drawable.default_profile,
+                profileImage = R.drawable.ic_ex0,
                 name = userInfo.nickName,
                 self_description = userInfo.self_description,
                 birthday = userInfo.birthday
