@@ -14,21 +14,21 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
     private val inflater by lazy { LayoutInflater.from(context) }
     private var personList: List<Person> = emptyList()
 
-    private val VIEW_TYPE_MINE = 1
-    private val VIEW_TYPE_FRIEND = 2
-    private val VIEW_TYPE_BIRTHDAY = 3
+    private val viewTypeMine = 1
+    private val viewTypeFriend = 2
+    private val viewTypeBirthday = 3
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            VIEW_TYPE_MINE -> {
+            viewTypeMine -> {
                 val binding = ItemMineBinding.inflate(inflater, parent, false)
                 MineViewHolder(binding)
             }
-            VIEW_TYPE_FRIEND -> {
+            viewTypeFriend -> {
                 val binding = ItemFriendBinding.inflate(inflater, parent, false)
                 FriendViewHolder(binding)
             }
-            VIEW_TYPE_BIRTHDAY -> {
+            viewTypeBirthday -> {
                 val binding = ItemBirthdayBinding.inflate(inflater, parent, false)
                 BirthdayViewHolder(binding)
             }
@@ -56,12 +56,12 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
 
     override fun getItemViewType(position: Int): Int {
         return when (personList[position]) {
-            is Mine -> VIEW_TYPE_MINE
+            is Mine -> viewTypeMine
             is Friend -> {
                 if (isBirthdayToday(personList[position] as Friend)) {
-                    VIEW_TYPE_BIRTHDAY
+                    viewTypeBirthday
                 } else {
-                    VIEW_TYPE_FRIEND
+                    viewTypeFriend
                 }
             }
             else -> throw IllegalArgumentException("Invalid view type")
