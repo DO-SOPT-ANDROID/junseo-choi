@@ -39,8 +39,7 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MineViewHolder -> {
-                val mine = personList[position] as Mine
-                holder.onBind(mine, userInfo)
+                holder.onBind(userInfo)
             }
             is FriendViewHolder -> {
                 val friend = personList[position] as Friend
