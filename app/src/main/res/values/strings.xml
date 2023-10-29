@@ -1,3 +1,53 @@
 <resources>
+
+    // activity_main.xml
     <string name="app_name">DoSoptTemplate</string>
+    <string name="greeting">Hello World!</string>
+    <string name="your_id">Your ID</string>
+    <string name="your_mbti">Your MBTI</string>
+    <string name="logout">LogOut</string>
+    <string name="test_nickname">Test</string>
+    <string name="test_text">산책이 가고싶은 기분이네요</string>
+
+    // activity_signup.xml
+    <string name="signup_title">Sign Up SOPT</string>
+    <string name="new_id_label">New ID</string>
+    <string name="new_pw_label">New PW</string>
+    <string name="nickname_label">NickName</string>
+    <string name="mbti_label">MBTI</string>
+    <string name="signup_button_label">회원가입 하기</string>
+    <string name="signup_id_hint">아이디를 입력해주세요</string>
+    <string name="signup_password_hint">비밀번호를 입력해주세요</string>
+    <string name="signup_nickname_hint">닉네임을 입력해주세요</string>
+    <string name="signup_mbti_hint">본인의 MBTI를 입력해주세요</string>
+
+    // activity_signin.xml
+    <string name="welcome_message">Welcome to Sopt</string>
+    <string name="id_label">ID</string>
+    <string name="id_hint">아이디를 입력해주세요</string>
+    <string name="pw_label">PW</string>
+    <string name="pw_hint">비밀번호를 입력해주세요</string>
+    <string name="signup_button">회원가입</string>
+    <string name="auto_login_label">자동 로그인</string>
+    <string name="login_button">로그인 하기</string>
+
+    // MainActivity.kt
+    <string name="double_back_to_exit">뒤로가기를 한 번 더 누르면 종료합니다.</string>
+
+    // SigninActivity.kt
+    <string name="invalid_id">아이디가 잘못되었습니다.</string>
+    <string name="invalid_password">비밀번호가 잘못되었습니다.</string>
+    <string name="login_success">성공적으로 로그인되었습니다!</string>
+    <string name="login_failed">회원님의 정보가 일치하지 않습니다.</string>
+
+    // SignupActivity.kt
+    <string name="user_id_error">아이디는 6~10글자이며, 공백 및 특수문자가 포함되면 안됩니다.</string>
+    <string name="password_error">비밀번호는 8~12글자이며, 공백이 포함되면 안됩니다.</string>
+    <string name="nickname_error">닉네임은 1~12글자이며, 공백으로만 이루어질 수 없습니다.</string>
+    <string name="sexy_error">당신은 SEXY하시군요! 하지만 저는 넘어가지 않는답니다 :)</string>
+    <string name="mbti_error">유효한 MBTI를 적어주세요. (예시: ENTJ)</string>
+    <string name="empty_field_message">아직 입력되지 않은 칸이 있습니다.</string>
+    <string name="signup_success_message">성공적으로 회원가입이 완료되었습니다!</string>
+
+
 </resources>

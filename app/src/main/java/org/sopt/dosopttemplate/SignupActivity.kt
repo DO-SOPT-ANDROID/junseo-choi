@@ -1,21 +1,27 @@
 package org.sopt.dosopttemplate
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.annotations.SerializedName
 import org.sopt.dosopttemplate.databinding.ActivitySignupBinding
+import java.time.LocalDate
 
 data class UserInfo(
-    val userId: String,
-    val password: String,
-    val nickName: String,
-    val MBTI: String
+    @SerializedName("userId") val userId: String,
+    @SerializedName("password") val password: String,
+    @SerializedName("nickName") val nickName: String,
+    @SerializedName("MBTI") val MBTI: String,
+    @SerializedName("birthday") val birthday: LocalDate,
+    @SerializedName("self_description") val self_description: String,
 )
+
+enum class MBTIType {
+    INFP, ENFP, ESFJ, ISFJ, ISFP, ESFP, INTP, INFJ, ENFJ, ENTP, ESTJ, ISTJ, INTJ, ISTP, ESTP, ENTJ
+}
 
 class SignupActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySignupBinding
@@ -25,16 +31,18 @@ class SignupActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.root.setOnClickListener {
-            hideKeyboard()
+            hideKeyboard(this, binding.root)
         }
 
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
-        binding.tvSignUpInbutton.setOnClickListener {
-            val userId = binding.tvSignUpInputid.text.toString()
-            val password = binding.tvSignUpInputpw.text.toString()
-            val nickName = binding.tvSignUpInputNick.text.toString()
-            val MBTI = binding.tvSignUpInputMBTI.text.toString().uppercase()
+        binding.btnSignUpInbutton.setOnClickListener {
+            val userId = binding.etSignUpInputid.text.toString()
+            val password = binding.etSignUpInputpw.text.toString()
+            val nickName = binding.etSignUpInputNick.text.toString()
+            val MBTI = binding.etSignUpInputMBTI.text.toString().uppercase()
+            val birthday = LocalDate.now() // 임시 생일 데이터
+            val self_description = binding.root.context.getString(R.string.test_text) // 임시 상메 데이터
 
             if (userId.isEmpty() || password.isEmpty() || nickName.isEmpty() || MBTI.isEmpty()) {
                 showEmptyFieldDialog()
@@ -42,23 +50,24 @@ class SignupActivity : AppCompatActivity() {
             }
 
             val errorMessage = when {
-                !isUserIdValid(userId) -> "아이디는 6~10글자이며, 공백 및 특수문자가 포함되면 안됩니다."
-                !isPasswordValid(password) -> "비밀번호는 8~12글자이며, 공백이 포함되면 안됩니다."
-                !isNickNameValid(nickName) -> "닉네임은 1~12글자이며, 공백으로만 이루어질 수 없습니다."
-                MBTI == "SEXY" -> "당신은 SEXY하시군요! 하지만 저는 넘어가지 않는답니다 :)"
-                !isMBTIValid(MBTI) -> "유효한 MBTI를 적어주세요. (예시: ENTJ)"
+                !isUserIdValid(userId) -> getString(R.string.user_id_error)
+                !isPasswordValid(password) -> getString(R.string.password_error)
+                !isNickNameValid(nickName) -> getString(R.string.nickname_error)
+                MBTI == "SEXY" -> getString(R.string.sexy_error)
+                !isMBTIValid(MBTI) -> getString(R.string.mbti_error)
                 else -> null
             }
 
             if (errorMessage != null) {
                 Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
             } else {
-                saveUserInfo(userId, password, nickName, MBTI)
-                Snackbar.make(
-                    binding.root,
-                    "성공적으로 회원가입이 완료되었습니다!",
-                    Snackbar.LENGTH_SHORT
-                ).show()
+                val userInfo =
+                    UserInfo(userId, password, nickName, MBTI, birthday, self_description)
+                val userInfoJson = userInfo.toJson()
+
+                userInfoJson.saveAsJsonFile("user_info.json", this)
+
+                binding.root.showSnackbar(getString(R.string.signup_success_message))
                 val intent = Intent(this, SigninActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -79,31 +88,17 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun isMBTIValid(MBTI: String): Boolean {
-        val validMBTIList = listOf(
-            "INFP",
-            "ENFP",
-            "ESFJ",
-            "ISFJ",
-            "ISFJ",
-            "ISFP",
-            "ESFP",
-            "INTP",
-            "INFJ",
-            "ENFJ",
-            "ENTP",
-            "ESTJ",
-            "ISTJ",
-            "INTJ",
-            "ISTP",
-            "ESTP",
-            "ENTJ"
-        )
-        return validMBTIList.contains(MBTI)
+        return try {
+            MBTIType.valueOf(MBTI)
+            true
+        } catch (e: IllegalArgumentException) {
+            false
+        }
     }
 
     private fun showEmptyFieldDialog() {
         val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setMessage("아직 입력되지 않은 칸이 있습니다.")
+        dialogBuilder.setMessage(getString(R.string.empty_field_message))
             .setCancelable(false)
             .setPositiveButton("확인") { dialog, _ ->
                 dialog.dismiss()
@@ -113,25 +108,6 @@ class SignupActivity : AppCompatActivity() {
         alert.show()
     }
 
-    private fun saveUserInfo(userId: String, password: String, nickName: String, MBTI: String) {
-        val sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-
-        editor.putString("UserId", userId)
-        editor.putString("Password", password)
-        editor.putString("NickName", nickName)
-        editor.putString("MBTI", MBTI)
-
-        editor.apply()
-    }
-
-    private fun hideKeyboard() {
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        val view = currentFocus
-        if (view != null) {
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
-    }
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -142,3 +118,4 @@ class SignupActivity : AppCompatActivity() {
     }
 
 }
+
