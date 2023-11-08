@@ -46,10 +46,11 @@ fun String.saveAsJsonFile(fileName: String, context: Context) {
     }
 }
 
+private val gson: Gson = Gson() // Gson 객체를 클래스의 멤버 변수로 선언하여 재사용
+
 fun String.getUserInfoFromJson(context: Context): UserInfo? {
     try {
         val jsonString = context.openFileInput(this).bufferedReader().use { it.readText() }
-        val gson = Gson()
         return gson.fromJson(jsonString, UserInfo::class.java)
     } catch (e: Exception) {
         e.printStackTrace()
@@ -57,6 +58,7 @@ fun String.getUserInfoFromJson(context: Context): UserInfo? {
     return null
 }
 
+// 유저 정보 Default값
 val defaultUserInfo = UserInfo(
     "",
     "",
