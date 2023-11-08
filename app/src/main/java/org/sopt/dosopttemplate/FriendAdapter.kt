@@ -7,12 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import org.sopt.dosopttemplate.databinding.ItemBirthdayBinding
 import org.sopt.dosopttemplate.databinding.ItemFriendBinding
 import org.sopt.dosopttemplate.databinding.ItemMineBinding
-import java.time.LocalDate
 
-class FriendAdapter(context: Context, private val userInfo: UserInfo) :
+class FriendAdapter(
+    context: Context,
+    private val userInfo: UserInfo,
+    private val viewModel: HomeViewModel,
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val inflater by lazy { LayoutInflater.from(context) }
-    private var personList: List<Person> = emptyList()
 
     private val viewTypeMine = 0
     private val viewTypeFriend = 1
@@ -39,6 +41,7 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
         }
     }
 
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MineViewHolder -> {
@@ -46,72 +49,45 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
             }
 
             is FriendViewHolder -> {
-                val friend = personList[position] as Friend
-                holder.onBind(friend)
+                if (position == 0) {
+                    // Do nothing for the header item (userInfo)
+                } else {
+                    val birthdayFriends = viewModel.getBirthdayFriends()
+                    val otherFriends = viewModel.getOtherFriends()
+                    val friend = if (position <= birthdayFriends.size) {
+                        birthdayFriends.getOrNull(position - 1)
+                    } else {
+                        otherFriends.getOrNull(position - birthdayFriends.size - 1)
+                    }
+
+                    friend?.let { holder.onBind(it) }
+                }
             }
 
             is BirthdayViewHolder -> {
-                val friend = personList[position] as Friend
-                holder.onBind(friend)
-            }
-        }
-    }
-
-    override fun getItemCount() = personList.size
-
-    override fun getItemViewType(position: Int): Int {
-        return when (personList[position]) {
-            is Mine -> viewTypeMine
-            is Friend -> {
-                if (isBirthdayToday(personList[position] as Friend)) {
-                    viewTypeBirthday
-                } else {
-                    viewTypeFriend
+                if (position <= viewModel.getBirthdayFriends().size) {
+                    val birthdayFriend = viewModel.getBirthdayFriends()[position - 1]
+                    holder.onBind(birthdayFriend)
                 }
             }
-            else -> throw IllegalArgumentException("Invalid view type")
         }
     }
 
-    private fun isBirthdayToday(friend: Friend): Boolean {
-        val today = LocalDate.now()
-        return friend.birthday != null && friend.birthday.monthValue == today.monthValue && friend.birthday.dayOfMonth == today.dayOfMonth
+    override fun getItemCount(): Int {
+        val birthdayFriends = viewModel.getBirthdayFriends()
+        val otherFriends = viewModel.getOtherFriends()
+        return birthdayFriends.size + otherFriends.size + 1
     }
 
-    fun setPersonList(personList: List<Person>) {
+    override fun getItemViewType(position: Int): Int {
+        return when (position) {
+            0 -> viewTypeMine
+            in 1..viewModel.getBirthdayFriends().size -> viewTypeBirthday
+            else -> viewTypeFriend
+        }
+    }
 
-        val sortedFriendList = personList.filterIsInstance<Friend>().sortedBy { it.name }
-        val (birthdayFriends, otherFriends) = partitionFriendsByBirthday(sortedFriendList)
-
-        this.personList = listOf(
-            Mine(
-                profileImage = R.drawable.ic_ex0,
-                name = userInfo.nickName,
-                self_description = userInfo.self_description,
-                birthday = userInfo.birthday
-            )
-        ) + birthdayFriends + otherFriends
-
+    fun setFriendsLists(birthdayFriends: List<Friend>, otherFriends: List<Friend>) {
         notifyDataSetChanged()
     }
-
-    private fun partitionFriendsByBirthday(friendList: List<Friend>): Pair<List<Friend>, List<Friend>> {
-        val today = LocalDate.now()
-        val (birthdayFriends, otherFriends) = friendList.partition {
-            it.birthday != null && it.birthday.monthValue == today.monthValue && it.birthday.dayOfMonth == today.dayOfMonth
-        }
-        return Pair(birthdayFriends, otherFriends)
-    }
-
-    private fun sortFriendsByBirthday(personList: List<Person>): List<Person> {
-        val sortedList = personList.toMutableList()
-        sortedList.sortWith(compareByDescending { it is Friend && isBirthdayToday(it) })
-        return sortedList.toList()
-    }
 }
-
-
-
-
-
-

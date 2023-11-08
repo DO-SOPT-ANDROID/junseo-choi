@@ -27,9 +27,15 @@ class HomeFragment(private val userInfo: UserInfo) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val friendAdapter = FriendAdapter(requireContext(), userInfo)
+
+        val friendAdapter = FriendAdapter(requireContext(), userInfo, viewModel)
         binding.rvFriends.adapter = friendAdapter
-        friendAdapter.setPersonList(viewModel.mockFriendList)
+
+        val birthdayFriends = viewModel.getBirthdayFriends()
+        val otherFriends = viewModel.getOtherFriends()
+
+        friendAdapter.setFriendsLists(birthdayFriends, otherFriends)
+
         binding.fabHomeEdit.setOnClickListener {
             binding.root.showSnackbar("3주차 과제 완료 ^0^")
         }

@@ -75,7 +75,35 @@ class HomeViewModel : ViewModel() {
             profileImage = R.drawable.ic_ex3,
             name = "최준서",
             self_description = "나는 매일매일 생일할거야",
-            birthday = LocalDate.of(1999, 10, 25),
+            birthday = LocalDate.of(1999, 11, 8),
         ),
     )
+
+    private val birthdayFriends = mutableListOf<Friend>()
+    private val otherFriends = mutableListOf<Friend>()
+
+    init {
+        separateFriendsByBirthday()
+    }
+
+    private fun separateFriendsByBirthday() {
+        val sortedFriends = mockFriendList.sortedBy { it.name } // 여기서도 정렬은 빼놓을 수는 없지 히히
+        val today = LocalDate.now()
+
+        for (friend in sortedFriends) {
+            if (friend.birthday.monthValue == today.monthValue && friend.birthday.dayOfMonth == today.dayOfMonth) {
+                birthdayFriends.add(friend)
+            } else {
+                otherFriends.add(friend)
+            }
+        }
+    }
+
+    fun getBirthdayFriends(): List<Friend> {
+        return birthdayFriends
+    }
+
+    fun getOtherFriends(): List<Friend> {
+        return otherFriends
+    }
 }
