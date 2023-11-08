@@ -14,14 +14,14 @@ data class Mine(
     @DrawableRes val profileImage: Int,
     override val name: String,
     override val self_description: String,
-    override val birthday: LocalDate
+    override val birthday: LocalDate,
 ) : Person()
 
 data class Friend(
     @DrawableRes val profileImage: Int,
     override val name: String,
     override val self_description: String,
-    override val birthday: LocalDate
+    override val birthday: LocalDate,
 ) : Person()
 
 
@@ -29,5 +29,5 @@ data class Birthday(
     @DrawableRes val profileImage: Int,
     override val name: String,
     override val self_description: String,
-    override val birthday: LocalDate
+    override val birthday: LocalDate,
 ) : Person()

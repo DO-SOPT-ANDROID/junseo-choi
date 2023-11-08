@@ -31,10 +31,10 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginStart="5dp"
-        app:layout_constraintStart_toEndOf="@id/tv_name"
-        app:layout_constraintTop_toTopOf="@id/tv_name"
+        android:src="@drawable/ic_birthday_cake"
         app:layout_constraintBottom_toBottomOf="@id/tv_name"
-        android:src="@drawable/ic_birthday_cake"/>
+        app:layout_constraintStart_toEndOf="@id/tv_name"
+        app:layout_constraintTop_toTopOf="@id/tv_name" />
 
     <TextView
         android:id="@id/tv_name"
