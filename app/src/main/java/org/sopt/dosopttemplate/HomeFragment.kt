@@ -31,7 +31,7 @@ class HomeFragment(private val userInfo: UserInfo) : Fragment() {
         binding.rvFriends.adapter = friendAdapter
         friendAdapter.setPersonList(viewModel.mockFriendList)
         binding.fabHomeEdit.setOnClickListener {
-            binding.root.showSnackbar("3주차 과제 완료")
+            binding.root.showSnackbar("3주차 과제 완료 ^0^")
         }
     }
 }

@@ -23,13 +23,11 @@ class DoAndroidFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // 대부분의 로직은 여기에 구현합니다.
-        // 원두를 갈고~
-        // 커피를 내리고~
+        // 로직 구현 위치
     }
 
     override fun onDestroyView() {
+        _binding = null // null 처리를 먼저 해줘야 안정성 증가
         super.onDestroyView()
-        _binding = null
     }
 }

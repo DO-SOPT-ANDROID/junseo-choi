@@ -7,8 +7,11 @@ class BirthdayViewHolder(private val binding: ItemBirthdayBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun onBind(friendData: Friend) {
-        binding.ivProfilePicture.setImageResource(friendData.profileImage)
-        binding.tvName.text = friendData.name
-        binding.tvSelfDescription.text = friendData.self_description
+        with(binding){ // 이렇게 binding을 할 수도 있음
+            ivProfilePicture.setImageResource(friendData.profileImage)
+            tvName.text = friendData.name
+            tvSelfDescription.text = friendData.self_description
+        }
     }
+
 }

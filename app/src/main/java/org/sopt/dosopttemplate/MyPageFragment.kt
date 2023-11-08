@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import org.sopt.dosopttemplate.databinding.ActivityMyPageBinding
-import java.time.LocalDate
 
 class MyPageFragment : Fragment() {
     private var _binding: ActivityMyPageBinding? = null
@@ -36,14 +35,7 @@ class MyPageFragment : Fragment() {
             AppCompatActivity.MODE_PRIVATE
         )
 
-        userInfo = "user_info.json".getUserInfoFromJson(requireContext()) ?: UserInfo(
-            "",
-            "",
-            "",
-            "",
-            LocalDate.of(0, 0, 0),
-            ""
-        )
+        userInfo = "user_info.json".getUserInfoFromJson(requireContext()) ?: defaultUserInfo
 
 
         displayUserInfo(userInfo)

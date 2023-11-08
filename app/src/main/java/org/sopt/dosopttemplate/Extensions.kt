@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.json.JSONObject
+import java.time.LocalDate
 
 // 키보드 감추기
 fun hideKeyboard(context: Context, view: View?) {
@@ -55,3 +56,12 @@ fun String.getUserInfoFromJson(context: Context): UserInfo? {
     }
     return null
 }
+
+val defaultUserInfo = UserInfo(
+    "",
+    "",
+    "",
+    "",
+    LocalDate.of(1000, 5, 11),
+    ""
+)

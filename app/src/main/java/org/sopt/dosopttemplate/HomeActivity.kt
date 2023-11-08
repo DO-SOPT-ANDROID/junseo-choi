@@ -5,7 +5,6 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import org.sopt.dosopttemplate.databinding.ActivityHomeBinding
-import java.time.LocalDate
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
@@ -15,14 +14,7 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        userInfo = "user_info.json".getUserInfoFromJson(this) ?: UserInfo(
-            "",
-            "",
-            "",
-            "",
-            LocalDate.of(0, 0, 0),
-            ""
-        )
+        userInfo = "user_info.json".getUserInfoFromJson(this) ?: defaultUserInfo
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
         if (currentFragment == null) {

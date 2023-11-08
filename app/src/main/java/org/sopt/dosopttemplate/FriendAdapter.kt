@@ -14,9 +14,9 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
     private val inflater by lazy { LayoutInflater.from(context) }
     private var personList: List<Person> = emptyList()
 
-    private val viewTypeMine = 1
-    private val viewTypeFriend = 2
-    private val viewTypeBirthday = 3
+    private val viewTypeMine = 0
+    private val viewTypeFriend = 1
+    private val viewTypeBirthday = 2
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -24,14 +24,17 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
                 val binding = ItemMineBinding.inflate(inflater, parent, false)
                 MineViewHolder(binding)
             }
+
             viewTypeFriend -> {
                 val binding = ItemFriendBinding.inflate(inflater, parent, false)
                 FriendViewHolder(binding)
             }
+
             viewTypeBirthday -> {
                 val binding = ItemBirthdayBinding.inflate(inflater, parent, false)
                 BirthdayViewHolder(binding)
             }
+
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
@@ -41,10 +44,12 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
             is MineViewHolder -> {
                 holder.onBind(userInfo)
             }
+
             is FriendViewHolder -> {
                 val friend = personList[position] as Friend
                 holder.onBind(friend)
             }
+
             is BirthdayViewHolder -> {
                 val friend = personList[position] as Friend
                 holder.onBind(friend)
