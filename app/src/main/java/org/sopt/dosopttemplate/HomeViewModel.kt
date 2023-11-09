@@ -75,7 +75,7 @@ class HomeViewModel : ViewModel() {
             profileImage = R.drawable.ic_ex3,
             name = "최준서",
             self_description = "나는 매일매일 생일할거야",
-            birthday = LocalDate.of(1999, 11, 8),
+            birthday = LocalDate.of(1999, 11, 10),
         ),
     )
 

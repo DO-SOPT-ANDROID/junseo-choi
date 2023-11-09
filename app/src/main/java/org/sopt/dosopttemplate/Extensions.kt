@@ -1,6 +1,7 @@
 package org.sopt.dosopttemplate
 
 import android.content.Context
+import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
@@ -9,6 +10,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.json.JSONObject
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.DateTimeParseException
 
 // 키보드 감추기
 fun hideKeyboard(context: Context, view: View?) {
@@ -67,3 +70,31 @@ val defaultUserInfo = UserInfo(
     LocalDate.of(1000, 5, 11),
     ""
 )
+
+// Bundle 데이터 받아오기
+
+fun Bundle?.extractUserInfo(): UserInfo {
+    val userId = this?.getString("userId", "")
+    val password = this?.getString("password", "")
+    val nickName = this?.getString("nickName", "")
+    val MBTI = this?.getString("MBTI", "")
+    val birthdayString = this?.getString("birthday", "")
+    val selfDescription = this?.getString("self_description", "") ?: ""
+
+    val formatter = DateTimeFormatter.ISO_DATE
+    val birthday = if (birthdayString != null && birthdayString.isNotBlank()) {
+        try {
+            LocalDate.parse(birthdayString, formatter)
+        } catch (e: DateTimeParseException) {
+            defaultUserInfo.birthday
+        }
+    } else {
+        defaultUserInfo.birthday
+    }
+
+    return if (userId != null && password != null && nickName != null && MBTI != null) {
+        UserInfo(userId, password, nickName, MBTI, birthday, selfDescription)
+    } else {
+        defaultUserInfo
+    }
+}

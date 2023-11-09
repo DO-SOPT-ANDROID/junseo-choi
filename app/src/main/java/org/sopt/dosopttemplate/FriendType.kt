@@ -23,11 +23,3 @@ data class Friend(
     override val self_description: String,
     override val birthday: LocalDate,
 ) : Person()
-
-
-data class Birthday(
-    @DrawableRes val profileImage: Int,
-    override val name: String,
-    override val self_description: String,
-    override val birthday: LocalDate,
-) : Person()

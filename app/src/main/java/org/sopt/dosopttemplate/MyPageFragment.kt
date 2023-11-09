@@ -35,8 +35,7 @@ class MyPageFragment : Fragment() {
             AppCompatActivity.MODE_PRIVATE
         )
 
-        userInfo = "user_info.json".getUserInfoFromJson(requireContext()) ?: defaultUserInfo
-
+        val userInfo = arguments.extractUserInfo()
 
         displayUserInfo(userInfo)
 

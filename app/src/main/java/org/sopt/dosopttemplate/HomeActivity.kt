@@ -18,8 +18,12 @@ class HomeActivity : AppCompatActivity() {
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
         if (currentFragment == null) {
+            val bundle = createUserInfoBundle(userInfo)
+            val homeFragment = HomeFragment()
+            homeFragment.arguments = bundle
+
             supportFragmentManager.beginTransaction()
-                .add(R.id.fcv_home, HomeFragment(userInfo)) // HomeFragment 생성 시 userInfo 전달
+                .add(R.id.fcv_home, homeFragment)
                 .commit()
         }
 
@@ -31,7 +35,7 @@ class HomeActivity : AppCompatActivity() {
         binding.bnvHome.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.menu_home -> {
-                    replaceFragment(HomeFragment(userInfo))
+                    replaceFragment(HomeFragment())
                     true
                 }
 
@@ -51,6 +55,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
+        val bundle = createUserInfoBundle(userInfo)
+        fragment.arguments = bundle
         supportFragmentManager.beginTransaction()
             .replace(R.id.fcv_home, fragment)
             .commit()
@@ -71,6 +77,18 @@ class HomeActivity : AppCompatActivity() {
                 showToast(getString(R.string.double_back_to_exit))
             }
         }
+    }
+
+    private fun createUserInfoBundle(userInfo: UserInfo): Bundle {
+        val bundle = Bundle()
+        bundle.putString("userId", userInfo.userId)
+        bundle.putString("password", userInfo.password)
+        bundle.putString("nickName", userInfo.nickName)
+        bundle.putString("MBTI", userInfo.MBTI)
+        bundle.putString("birthday", userInfo.birthday.toString()) // LocalDate를 String으로 변환
+        bundle.putString("self_description", userInfo.self_description) // self_description 추가
+
+        return bundle
     }
 }
 
