@@ -15,7 +15,6 @@ class MyPageFragment : Fragment() {
     private val binding: ActivityMyPageBinding
         get() = requireNotNull(_binding) { "바인딩 객체가 생성되지 않았다. 생성하고 불러라 임마!" }
 
-    private lateinit var userInfo: UserInfo
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(

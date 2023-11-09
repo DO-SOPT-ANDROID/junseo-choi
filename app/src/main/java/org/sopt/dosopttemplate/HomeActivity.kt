@@ -18,13 +18,7 @@ class HomeActivity : AppCompatActivity() {
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
         if (currentFragment == null) {
-            val bundle = createUserInfoBundle(userInfo)
-            val homeFragment = HomeFragment()
-            homeFragment.arguments = bundle
-
-            supportFragmentManager.beginTransaction()
-                .add(R.id.fcv_home, homeFragment)
-                .commit()
+            replaceFragment(HomeFragment())
         }
 
         clickBottomNavigation()
