@@ -3,17 +3,17 @@ package org.sopt.dosopttemplate
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.sopt.dosopttemplate.databinding.ItemBirthdayBinding
 import org.sopt.dosopttemplate.databinding.ItemFriendBinding
 import org.sopt.dosopttemplate.databinding.ItemMineBinding
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 
 class FriendAdapter(
     context: Context,
     private val userInfo: UserInfo,
-    private val viewModel: HomeViewModel
+    private val viewModel: HomeViewModel,
 ) : ListAdapter<Friend, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
 
@@ -86,7 +86,7 @@ class FriendAdapter(
     fun setFriendsLists(birthdayFriends: List<Friend>, otherFriends: List<Friend>) {
         val newList = mutableListOf<Friend>()
         val userInfoFriend = Friend(
-            profileImage = R.drawable.ic_ex0,
+            profileImage = userInfo.profileImage,
             userId = userInfo.userId,
             name = userInfo.nickName,
             self_description = userInfo.self_description,

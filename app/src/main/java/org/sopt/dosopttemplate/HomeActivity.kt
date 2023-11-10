@@ -55,7 +55,8 @@ class HomeActivity : AppCompatActivity() {
             // setOnNavigationItemReselectedListener 안쓴다네용 o0o
             when (it.itemId) {
                 R.id.menu_home -> {
-                    val homeFragment = supportFragmentManager.findFragmentById(R.id.fcv_home) as? HomeFragment
+                    val homeFragment =
+                        supportFragmentManager.findFragmentById(R.id.fcv_home) as? HomeFragment
                     homeFragment?.scrollToTop()
                     true
                 }

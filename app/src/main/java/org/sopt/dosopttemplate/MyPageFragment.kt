@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import coil.load
+import coil.transform.RoundedCornersTransformation
 import org.sopt.dosopttemplate.databinding.ActivityMyPageBinding
 
 class MyPageFragment : Fragment() {
@@ -47,6 +49,11 @@ class MyPageFragment : Fragment() {
     }
 
     private fun displayUserInfo(userInfo: UserInfo) {
+        binding.ivProfilePicture.load(userInfo.profileImage) {
+            crossfade(true)
+            error(R.drawable.ic_default_image) // 에러 시 보여줄 이미지 설정
+            transformations(RoundedCornersTransformation())
+        }
         binding.tvId.text = userInfo.userId
         binding.tvName.text = userInfo.nickName
         binding.tvMBTI.text = userInfo.MBTI

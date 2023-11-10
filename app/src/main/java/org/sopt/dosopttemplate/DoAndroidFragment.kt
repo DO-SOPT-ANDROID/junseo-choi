@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import org.sopt.dosopttemplate.databinding.FragmentDoandroidBinding
-import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
 
 class DoAndroidFragment : Fragment() {
     private var _binding: FragmentDoandroidBinding? = null

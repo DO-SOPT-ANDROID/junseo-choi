@@ -63,6 +63,7 @@ fun String.getUserInfoFromJson(context: Context): UserInfo? {
 
 // 유저 정보 Default값
 val defaultUserInfo = UserInfo(
+    "R.drawable.ic_ex1",
     "",
     "",
     "",
@@ -74,6 +75,7 @@ val defaultUserInfo = UserInfo(
 // Bundle 데이터 받아오기
 
 fun Bundle?.extractUserInfo(): UserInfo {
+    val profileImage = this?.getString("profileImage", "")
     val userId = this?.getString("userId", "")
     val password = this?.getString("password", "")
     val nickName = this?.getString("nickName", "")
@@ -92,8 +94,8 @@ fun Bundle?.extractUserInfo(): UserInfo {
         defaultUserInfo.birthday
     }
 
-    return if (userId != null && password != null && nickName != null && MBTI != null) {
-        UserInfo(userId, password, nickName, MBTI, birthday, selfDescription)
+    return if (profileImage != null && userId != null && password != null && nickName != null && MBTI != null) {
+        UserInfo(profileImage, userId, password, nickName, MBTI, birthday, selfDescription)
     } else {
         defaultUserInfo
     }

@@ -11,6 +11,7 @@ import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
 interface ScrollableFragment {
     fun scrollToTop()
 }
+
 class HomeFragment : Fragment(), ScrollableFragment {
     private var _binding: FragmentHomeBinding? = null
     private val viewModel by viewModels<HomeViewModel>()
