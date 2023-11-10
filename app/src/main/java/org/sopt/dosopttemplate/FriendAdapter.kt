@@ -7,13 +7,14 @@ import androidx.recyclerview.widget.RecyclerView
 import org.sopt.dosopttemplate.databinding.ItemBirthdayBinding
 import org.sopt.dosopttemplate.databinding.ItemFriendBinding
 import org.sopt.dosopttemplate.databinding.ItemMineBinding
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 
 class FriendAdapter(
     context: Context,
     private val userInfo: UserInfo,
-    private val viewModel: HomeViewModel,
-) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private val viewModel: HomeViewModel
+) : ListAdapter<Friend, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
 
     private val viewTypeMine = 0
@@ -41,7 +42,6 @@ class FriendAdapter(
         }
     }
 
-
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MineViewHolder -> {
@@ -50,7 +50,7 @@ class FriendAdapter(
 
             is FriendViewHolder -> {
                 if (position == 0) {
-                    // Do nothing for the header item (userInfo)
+                    // 뿜빰
                 } else {
                     val birthdayFriends = viewModel.getBirthdayFriends()
                     val otherFriends = viewModel.getOtherFriends()
@@ -73,12 +73,6 @@ class FriendAdapter(
         }
     }
 
-    override fun getItemCount(): Int {
-        val birthdayFriends = viewModel.getBirthdayFriends()
-        val otherFriends = viewModel.getOtherFriends()
-        return birthdayFriends.size + otherFriends.size + 1
-    }
-
     override fun getItemViewType(position: Int): Int {
         return when (position) {
             0 -> viewTypeMine
@@ -88,6 +82,28 @@ class FriendAdapter(
     }
 
     fun setFriendsLists(birthdayFriends: List<Friend>, otherFriends: List<Friend>) {
-        notifyDataSetChanged()
+        val newList = mutableListOf<Friend>()
+        val userInfoFriend = Friend(
+            profileImage = R.drawable.ic_ex0,
+            userId = userInfo.userId,
+            name = userInfo.nickName,
+            self_description = userInfo.self_description,
+            birthday = userInfo.birthday
+        )
+
+        newList.add(userInfoFriend)
+        newList.addAll(birthdayFriends)
+        newList.addAll(otherFriends)
+        submitList(newList)
+    }
+}
+
+class DiffCallback : DiffUtil.ItemCallback<Friend>() {
+    override fun areItemsTheSame(oldItem: Friend, newItem: Friend): Boolean {
+        return oldItem.userId == newItem.userId
+    }
+
+    override fun areContentsTheSame(oldItem: Friend, newItem: Friend): Boolean {
+        return oldItem == newItem
     }
 }
