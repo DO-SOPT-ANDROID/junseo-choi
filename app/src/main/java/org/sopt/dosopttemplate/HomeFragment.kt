@@ -8,7 +8,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
 
-class HomeFragment : Fragment() {
+interface ScrollableFragment {
+    fun scrollToTop()
+}
+class HomeFragment : Fragment(), ScrollableFragment {
     private var _binding: FragmentHomeBinding? = null
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -46,5 +49,9 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
+    }
+
+    override fun scrollToTop() {
+        binding.rvFriends.smoothScrollToPosition(0)
     }
 }

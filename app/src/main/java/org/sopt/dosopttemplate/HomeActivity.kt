@@ -19,9 +19,11 @@ class HomeActivity : AppCompatActivity() {
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
         if (currentFragment == null) {
             replaceFragment(HomeFragment())
+            binding.bnvHome.selectedItemId = R.id.menu_home
         }
 
         clickBottomNavigation()
+        doubleClickBottomNavigation()
         setupOnBackPressedCallback()
     }
 
@@ -40,6 +42,29 @@ class HomeActivity : AppCompatActivity() {
 
                 R.id.menu_mypage -> {
                     replaceFragment(MyPageFragment())
+                    true
+                }
+
+                else -> false
+            }
+        }
+    }
+
+    private fun doubleClickBottomNavigation() {
+        binding.bnvHome.setOnItemReselectedListener { it ->
+            // setOnNavigationItemReselectedListener 안쓴다네용 o0o
+            when (it.itemId) {
+                R.id.menu_home -> {
+                    val homeFragment = supportFragmentManager.findFragmentById(R.id.fcv_home) as? HomeFragment
+                    homeFragment?.scrollToTop()
+                    true
+                }
+
+                R.id.menu_do_android -> {
+                    true
+                }
+
+                R.id.menu_mypage -> {
                     true
                 }
 
@@ -85,4 +110,3 @@ class HomeActivity : AppCompatActivity() {
         return bundle
     }
 }
-
