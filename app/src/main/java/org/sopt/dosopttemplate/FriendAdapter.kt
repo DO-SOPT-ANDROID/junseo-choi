@@ -17,23 +17,25 @@ class FriendAdapter(
 ) : ListAdapter<Friend, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
 
-    private val viewTypeMine = 0
-    private val viewTypeFriend = 1
-    private val viewTypeBirthday = 2
+    companion object {
+        const val VIEW_TYPE_MINE = 0
+        const val VIEW_TYPE_FRIEND = 1
+        const val VIEW_TYPE_BIRTHDAY = 2
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            viewTypeMine -> {
+            VIEW_TYPE_MINE -> {
                 val binding = ItemMineBinding.inflate(inflater, parent, false)
                 MineViewHolder(binding)
             }
 
-            viewTypeFriend -> {
+            VIEW_TYPE_FRIEND -> {
                 val binding = ItemFriendBinding.inflate(inflater, parent, false)
                 FriendViewHolder(binding)
             }
 
-            viewTypeBirthday -> {
+            VIEW_TYPE_BIRTHDAY -> {
                 val binding = ItemBirthdayBinding.inflate(inflater, parent, false)
                 BirthdayViewHolder(binding)
             }
@@ -75,9 +77,9 @@ class FriendAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
-            0 -> viewTypeMine
-            in 1..viewModel.getBirthdayFriends().size -> viewTypeBirthday
-            else -> viewTypeFriend
+            0 -> VIEW_TYPE_MINE
+            in 1..viewModel.getBirthdayFriends().size -> VIEW_TYPE_BIRTHDAY
+            else -> VIEW_TYPE_FRIEND
         }
     }
 
