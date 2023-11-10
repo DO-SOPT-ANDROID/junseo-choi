@@ -12,7 +12,7 @@ class MineViewHolder(private val binding: ItemMineBinding) :
     fun onBind(userInfo: UserInfo) {
         binding.ivProfilePicture.load(userInfo.profileImage) {
             crossfade(true)
-            error(R.drawable.ic_mypet)
+            error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
         binding.tvName.text = userInfo.nickName

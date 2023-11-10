@@ -38,12 +38,12 @@ class SignupActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         binding.btnSignUpInbutton.setOnClickListener {
-            val profileImage = "R.drawable.ic_ex0"
+            val profileImage = "https://avatars.githubusercontent.com/u/127238018?v=4"
             val userId = binding.etSignUpInputid.text.toString()
             val password = binding.etSignUpInputpw.text.toString()
             val nickName = binding.etSignUpInputNick.text.toString()
             val MBTI = binding.etSignUpInputMBTI.text.toString().uppercase()
-            val birthday = LocalDate.now() // 임시 생일 데이터
+            val birthday = defaultUserInfo.birthday // 임시 생일 데이터
             val self_description = binding.root.context.getString(R.string.test_text) // 임시 상메 데이터
 
             if (userId.isEmpty() || password.isEmpty() || nickName.isEmpty() || MBTI.isEmpty()) {

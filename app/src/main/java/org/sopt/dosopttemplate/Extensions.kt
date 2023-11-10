@@ -63,7 +63,7 @@ fun String.getUserInfoFromJson(context: Context): UserInfo? {
 
 // 유저 정보 Default값
 val defaultUserInfo = UserInfo(
-    "R.drawable.ic_ex1",
+    "",
     "",
     "",
     "",

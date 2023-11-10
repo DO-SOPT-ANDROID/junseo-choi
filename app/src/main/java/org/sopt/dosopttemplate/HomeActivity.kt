@@ -101,6 +101,7 @@ class HomeActivity : AppCompatActivity() {
 
     private fun createUserInfoBundle(userInfo: UserInfo): Bundle {
         val bundle = Bundle()
+        bundle.putString("profileImage", userInfo.profileImage)
         bundle.putString("userId", userInfo.userId)
         bundle.putString("password", userInfo.password)
         bundle.putString("nickName", userInfo.nickName)
