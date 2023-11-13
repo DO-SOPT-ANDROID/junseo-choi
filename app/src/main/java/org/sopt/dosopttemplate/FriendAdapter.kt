@@ -6,13 +6,12 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.sopt.dosopttemplate.databinding.ItemBirthdayBinding
 import org.sopt.dosopttemplate.databinding.ItemFriendBinding
 import org.sopt.dosopttemplate.databinding.ItemMineBinding
 
 class FriendAdapter(
     context: Context,
-    private val userInfo: UserInfo,
+    private val userData: UserInfoBundle,
     private val viewModel: HomeViewModel,
 ) : ListAdapter<Friend, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
@@ -20,8 +19,8 @@ class FriendAdapter(
     companion object {
         const val VIEW_TYPE_MINE = 0
         const val VIEW_TYPE_FRIEND = 1
-        const val VIEW_TYPE_BIRTHDAY = 2
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -35,11 +34,6 @@ class FriendAdapter(
                 FriendViewHolder(binding)
             }
 
-            VIEW_TYPE_BIRTHDAY -> {
-                val binding = ItemBirthdayBinding.inflate(inflater, parent, false)
-                BirthdayViewHolder(binding)
-            }
-
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
@@ -47,30 +41,12 @@ class FriendAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MineViewHolder -> {
-                holder.onBind(userInfo)
+                holder.onBind(userData)
             }
 
             is FriendViewHolder -> {
-                if (position == 0) {
-                    // 뿜빰
-                } else {
-                    val birthdayFriends = viewModel.getBirthdayFriends()
-                    val otherFriends = viewModel.getOtherFriends()
-                    val friend = if (position <= birthdayFriends.size) {
-                        birthdayFriends.getOrNull(position - 1)
-                    } else {
-                        otherFriends.getOrNull(position - birthdayFriends.size - 1)
-                    }
-
-                    friend?.let { holder.onBind(it) }
-                }
-            }
-
-            is BirthdayViewHolder -> {
-                if (position <= viewModel.getBirthdayFriends().size) {
-                    val birthdayFriend = viewModel.getBirthdayFriends()[position - 1]
-                    holder.onBind(birthdayFriend)
-                }
+                val friend = getItem(position)
+                friend?.let { holder.onBind(it) }
             }
         }
     }
@@ -78,25 +54,33 @@ class FriendAdapter(
     override fun getItemViewType(position: Int): Int {
         return when (position) {
             0 -> VIEW_TYPE_MINE
-            in 1..viewModel.getBirthdayFriends().size -> VIEW_TYPE_BIRTHDAY
             else -> VIEW_TYPE_FRIEND
         }
     }
 
-    fun setFriendsLists(birthdayFriends: List<Friend>, otherFriends: List<Friend>) {
+    fun setFriendsList(allFriends: List<FriendDto>) {
         val newList = mutableListOf<Friend>()
         val userInfoFriend = Friend(
-            profileImage = userInfo.profileImage,
-            userId = userInfo.userId,
-            name = userInfo.nickName,
-            self_description = userInfo.self_description,
-            birthday = userInfo.birthday
+            profileImage = userData.profileImage,
+            userId = userData.userName,
+            name = userData.nickName,
+            self_description = userData.self_description,
         )
 
         newList.add(userInfoFriend)
-        newList.addAll(birthdayFriends)
-        newList.addAll(otherFriends)
+
+        newList.addAll(allFriends.map { it.toFriend() })
+
         submitList(newList)
+    }
+
+    fun FriendDto.toFriend(): Friend {
+        return Friend(
+            profileImage = this.avatar,
+            userId = this.email,
+            name = this.firstName,
+            self_description = "",
+        )
     }
 }
 

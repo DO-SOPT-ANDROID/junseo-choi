@@ -8,10 +8,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import org.json.JSONObject
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
+import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 // 키보드 감추기
 fun hideKeyboard(context: Context, view: View?) {
@@ -31,21 +31,15 @@ fun AppCompatActivity.showToast(message: String, duration: Int = Toast.LENGTH_SH
 }
 
 
-// 유저 정보 저장하기
+// 유저 추가정보 저장 및 불러오기
 fun UserInfo.toJson(): String {
-    val gson = Gson()
-    return gson.toJson(this)
+    return Json.encodeToString(this)
 }
 
-fun String.saveAsJsonFile(fileName: String, context: Context) {
-    try {
-        val jsonObject = JSONObject(this)
-        val jsonString = jsonObject.toString()
-        context.openFileOutput(fileName, Context.MODE_PRIVATE).use { stream ->
-            stream.write(jsonString.toByteArray())
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
+fun UserInfo.saveAsJsonFile(fileName: String, context: Context) {
+    val jsonString = this.toJson()
+    context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
+        it.write(jsonString.toByteArray())
     }
 }
 
@@ -67,36 +61,29 @@ val defaultUserInfo = UserInfo(
     "",
     "",
     "",
-    "",
-    LocalDate.of(1000, 5, 11),
-    ""
 )
 
 // Bundle 데이터 받아오기
 
-fun Bundle?.extractUserInfo(): UserInfo {
-    val profileImage = this?.getString("profileImage", "")
-    val userId = this?.getString("userId", "")
-    val password = this?.getString("password", "")
-    val nickName = this?.getString("nickName", "")
-    val MBTI = this?.getString("MBTI", "")
-    val birthdayString = this?.getString("birthday", "")
-    val selfDescription = this?.getString("self_description", "") ?: ""
-
-    val formatter = DateTimeFormatter.ISO_DATE
-    val birthday = if (birthdayString != null && birthdayString.isNotBlank()) {
-        try {
-            LocalDate.parse(birthdayString, formatter)
-        } catch (e: DateTimeParseException) {
-            defaultUserInfo.birthday
-        }
-    } else {
-        defaultUserInfo.birthday
+data class UserInfoBundle(
+    @SerializedName("profileImage") val profileImage: String,
+    @SerializedName("userName") val userName: String,
+    @SerializedName("nickName") val nickName: String,
+    @SerializedName("mbti") val mbti: String,
+    @SerializedName("birthday") val birthday: String,
+    @SerializedName("self_description") val self_description: String
+)
+fun Bundle?.extractUserData(): UserInfoBundle? {
+    if (this == null) {
+        return null
     }
 
-    return if (profileImage != null && userId != null && password != null && nickName != null && MBTI != null) {
-        UserInfo(profileImage, userId, password, nickName, MBTI, birthday, selfDescription)
-    } else {
-        defaultUserInfo
-    }
+    val profileImage = getString("profileImage") ?: ""
+    val userName = getString("userName") ?: ""
+    val nickName = getString("nickName") ?: ""
+    val mbti = getString("mbti") ?: ""
+    val birthday = getString("birthday") ?: ""
+    val selfDescription = getString("self_description") ?: ""
+
+    return UserInfoBundle(profileImage, userName, nickName, mbti, birthday, selfDescription)
 }

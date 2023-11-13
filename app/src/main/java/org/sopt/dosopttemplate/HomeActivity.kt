@@ -1,20 +1,31 @@
 package org.sopt.dosopttemplate
 
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import org.sopt.dosopttemplate.databinding.ActivityHomeBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var userInfo: UserInfo
+    private lateinit var authService: AuthService
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var receivedUserInfo: ResponseGetUserInfoDto
+    val id = intent.getStringExtra("id")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         userInfo = "user_info.json".getUserInfoFromJson(this) ?: defaultUserInfo
+        getUserInfoFromServer(id?.toInt() ?: -1)
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
         if (currentFragment == null) {
@@ -25,6 +36,34 @@ class HomeActivity : AppCompatActivity() {
         clickBottomNavigation()
         doubleClickBottomNavigation()
         setupOnBackPressedCallback()
+    }
+
+    private fun getUserInfoFromServer(id: Int) {
+        authService.getUserInfo(id)
+            .enqueue(object : Callback<ResponseGetUserInfoDto> {
+                override fun onResponse(
+                    call: Call<ResponseGetUserInfoDto>,
+                    response: Response<ResponseGetUserInfoDto>,
+                ) {
+                    when (response.code()) {
+                        200 -> {
+                            val data: ResponseGetUserInfoDto? = response.body()
+
+                            if (data != null) {
+                                receivedUserInfo = data
+                            }
+                        }
+
+                        400 -> {
+                            kickToSignIn()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseGetUserInfoDto>, t: Throwable) {
+                    kickToSignIn()
+                }
+            })
     }
 
     private fun clickBottomNavigation() {
@@ -51,32 +90,28 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun doubleClickBottomNavigation() {
-        binding.bnvHome.setOnItemReselectedListener { it ->
+        binding.bnvHome.setOnItemReselectedListener {
             // setOnNavigationItemReselectedListener 안쓴다네용 o0o
             when (it.itemId) {
                 R.id.menu_home -> {
                     val homeFragment =
                         supportFragmentManager.findFragmentById(R.id.fcv_home) as? HomeFragment
                     homeFragment?.scrollToTop()
-                    true
                 }
 
                 R.id.menu_do_android -> {
-                    true
                 }
 
                 R.id.menu_mypage -> {
-                    true
                 }
-
-                else -> false
             }
         }
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        val bundle = createUserInfoBundle(userInfo)
-        fragment.arguments = bundle
+        val userInfoBundle =
+            createUserInfoBundle(userInfo, receivedUserInfo.username, receivedUserInfo.nickname)
+        fragment.arguments = userInfoBundle
         supportFragmentManager.beginTransaction()
             .replace(R.id.fcv_home, fragment)
             .commit()
@@ -99,16 +134,34 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun createUserInfoBundle(userInfo: UserInfo): Bundle {
+    private fun createUserInfoBundle(
+        userInfo: UserInfo,
+        userName: String,
+        nickName: String,
+    ): Bundle {
         val bundle = Bundle()
         bundle.putString("profileImage", userInfo.profileImage)
-        bundle.putString("userId", userInfo.userId)
-        bundle.putString("password", userInfo.password)
-        bundle.putString("nickName", userInfo.nickName)
-        bundle.putString("MBTI", userInfo.MBTI)
-        bundle.putString("birthday", userInfo.birthday.toString()) // LocalDate를 String으로 변환
-        bundle.putString("self_description", userInfo.self_description) // self_description 추가
-
+        bundle.putString("userName", userName)
+        bundle.putString("nickName", nickName)
+        bundle.putString("mbti", userInfo.mbti)
+        bundle.putString("birthday", userInfo.birthday)
+        bundle.putString("self_description", userInfo.self_description)
         return bundle
     }
+
+    private fun kickToSignIn() {
+        showToast(getString(R.string.server_error))
+        saveAutoLogin(false)
+
+        val intent = Intent(this@HomeActivity, SigninActivity::class.java)
+        startActivity(intent)
+        finish()
+    }
+
+    private fun saveAutoLogin(autoLogin: Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("AutoLogin", autoLogin)
+        editor.apply()
+    }
+
 }

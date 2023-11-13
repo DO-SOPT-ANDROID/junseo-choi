@@ -7,20 +7,20 @@ import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import org.sopt.dosopttemplate.databinding.ActivitySigninBinding
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 object SharedPreferencesKeys {
-    const val PROFILE_IMAGE = "ProfileImage"
     const val USER_INFO = "UserInfo"
-    const val USER_ID = "UserId"
+    const val USERNAME = "UserName"
     const val PASSWORD = "Password"
-    const val NICK_NAME = "NickName"
-    const val MBTI = "MBTI"
-    const val SELF_DESCRIPTION = "Self_Description"
 }
 
 class SigninActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySigninBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private val authService = ServicePool.authService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,9 +33,14 @@ class SigninActivity : AppCompatActivity() {
         binding.chkSignInAutologin.isChecked = isAutoLogin
 
         if (isAutoLogin) {
-            val userInfoJson = "user_info.json".getUserInfoFromJson(this)
-            if (userInfoJson != null) {
-                performAutoLogin(userInfoJson)
+            val savedUserName = sharedPreferences.getString(SharedPreferencesKeys.USERNAME, "")
+            val savedPassword = sharedPreferences.getString(SharedPreferencesKeys.PASSWORD, "")
+
+            if (!savedUserName.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
+                binding.etSignInInputid.setText(savedUserName)
+                binding.etSignInInputpw.setText(savedPassword)
+
+                performSignIn(savedUserName, savedPassword, autoLogin = true)
             }
         }
 
@@ -44,17 +49,21 @@ class SigninActivity : AppCompatActivity() {
         }
 
         binding.btnSignInInbutton.setOnClickListener {
-            val userInfoJson = "user_info.json".getUserInfoFromJson(this)
-            if (userInfoJson != null) {
-                performSignin(userInfoJson)
+            val inputId = binding.etSignInInputid.text.toString()
+            val inputPw = binding.etSignInInputpw.text.toString()
+
+            if (inputId.isNotEmpty() && inputPw.isNotEmpty()) {
+                performSignIn(inputId, inputPw, autoLogin = false)
             }
         }
 
         binding.etSignInInputpw.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val userInfoJson = "user_info.json".getUserInfoFromJson(this)
-                if (userInfoJson != null) {
-                    performSignin(userInfoJson)
+                val inputId = binding.etSignInInputid.text.toString()
+                val inputPw = binding.etSignInInputpw.text.toString()
+
+                if (inputId.isNotEmpty() && inputPw.isNotEmpty()) {
+                    performSignIn(inputId, inputPw, autoLogin = false)
                 }
                 true
             } else {
@@ -70,75 +79,57 @@ class SigninActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
-    private fun performAutoLogin(userInfo: UserInfo) {
-        val autoLogin = binding.chkSignInAutologin.isChecked
+    private fun performSignIn(userName: String, password: String, autoLogin: Boolean) {
+        authService.signIn(RequestSignInDto(userName, password))
+            .enqueue(object : Callback<ResponseSignInDto> {
+                override fun onResponse(
+                    call: Call<ResponseSignInDto>,
+                    response: Response<ResponseSignInDto>,
+                ) {
+                    when (response.code()) {
+                        200 -> {
+                            val data: ResponseSignInDto = response.body()!!
+                            val userName = data.username
+                            val id = data.id
 
-        if (autoLogin) {
-            val savedUserId = sharedPreferences.getString(SharedPreferencesKeys.USER_ID, "")
-            val savedPassword = sharedPreferences.getString(SharedPreferencesKeys.PASSWORD, "")
+                            if (autoLogin) {
+                                saveAutoLoginInfo(userName, password)
+                            }
+                            binding.root.showSnackbar(getString(R.string.login_success))
+                            val intent = Intent(this@SigninActivity, HomeActivity::class.java)
+                            intent.putExtra("id", id)
+                            startActivity(intent)
+                            finish()
+                        }
 
-            if (!savedUserId.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
-                binding.etSignInInputid.setText(savedUserId)
-                binding.etSignInInputpw.setText(savedPassword)
+                        400 -> {
+                            val errorResponse = response.errorBody()?.string()
+                            binding.root.showSnackbar(
+                                errorResponse ?: getString(R.string.login_failed)
+                            )
+                        }
 
-                val userInfoJson = "user_info.json".getUserInfoFromJson(this)
-                if (userInfoJson != null) {
-                    performSignin(userInfoJson)
-                }
-            }
-        }
-    }
-
-    private fun performSignin(userInfo: UserInfo) {
-        val inputId = binding.etSignInInputid.text.toString()
-        val inputPw = binding.etSignInInputpw.text.toString()
-
-        val idValid = inputId.length >= 6
-        val pwValid = inputPw.length in 6..10
-
-        when {
-            !idValid -> {
-                binding.root.showSnackbar(getString(R.string.invalid_id))
-            }
-
-            !pwValid -> {
-                binding.root.showSnackbar(getString(R.string.invalid_password))
-            }
-
-            inputId == userInfo.userId && inputPw == userInfo.password -> {
-                val autoLogin = binding.chkSignInAutologin.isChecked
-
-                if (autoLogin) {
-                    saveAutoLoginInfo(userInfo)
+                        else -> {
+                            binding.root.showSnackbar(response.code().toString())
+                        }
+                    }
                 }
 
-                binding.root.showSnackbar(getString(R.string.login_success))
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
-
-            else -> {
-                binding.root.showSnackbar(getString(R.string.login_failed))
-            }
-        }
+                override fun onFailure(call: Call<ResponseSignInDto>, t: Throwable) {
+                    binding.root.showSnackbar(getString(R.string.server_error))
+                }
+            })
 
         hideKeyboard(this, binding.root)
     }
 
-
-    private fun saveAutoLoginInfo(userInfo: UserInfo) {
+    private fun saveAutoLoginInfo(userName: String, password: String) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("AutoLogin", true)
-        editor.putString(SharedPreferencesKeys.PROFILE_IMAGE, userInfo.profileImage)
-        editor.putString(SharedPreferencesKeys.USER_ID, userInfo.userId)
-        editor.putString(SharedPreferencesKeys.PASSWORD, userInfo.password)
-        editor.putString(SharedPreferencesKeys.NICK_NAME, userInfo.nickName)
-        editor.putString(SharedPreferencesKeys.MBTI, userInfo.MBTI)
-        editor.putString(SharedPreferencesKeys.SELF_DESCRIPTION, userInfo.self_description)
+        editor.putString(SharedPreferencesKeys.USERNAME, userName)
+        editor.putString(SharedPreferencesKeys.PASSWORD, password)
         editor.apply()
     }
-
 
     private var backPressedTime = 0L
 
@@ -153,6 +144,3 @@ class SigninActivity : AppCompatActivity() {
         }
     }
 }
-
-
-

@@ -36,9 +36,9 @@ class MyPageFragment : Fragment() {
             AppCompatActivity.MODE_PRIVATE
         )
 
-        val userInfo = arguments.extractUserInfo()
+        val userInfoBundle = arguments.extractUserData()
 
-        displayUserInfo(userInfo)
+        displayUserInfo(userInfoBundle!!)
 
         setupSignOutButton()
     }
@@ -48,16 +48,16 @@ class MyPageFragment : Fragment() {
         _binding = null
     }
 
-    private fun displayUserInfo(userInfo: UserInfo) {
-        binding.ivProfilePicture.load(userInfo.profileImage) {
+    private fun displayUserInfo(userInfoBundle: UserInfoBundle) {
+        binding.ivProfilePicture.load(userInfoBundle.profileImage) {
             crossfade(true)
             error(R.drawable.ic_default_image) // 에러 시 보여줄 이미지 설정
             transformations(RoundedCornersTransformation())
         }
-        binding.tvId.text = userInfo.userId
-        binding.tvName.text = userInfo.nickName
-        binding.tvMBTI.text = userInfo.MBTI
-        binding.tvSelfDescription.text = userInfo.self_description
+        binding.tvId.text = userInfoBundle.userName
+        binding.tvName.text = userInfoBundle.nickName
+        binding.tvMBTI.text = userInfoBundle.mbti
+        binding.tvSelfDescription.text = userInfoBundle.self_description
     }
 
 
@@ -76,7 +76,7 @@ class MyPageFragment : Fragment() {
     }
 
 
-    private fun saveAutoLogin(autoLogin: Boolean) {
+    fun saveAutoLogin(autoLogin: Boolean) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("AutoLogin", autoLogin)
         editor.apply()

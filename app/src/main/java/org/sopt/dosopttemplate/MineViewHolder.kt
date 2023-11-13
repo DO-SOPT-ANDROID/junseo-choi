@@ -9,13 +9,13 @@ import org.sopt.dosopttemplate.databinding.ItemMineBinding
 class MineViewHolder(private val binding: ItemMineBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun onBind(userInfo: UserInfo) {
-        binding.ivProfilePicture.load(userInfo.profileImage) {
+    fun onBind(userData: UserInfoBundle) {
+        binding.ivProfilePicture.load(userData.profileImage) {
             crossfade(true)
             error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
-        binding.tvName.text = userInfo.nickName
-        binding.tvSelfDescription.text = userInfo.self_description
+        binding.tvName.text = userData.nickName
+        binding.tvSelfDescription.text = userData.self_description
     }
 }

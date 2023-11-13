@@ -19,7 +19,6 @@ class HomeFragment : Fragment(), ScrollableFragment {
     private val binding: FragmentHomeBinding
         get() = requireNotNull(_binding) { "바인딩 객체가 생성되지 않았다. 생성하고 불러라 임마!" }
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,15 +31,12 @@ class HomeFragment : Fragment(), ScrollableFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userInfo = arguments.extractUserInfo()
-
-        val friendAdapter = FriendAdapter(requireContext(), userInfo, viewModel)
+        val friendAdapter = FriendAdapter(requireContext(),
+            arguments?.extractUserData()!!, viewModel)
         binding.rvFriends.adapter = friendAdapter
 
-        val birthdayFriends = viewModel.getBirthdayFriends()
-        val otherFriends = viewModel.getOtherFriends()
-
-        friendAdapter.setFriendsLists(birthdayFriends, otherFriends)
+        val allFriends = viewModel.getAllFriends()
+        friendAdapter.setFriendsList(allFriends)
 
         binding.fabHomeEdit.setOnClickListener {
             binding.root.showSnackbar("3주차 과제 완료 ^0^")

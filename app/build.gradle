@@ -1,7 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.8.20'
 }
+
+Properties properties = new Properties() // local.properties에서 정보 가져오기
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
 android {
     namespace 'org.sopt.dosopttemplate'
@@ -14,9 +18,12 @@ android {
         versionCode 1
         versionName "1.0"
 
+        buildConfigField "String", "AUTH_BASE_URL", properties["base.url"] // ip 정보
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildFeatures {
             viewBinding true
+            buildConfig true
         }
     }
 

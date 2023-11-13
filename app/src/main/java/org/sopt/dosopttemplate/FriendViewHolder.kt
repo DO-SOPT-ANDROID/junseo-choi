@@ -6,7 +6,9 @@ import coil.transform.RoundedCornersTransformation
 import org.sopt.dosopttemplate.databinding.ItemFriendBinding
 
 
-class FriendViewHolder(private val binding: ItemFriendBinding) :
+class FriendViewHolder(
+    private val binding: ItemFriendBinding,
+) :
     RecyclerView.ViewHolder(binding.root) {
 
     fun onBind(friendData: Friend) {
@@ -15,6 +17,7 @@ class FriendViewHolder(private val binding: ItemFriendBinding) :
             error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
+
         binding.tvName.text = friendData.name
         binding.tvSelfDescription.text = friendData.self_description
     }

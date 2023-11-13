@@ -39,6 +39,7 @@
     <string name="invalid_password">비밀번호가 잘못되었습니다.</string>
     <string name="login_success">성공적으로 로그인되었습니다!</string>
     <string name="login_failed">회원님의 정보가 일치하지 않습니다.</string>
+    <string name="server_error">서버와의 접속이 원활하지 않습니다.</string>
 
     // SignupActivity.kt
     <string name="user_id_error">아이디는 6~10글자이며, 공백 및 특수문자가 포함되면 안됩니다.</string>
@@ -48,6 +49,7 @@
     <string name="mbti_error">유효한 MBTI를 적어주세요. (예시: ENTJ)</string>
     <string name="empty_field_message">아직 입력되지 않은 칸이 있습니다.</string>
     <string name="signup_success_message">성공적으로 회원가입이 완료되었습니다!</string>
+    <string name="signup_failed">회원가입에 실패하였습니다.</string>
 
 
 </resources>
