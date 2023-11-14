@@ -8,15 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import coil.load
+import coil.transform.RoundedCornersTransformation
 import org.sopt.dosopttemplate.databinding.ActivityMyPageBinding
-import java.time.LocalDate
 
 class MyPageFragment : Fragment() {
     private var _binding: ActivityMyPageBinding? = null
     private val binding: ActivityMyPageBinding
         get() = requireNotNull(_binding) { "바인딩 객체가 생성되지 않았다. 생성하고 불러라 임마!" }
 
-    private lateinit var userInfo: UserInfo
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreateView(
@@ -36,15 +36,7 @@ class MyPageFragment : Fragment() {
             AppCompatActivity.MODE_PRIVATE
         )
 
-        userInfo = "user_info.json".getUserInfoFromJson(requireContext()) ?: UserInfo(
-            "",
-            "",
-            "",
-            "",
-            LocalDate.of(0, 0, 0),
-            ""
-        )
-
+        val userInfo = arguments.extractUserInfo()
 
         displayUserInfo(userInfo)
 
@@ -57,6 +49,11 @@ class MyPageFragment : Fragment() {
     }
 
     private fun displayUserInfo(userInfo: UserInfo) {
+        binding.ivProfilePicture.load(userInfo.profileImage) {
+            crossfade(true)
+            error(R.drawable.ic_default_image) // 에러 시 보여줄 이미지 설정
+            transformations(RoundedCornersTransformation())
+        }
         binding.tvId.text = userInfo.userId
         binding.tvName.text = userInfo.nickName
         binding.tvMBTI.text = userInfo.MBTI

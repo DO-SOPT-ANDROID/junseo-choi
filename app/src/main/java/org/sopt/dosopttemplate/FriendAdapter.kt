@@ -3,35 +3,43 @@ package org.sopt.dosopttemplate
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.sopt.dosopttemplate.databinding.ItemBirthdayBinding
 import org.sopt.dosopttemplate.databinding.ItemFriendBinding
 import org.sopt.dosopttemplate.databinding.ItemMineBinding
-import java.time.LocalDate
 
-class FriendAdapter(context: Context, private val userInfo: UserInfo) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class FriendAdapter(
+    context: Context,
+    private val userInfo: UserInfo,
+    private val viewModel: HomeViewModel,
+) : ListAdapter<Friend, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
-    private var personList: List<Person> = emptyList()
 
-    private val viewTypeMine = 1
-    private val viewTypeFriend = 2
-    private val viewTypeBirthday = 3
+    companion object {
+        const val VIEW_TYPE_MINE = 0
+        const val VIEW_TYPE_FRIEND = 1
+        const val VIEW_TYPE_BIRTHDAY = 2
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            viewTypeMine -> {
+            VIEW_TYPE_MINE -> {
                 val binding = ItemMineBinding.inflate(inflater, parent, false)
                 MineViewHolder(binding)
             }
-            viewTypeFriend -> {
+
+            VIEW_TYPE_FRIEND -> {
                 val binding = ItemFriendBinding.inflate(inflater, parent, false)
                 FriendViewHolder(binding)
             }
-            viewTypeBirthday -> {
+
+            VIEW_TYPE_BIRTHDAY -> {
                 val binding = ItemBirthdayBinding.inflate(inflater, parent, false)
                 BirthdayViewHolder(binding)
             }
+
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
@@ -41,72 +49,63 @@ class FriendAdapter(context: Context, private val userInfo: UserInfo) :
             is MineViewHolder -> {
                 holder.onBind(userInfo)
             }
+
             is FriendViewHolder -> {
-                val friend = personList[position] as Friend
-                holder.onBind(friend)
-            }
-            is BirthdayViewHolder -> {
-                val friend = personList[position] as Friend
-                holder.onBind(friend)
-            }
-        }
-    }
-
-    override fun getItemCount() = personList.size
-
-    override fun getItemViewType(position: Int): Int {
-        return when (personList[position]) {
-            is Mine -> viewTypeMine
-            is Friend -> {
-                if (isBirthdayToday(personList[position] as Friend)) {
-                    viewTypeBirthday
+                if (position == 0) {
+                    // 뿜빰
                 } else {
-                    viewTypeFriend
+                    val birthdayFriends = viewModel.getBirthdayFriends()
+                    val otherFriends = viewModel.getOtherFriends()
+                    val friend = if (position <= birthdayFriends.size) {
+                        birthdayFriends.getOrNull(position - 1)
+                    } else {
+                        otherFriends.getOrNull(position - birthdayFriends.size - 1)
+                    }
+
+                    friend?.let { holder.onBind(it) }
                 }
             }
-            else -> throw IllegalArgumentException("Invalid view type")
+
+            is BirthdayViewHolder -> {
+                if (position <= viewModel.getBirthdayFriends().size) {
+                    val birthdayFriend = viewModel.getBirthdayFriends()[position - 1]
+                    holder.onBind(birthdayFriend)
+                }
+            }
         }
     }
 
-    private fun isBirthdayToday(friend: Friend): Boolean {
-        val today = LocalDate.now()
-        return friend.birthday != null && friend.birthday.monthValue == today.monthValue && friend.birthday.dayOfMonth == today.dayOfMonth
-    }
-
-    fun setPersonList(personList: List<Person>) {
-
-        val sortedFriendList = personList.filterIsInstance<Friend>().sortedBy { it.name }
-        val (birthdayFriends, otherFriends) = partitionFriendsByBirthday(sortedFriendList)
-
-        this.personList = listOf(
-            Mine(
-                profileImage = R.drawable.ic_ex0,
-                name = userInfo.nickName,
-                self_description = userInfo.self_description,
-                birthday = userInfo.birthday
-            )
-        ) + birthdayFriends + otherFriends
-
-        notifyDataSetChanged()
-    }
-
-    private fun partitionFriendsByBirthday(friendList: List<Friend>): Pair<List<Friend>, List<Friend>> {
-        val today = LocalDate.now()
-        val (birthdayFriends, otherFriends) = friendList.partition {
-            it.birthday != null && it.birthday.monthValue == today.monthValue && it.birthday.dayOfMonth == today.dayOfMonth
+    override fun getItemViewType(position: Int): Int {
+        return when (position) {
+            0 -> VIEW_TYPE_MINE
+            in 1..viewModel.getBirthdayFriends().size -> VIEW_TYPE_BIRTHDAY
+            else -> VIEW_TYPE_FRIEND
         }
-        return Pair(birthdayFriends, otherFriends)
     }
 
-    private fun sortFriendsByBirthday(personList: List<Person>): List<Person> {
-        val sortedList = personList.toMutableList()
-        sortedList.sortWith(compareByDescending { it is Friend && isBirthdayToday(it) })
-        return sortedList.toList()
+    fun setFriendsLists(birthdayFriends: List<Friend>, otherFriends: List<Friend>) {
+        val newList = mutableListOf<Friend>()
+        val userInfoFriend = Friend(
+            profileImage = userInfo.profileImage,
+            userId = userInfo.userId,
+            name = userInfo.nickName,
+            self_description = userInfo.self_description,
+            birthday = userInfo.birthday
+        )
+
+        newList.add(userInfoFriend)
+        newList.addAll(birthdayFriends)
+        newList.addAll(otherFriends)
+        submitList(newList)
     }
 }
 
+class DiffCallback : DiffUtil.ItemCallback<Friend>() {
+    override fun areItemsTheSame(oldItem: Friend, newItem: Friend): Boolean {
+        return oldItem.userId == newItem.userId
+    }
 
-
-
-
-
+    override fun areContentsTheSame(oldItem: Friend, newItem: Friend): Boolean {
+        return oldItem == newItem
+    }
+}

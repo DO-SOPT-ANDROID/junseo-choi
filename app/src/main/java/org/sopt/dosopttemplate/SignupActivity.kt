@@ -11,6 +11,7 @@ import org.sopt.dosopttemplate.databinding.ActivitySignupBinding
 import java.time.LocalDate
 
 data class UserInfo(
+    @SerializedName("profileImage") val profileImage: String,
     @SerializedName("userId") val userId: String,
     @SerializedName("password") val password: String,
     @SerializedName("nickName") val nickName: String,
@@ -37,11 +38,12 @@ class SignupActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         binding.btnSignUpInbutton.setOnClickListener {
+            val profileImage = "https://avatars.githubusercontent.com/u/127238018?v=4"
             val userId = binding.etSignUpInputid.text.toString()
             val password = binding.etSignUpInputpw.text.toString()
             val nickName = binding.etSignUpInputNick.text.toString()
             val MBTI = binding.etSignUpInputMBTI.text.toString().uppercase()
-            val birthday = LocalDate.now() // 임시 생일 데이터
+            val birthday = defaultUserInfo.birthday // 임시 생일 데이터
             val self_description = binding.root.context.getString(R.string.test_text) // 임시 상메 데이터
 
             if (userId.isEmpty() || password.isEmpty() || nickName.isEmpty() || MBTI.isEmpty()) {
@@ -62,7 +64,7 @@ class SignupActivity : AppCompatActivity() {
                 Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
             } else {
                 val userInfo =
-                    UserInfo(userId, password, nickName, MBTI, birthday, self_description)
+                    UserInfo(profileImage, userId, password, nickName, MBTI, birthday, self_description)
                 val userInfoJson = userInfo.toJson()
 
                 userInfoJson.saveAsJsonFile("user_info.json", this)

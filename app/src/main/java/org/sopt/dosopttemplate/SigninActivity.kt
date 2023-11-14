@@ -9,11 +9,13 @@ import androidx.appcompat.app.AppCompatActivity
 import org.sopt.dosopttemplate.databinding.ActivitySigninBinding
 
 object SharedPreferencesKeys {
+    const val PROFILE_IMAGE = "ProfileImage"
     const val USER_INFO = "UserInfo"
     const val USER_ID = "UserId"
     const val PASSWORD = "Password"
     const val NICK_NAME = "NickName"
     const val MBTI = "MBTI"
+    const val SELF_DESCRIPTION = "Self_Description"
 }
 
 class SigninActivity : AppCompatActivity() {
@@ -128,10 +130,12 @@ class SigninActivity : AppCompatActivity() {
     private fun saveAutoLoginInfo(userInfo: UserInfo) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("AutoLogin", true)
+        editor.putString(SharedPreferencesKeys.PROFILE_IMAGE, userInfo.profileImage)
         editor.putString(SharedPreferencesKeys.USER_ID, userInfo.userId)
         editor.putString(SharedPreferencesKeys.PASSWORD, userInfo.password)
         editor.putString(SharedPreferencesKeys.NICK_NAME, userInfo.nickName)
         editor.putString(SharedPreferencesKeys.MBTI, userInfo.MBTI)
+        editor.putString(SharedPreferencesKeys.SELF_DESCRIPTION, userInfo.self_description)
         editor.apply()
     }
 

@@ -5,31 +5,29 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
+import org.sopt.dosopttemplate.databinding.FragmentDoandroidBinding
 
-class DoAndroidFragment: Fragment() {
-    private var _binding: FragmentHomeBinding? = null
-    private val binding: FragmentHomeBinding
+class DoAndroidFragment : Fragment() {
+    private var _binding: FragmentDoandroidBinding? = null
+    private val binding: FragmentDoandroidBinding
         get() = requireNotNull(_binding) { "바인딩 객체가 생성되지 않았다. 생성하고 불러라 임마!" }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentDoandroidBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // 대부분의 로직은 여기에 구현합니다.
-        // 원두를 갈고~
-        // 커피를 내리고~
+        // 로직 구현 위치
     }
 
     override fun onDestroyView() {
+        _binding = null // null 처리를 먼저 해줘야 안정성 증가
         super.onDestroyView()
-        _binding = null
     }
 }

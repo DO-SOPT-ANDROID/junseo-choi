@@ -8,7 +8,11 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
 
-class HomeFragment(private val userInfo: UserInfo) : Fragment() {
+interface ScrollableFragment {
+    fun scrollToTop()
+}
+
+class HomeFragment : Fragment(), ScrollableFragment {
     private var _binding: FragmentHomeBinding? = null
     private val viewModel by viewModels<HomeViewModel>()
 
@@ -27,8 +31,28 @@ class HomeFragment(private val userInfo: UserInfo) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val friendAdapter = FriendAdapter(requireContext(), userInfo)
+
+        val userInfo = arguments.extractUserInfo()
+
+        val friendAdapter = FriendAdapter(requireContext(), userInfo, viewModel)
         binding.rvFriends.adapter = friendAdapter
-        friendAdapter.setPersonList(viewModel.mockFriendList)
+
+        val birthdayFriends = viewModel.getBirthdayFriends()
+        val otherFriends = viewModel.getOtherFriends()
+
+        friendAdapter.setFriendsLists(birthdayFriends, otherFriends)
+
+        binding.fabHomeEdit.setOnClickListener {
+            binding.root.showSnackbar("3주차 과제 완료 ^0^")
+        }
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
+    }
+
+    override fun scrollToTop() {
+        binding.rvFriends.smoothScrollToPosition(0)
     }
 }
