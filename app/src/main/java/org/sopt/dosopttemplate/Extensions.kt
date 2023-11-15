@@ -8,10 +8,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
-import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.json.JSONObject
 
 // 키보드 감추기
@@ -71,14 +67,6 @@ val defaultUserInfo = UserInfo(
 
 // Bundle 데이터 받아오기
 
-data class UserInfoBundle(
-    @SerializedName("profileImage") val profileImage: String,
-    @SerializedName("userName") val userName: String,
-    @SerializedName("nickName") val nickName: String,
-    @SerializedName("mbti") val mbti: String,
-    @SerializedName("birthday") val birthday: String,
-    @SerializedName("self_description") val self_description: String
-)
 fun Bundle?.extractUserData(): UserInfoBundle? {
     if (this == null) {
         return null

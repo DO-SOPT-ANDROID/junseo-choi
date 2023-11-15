@@ -10,11 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import coil.load
 import coil.transform.RoundedCornersTransformation
-import org.sopt.dosopttemplate.databinding.ActivityMyPageBinding
+import org.sopt.dosopttemplate.databinding.FragmentMyPageBinding
 
 class MyPageFragment : Fragment() {
-    private var _binding: ActivityMyPageBinding? = null
-    private val binding: ActivityMyPageBinding
+    private var _binding: FragmentMyPageBinding? = null
+    private val binding: FragmentMyPageBinding
         get() = requireNotNull(_binding) { "바인딩 객체가 생성되지 않았다. 생성하고 불러라 임마!" }
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -24,7 +24,7 @@ class MyPageFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = ActivityMyPageBinding.inflate(inflater, container, false)
+        _binding = FragmentMyPageBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -58,7 +58,8 @@ class MyPageFragment : Fragment() {
         binding.tvName.text = userInfoBundle.nickName
         binding.tvMBTI.text = userInfoBundle.mbti
         val selfDescription = userInfoBundle.self_description
-        binding.tvSelfDescription.text = selfDescription.ifEmpty {getString(R.string.if_desc_empty)}
+        binding.tvSelfDescription.text =
+            selfDescription.ifEmpty { getString(R.string.if_desc_empty) }
     }
 
 

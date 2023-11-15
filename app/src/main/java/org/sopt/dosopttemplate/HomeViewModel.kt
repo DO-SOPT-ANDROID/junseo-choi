@@ -33,11 +33,13 @@ class HomeViewModel : ViewModel() {
                     ifServerError()
                 }
             }
+
             override fun onFailure(call: Call<OpenApiResponse<List<FriendDto>>>, t: Throwable) {
                 ifServerError()
             }
         })
     }
+
     private fun ifServerError() {
         _toastMessage.value = R.string.server_error.toString()
     }

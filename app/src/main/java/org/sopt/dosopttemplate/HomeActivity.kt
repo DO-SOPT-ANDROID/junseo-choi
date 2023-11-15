@@ -149,18 +149,27 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    object BundleKeys {
+        const val PROFILE_IMAGE = "profileImage"
+        const val USER_NAME = "userName"
+        const val NICK_NAME = "nickName"
+        const val MBTI = "mbti"
+        const val BIRTHDAY = "birthday"
+        const val SELF_DESCRIPTION = "self_description"
+    }
+
     private fun createUserInfoBundle(
         userInfo: UserInfo,
         userName: String,
         nickName: String,
     ): Bundle {
         val bundle = Bundle()
-        bundle.putString("profileImage", userInfo.profileImage)
-        bundle.putString("userName", userName)
-        bundle.putString("nickName", nickName)
-        bundle.putString("mbti", userInfo.mbti)
-        bundle.putString("birthday", userInfo.birthday)
-        bundle.putString("self_description", userInfo.self_description)
+        bundle.putString(BundleKeys.PROFILE_IMAGE, userInfo.profileImage)
+        bundle.putString(BundleKeys.USER_NAME, userName)
+        bundle.putString(BundleKeys.NICK_NAME, nickName)
+        bundle.putString(BundleKeys.MBTI, userInfo.mbti)
+        bundle.putString(BundleKeys.BIRTHDAY, userInfo.birthday)
+        bundle.putString(BundleKeys.SELF_DESCRIPTION, userInfo.self_description)
         return bundle
     }
 

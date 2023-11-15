@@ -19,6 +19,6 @@ class FriendViewHolder(
         }
 
         binding.tvName.text = friendData.name
-        binding.tvSelfDescription.text = friendData.self_description
+        binding.tvSelfDescription.text = friendData.description
     }
 }

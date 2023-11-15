@@ -12,7 +12,6 @@ import org.sopt.dosopttemplate.databinding.ItemMineBinding
 class FriendAdapter(
     context: Context,
     private val userData: UserInfoBundle,
-    private val viewModel: HomeViewModel,
 ) : ListAdapter<Friend, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
 
@@ -64,13 +63,11 @@ class FriendAdapter(
             profileImage = userData.profileImage,
             userId = userData.userName,
             name = userData.nickName,
-            self_description = userData.self_description,
+            description = userData.self_description,
         )
 
         newList.add(userInfoFriend)
-
         newList.addAll(allFriends.map { it.toFriend() })
-
         submitList(newList)
     }
 
@@ -79,7 +76,7 @@ class FriendAdapter(
             profileImage = this.avatar,
             userId = this.email,
             name = this.firstName,
-            self_description = "",
+            description = "",
         )
     }
 }

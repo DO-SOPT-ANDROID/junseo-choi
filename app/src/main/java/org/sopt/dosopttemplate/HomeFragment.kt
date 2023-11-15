@@ -23,7 +23,7 @@ class HomeFragment : Fragment(), ScrollableFragment {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -31,8 +31,10 @@ class HomeFragment : Fragment(), ScrollableFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val friendAdapter = FriendAdapter(requireContext(),
-            arguments?.extractUserData()!!, viewModel)
+        val friendAdapter = FriendAdapter(
+            requireContext(),
+            arguments?.extractUserData()!!
+        )
         binding.rvFriends.adapter = friendAdapter
 
         viewModel.allFriends.observe(viewLifecycleOwner) { allFriends ->

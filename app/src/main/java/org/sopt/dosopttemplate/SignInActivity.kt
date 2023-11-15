@@ -22,6 +22,19 @@ class SigninActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
     private val authService = ServicePool.authService
 
+    private var backPressedTime = 0L
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            if (System.currentTimeMillis() - backPressedTime <= 2000) {
+                finish()
+            } else {
+                backPressedTime = System.currentTimeMillis()
+                showToast(getString(R.string.double_back_to_exit))
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySigninBinding.inflate(layoutInflater)
@@ -29,21 +42,35 @@ class SigninActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences(SharedPreferencesKeys.USER_INFO, MODE_PRIVATE)
 
+        setupAutoLogin()
+
+        setupClickListeners()
+
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+    }
+
+    private fun setupAutoLogin() {
         val isAutoLogin = sharedPreferences.getBoolean("AutoLogin", false)
         binding.chkSignInAutologin.isChecked = isAutoLogin
 
         if (isAutoLogin) {
-            val savedUserName = sharedPreferences.getString(SharedPreferencesKeys.USERNAME, "")
-            val savedPassword = sharedPreferences.getString(SharedPreferencesKeys.PASSWORD, "")
-
-            if (!savedUserName.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
-                binding.etSignInInputid.setText(savedUserName)
-                binding.etSignInInputpw.setText(savedPassword)
-
-                performSignIn(savedUserName, savedPassword)
-            }
+            restoreSavedCredentials()
         }
+    }
 
+    private fun restoreSavedCredentials() {
+        val savedUserName = sharedPreferences.getString(SharedPreferencesKeys.USERNAME, "")
+        val savedPassword = sharedPreferences.getString(SharedPreferencesKeys.PASSWORD, "")
+
+        if (!savedUserName.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
+            binding.etSignInInputid.setText(savedUserName)
+            binding.etSignInInputpw.setText(savedPassword)
+
+            performSignIn(savedUserName, savedPassword)
+        }
+    }
+
+    private fun setupClickListeners() {
         binding.root.setOnClickListener {
             hideKeyboard(this, binding.root)
         }
@@ -76,7 +103,6 @@ class SigninActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
     private fun performSignIn(userName: String, password: String) {
@@ -87,34 +113,7 @@ class SigninActivity : AppCompatActivity() {
                     call: Call<ResponseSignInDto>,
                     response: Response<ResponseSignInDto>,
                 ) {
-                    when (response.code()) {
-                        200 -> {
-                            val data: ResponseSignInDto = response.body()!!
-                            val username = data.username
-                            val id = data.id
-
-                            if (isAutoLogin) {
-                                saveAutoLoginInfo(username, password)
-                            }
-
-                            val intent = Intent(this@SigninActivity, HomeActivity::class.java)
-                            showToast("$username${getString(R.string.login_success)}")
-                            intent.putExtra("id", id)
-                            startActivity(intent)
-                            finish()
-                        }
-
-                        400 -> {
-                            val errorResponse = response.errorBody()?.string()
-                            binding.root.showSnackbar(
-                                errorResponse ?: getString(R.string.login_failed)
-                            )
-                        }
-
-                        else -> {
-                            binding.root.showSnackbar(response.code().toString())
-                        }
-                    }
+                    handleSignInResponse(response, isAutoLogin, password)
                 }
 
                 override fun onFailure(call: Call<ResponseSignInDto>, t: Throwable) {
@@ -125,24 +124,46 @@ class SigninActivity : AppCompatActivity() {
         hideKeyboard(this, binding.root)
     }
 
+    private fun handleSignInResponse(
+        response: Response<ResponseSignInDto>,
+        isAutoLogin: Boolean,
+        password: String,
+    ) {
+        when (response.code()) {
+            200 -> {
+                val data: ResponseSignInDto = response.body()!!
+                val username = data.username
+                val id = data.id
+
+                if (isAutoLogin) {
+                    saveAutoLoginInfo(username, password)
+                }
+
+                val intent = Intent(this@SigninActivity, HomeActivity::class.java)
+                showToast("$username${getString(R.string.login_success)}")
+                intent.putExtra("id", id)
+                startActivity(intent)
+                finish()
+            }
+
+            400 -> {
+                val errorResponse = response.errorBody()?.string()
+                binding.root.showSnackbar(
+                    errorResponse ?: getString(R.string.login_failed)
+                )
+            }
+
+            else -> {
+                binding.root.showSnackbar(response.code().toString())
+            }
+        }
+    }
+
     private fun saveAutoLoginInfo(userName: String, password: String) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("AutoLogin", true)
         editor.putString(SharedPreferencesKeys.USERNAME, userName)
         editor.putString(SharedPreferencesKeys.PASSWORD, password)
         editor.apply()
-    }
-
-    private var backPressedTime = 0L
-
-    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            if (System.currentTimeMillis() - backPressedTime <= 2000) {
-                finish()
-            } else {
-                backPressedTime = System.currentTimeMillis()
-                showToast(getString(R.string.double_back_to_exit))
-            }
-        }
     }
 }
