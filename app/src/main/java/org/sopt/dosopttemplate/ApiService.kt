@@ -1,5 +1,6 @@
 package org.sopt.dosopttemplate
 
+import android.util.Log
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -30,8 +31,8 @@ data class ResponseSignInDto(
     val id: Int,
     @SerialName("username")
     val username: String,
-    @SerialName("password")
-    val password: String,
+    @SerialName("nickname")
+    val nickname: String,
 )
 
 @Serializable
@@ -45,21 +46,7 @@ data class RequestSignUpDto(
 )
 
 @Serializable
-data class ResponseSignUpDto(
-    @SerialName("message")
-    val message: String,
-)
-
-@Serializable
-data class RequestGetUserInfoDto(
-    @SerialName("memberId")
-    val id: Int,
-)
-
-@Serializable
 data class ResponseGetUserInfoDto(
-    @SerialName("id")
-    val id: Int,
     @SerialName("username")
     val username: String,
     @SerialName("nickname")
@@ -96,6 +83,13 @@ data class SupportDto(
     @SerialName("text") val text: String,
 )
 
+interface FriendService {
+    @GET("api/users")
+    fun getFriendList(
+        @Query("page") page: Int,
+    ): Call<OpenApiResponse<List<FriendDto>>>
+
+}
 
 interface AuthService {
     @POST("api/v1/members/sign-in")
@@ -106,72 +100,65 @@ interface AuthService {
     @POST("api/v1/members")
     fun signUp(
         @Body request: RequestSignUpDto,
-    ): Call<ResponseSignUpDto>
+    ): Call<Unit>
 
     @GET("api/v1/members/{memberId}")
     fun getUserInfo(
         @Path("memberId") id: Int,
     ): Call<ResponseGetUserInfoDto>
-
-    @GET("users")
-    fun getFriendList(
-        @Query("page") page: Int,
-        @Query("per_page") perPage: Int,
-    ): Call<OpenApiResponse<List<FriendDto>>>
-
-    @Serializable
-    data class OpenApiResponse<T>(
-        @SerialName("page") val page: Int,
-        @SerialName("per_page") val perPage: Int,
-        @SerialName("total") val total: Int,
-        @SerialName("total_pages") val totalPages: Int,
-        @SerialName("data") val data: T,
-        @SerialName("support") val support: SupportDto,
-    )
-
-    @Serializable
-    data class SupportDto(
-        @SerialName("url") val url: String,
-        @SerialName("text") val text: String,
-    )
 }
 
-object ApiFactory {
+object AuthApiFactory {
     private const val AUTH_BASE_URL = BuildConfig.AUTH_BASE_URL
-    private const val FRIEND_BASE_URL = "https://reqres.in/api/"
 
     private fun getLogOkHttpClient(): Interceptor {
-        val interceptor = HttpLoggingInterceptor {}
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
-        return interceptor
+        val loggingInterceptor = HttpLoggingInterceptor { message ->
+            Log.d("Retrofit2", "CONNECTION INFO -> $message")
+        }
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+        return loggingInterceptor
     }
 
-    val okHttpClient = OkHttpClient.Builder()
+    private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor(getLogOkHttpClient())
         .build()
-
 
     val authRetrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(AUTH_BASE_URL)
+            .client(okHttpClient)
             .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
             .build()
     }
+    inline fun <reified T> create(): T = authRetrofit.create<T>(T::class.java)
+}
+
+object FriendApiFactory {
+    private const val FRIEND_BASE_URL = BuildConfig.FRIEND_BASE_URL
+
+    private fun getLogOkHttpClient(): Interceptor {
+        val loggingInterceptor = HttpLoggingInterceptor { message ->
+            Log.d("Retrofit2", "CONNECTION INFO -> $message")
+        }
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+        return loggingInterceptor
+    }
+
+    private val okHttpClient = OkHttpClient.Builder()
+        .addInterceptor(getLogOkHttpClient())
+        .build()
 
     val friendRetrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(FRIEND_BASE_URL)
-            .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
             .client(okHttpClient)
+            .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
             .build()
     }
-
-    inline fun <reified T> create(auth: Boolean = true): T {
-        return if (auth) authRetrofit.create(T::class.java)
-        else friendRetrofit.create(T::class.java)
-    }
+    inline fun <reified T> create(): T = friendRetrofit.create<T>(T::class.java)
 }
 
 object ServicePool {
-    val authService = ApiFactory.create<AuthService>()
+    val authService = AuthApiFactory.create<AuthService>()
+    val friendService = FriendApiFactory.create<FriendService>()
 }

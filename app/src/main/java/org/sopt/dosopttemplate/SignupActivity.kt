@@ -80,10 +80,10 @@ class SignupActivity : AppCompatActivity() {
 
                 // 서버로 데이터 전송
                 authService.signUp(RequestSignUpDto(userName, password, nickName))
-                    .enqueue(object : Callback<ResponseSignUpDto> {
+                    .enqueue(object : Callback<Unit> {
                         override fun onResponse(
-                            call: Call<ResponseSignUpDto>,
-                            response: Response<ResponseSignUpDto>,
+                            call: Call<Unit>,
+                            response: Response<Unit>,
                         ) {
                             when (response.code()) {
                                 201 -> {
@@ -99,7 +99,7 @@ class SignupActivity : AppCompatActivity() {
                             }
                         }
 
-                        override fun onFailure(call: Call<ResponseSignUpDto>, t: Throwable) {
+                        override fun onFailure(call: Call<Unit>, t: Throwable) {
                             binding.root.showSnackbar(getString(R.string.server_error))
                         }
                 })

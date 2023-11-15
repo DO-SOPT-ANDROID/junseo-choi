@@ -9,23 +9,21 @@ import retrofit2.Response
 import retrofit2.Retrofit
 
 class HomeViewModel : ViewModel() {
-    private val apiService: AuthService
+    private val friendService = ServicePool.friendService
 
     private val allFriends = mutableListOf<FriendDto>()
 
     init {
-        apiService = ApiFactory.create()
-
         fetchFriendsData()
     }
 
     private fun fetchFriendsData() {
-        val call = apiService.getFriendList(1, 6)
+        val call = friendService.getFriendList(1)
 
-        call.enqueue(object : Callback<AuthService.OpenApiResponse<List<FriendDto>>> {
+        call.enqueue(object : Callback<OpenApiResponse<List<FriendDto>>> {
             override fun onResponse(
-                call: Call<AuthService.OpenApiResponse<List<FriendDto>>>,
-                response: Response<AuthService.OpenApiResponse<List<FriendDto>>>,
+                call: Call<OpenApiResponse<List<FriendDto>>>,
+                response: Response<OpenApiResponse<List<FriendDto>>>,
             ) {
                 if (response.isSuccessful) {
                     val data = response.body()?.data
@@ -35,7 +33,7 @@ class HomeViewModel : ViewModel() {
                 }
             }
 
-            override fun onFailure(call: Call<AuthService.OpenApiResponse<List<FriendDto>>>, t: Throwable) {
+            override fun onFailure(call: Call<OpenApiResponse<List<FriendDto>>>, t: Throwable) {
                 // 실패 처리
             }
         })

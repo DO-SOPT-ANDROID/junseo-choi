@@ -57,7 +57,8 @@ class MyPageFragment : Fragment() {
         binding.tvId.text = userInfoBundle.userName
         binding.tvName.text = userInfoBundle.nickName
         binding.tvMBTI.text = userInfoBundle.mbti
-        binding.tvSelfDescription.text = userInfoBundle.self_description
+        val selfDescription = userInfoBundle.self_description
+        binding.tvSelfDescription.text = if (selfDescription.isNotEmpty()) selfDescription else "상태메시지를 작성해주세요."
     }
 
 

@@ -15,17 +15,23 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var userInfo: UserInfo
     private lateinit var authService: AuthService
+    private lateinit var friendService: FriendService
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var receivedUserInfo: ResponseGetUserInfoDto
-    val id = intent.getStringExtra("id")
+    private var id: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        id = intent.getIntExtra("id", -1)
+        authService = ServicePool.authService
+        friendService = ServicePool.friendService
+        sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE) // Add this line
+
         userInfo = "user_info.json".getUserInfoFromJson(this) ?: defaultUserInfo
-        getUserInfoFromServer(id?.toInt() ?: -1)
+        getUserInfoFromServer(id)
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
         if (currentFragment == null) {
@@ -109,12 +115,16 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        val userInfoBundle =
-            createUserInfoBundle(userInfo, receivedUserInfo.username, receivedUserInfo.nickname)
-        fragment.arguments = userInfoBundle
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fcv_home, fragment)
-            .commit()
+        if (::receivedUserInfo.isInitialized) {
+            val userInfoBundle =
+                createUserInfoBundle(userInfo, receivedUserInfo.username, receivedUserInfo.nickname)
+            fragment.arguments = userInfoBundle
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fcv_home, fragment)
+                .commit()
+        } else {
+            getUserInfoFromServer(id)
+        }
     }
 
     private fun setupOnBackPressedCallback() {
