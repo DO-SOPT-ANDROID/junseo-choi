@@ -1,17 +1,18 @@
 package org.sopt.dosopttemplate
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
 
 class HomeViewModel : ViewModel() {
     private val friendService = ServicePool.friendService
-
-    private val allFriends = mutableListOf<FriendDto>()
+    private val _allFriends = MutableLiveData<List<FriendDto>>()
+    private val _toastMessage = MutableLiveData<String>()
+    val toastMessage: LiveData<String> get() = _toastMessage
+    val allFriends: LiveData<List<FriendDto>> get() = _allFriends
 
     init {
         fetchFriendsData()
@@ -27,19 +28,17 @@ class HomeViewModel : ViewModel() {
             ) {
                 if (response.isSuccessful) {
                     val data = response.body()?.data
-                    data?.let { allFriends.addAll(it) }
+                    data?.let { _allFriends.value = it }
                 } else {
-                    // 오류 처리
+                    ifServerError()
                 }
             }
-
             override fun onFailure(call: Call<OpenApiResponse<List<FriendDto>>>, t: Throwable) {
-                // 실패 처리
+                ifServerError()
             }
         })
     }
-
-    fun getAllFriends(): List<FriendDto> {
-        return allFriends
+    private fun ifServerError() {
+        _toastMessage.value = R.string.server_error.toString()
     }
 }

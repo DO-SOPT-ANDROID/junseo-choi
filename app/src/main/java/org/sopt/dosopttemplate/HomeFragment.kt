@@ -35,8 +35,9 @@ class HomeFragment : Fragment(), ScrollableFragment {
             arguments?.extractUserData()!!, viewModel)
         binding.rvFriends.adapter = friendAdapter
 
-        val allFriends = viewModel.getAllFriends()
-        friendAdapter.setFriendsList(allFriends)
+        viewModel.allFriends.observe(viewLifecycleOwner) { allFriends ->
+            friendAdapter.setFriendsList(allFriends)
+        }
 
         binding.fabHomeEdit.setOnClickListener {
             binding.root.showSnackbar("3주차 과제 완료 ^0^")

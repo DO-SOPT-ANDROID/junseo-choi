@@ -12,6 +12,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.json.JSONObject
 
 // 키보드 감추기
 fun hideKeyboard(context: Context, view: View?) {
@@ -21,7 +22,7 @@ fun hideKeyboard(context: Context, view: View?) {
     }
 }
 
-// 스낵바 출력
+// 스낵바 및 토스트 출력
 fun View.showSnackbar(message: String, duration: Int = Snackbar.LENGTH_SHORT) {
     Snackbar.make(this, message, duration).show()
 }
@@ -30,16 +31,21 @@ fun AppCompatActivity.showToast(message: String, duration: Int = Toast.LENGTH_SH
     Toast.makeText(this, message, duration).show()
 }
 
-
-// 유저 추가정보 저장 및 불러오기
+// 유저 정보 저장하기
 fun UserInfo.toJson(): String {
-    return Json.encodeToString(this)
+    val gson = Gson()
+    return gson.toJson(this)
 }
 
-fun UserInfo.saveAsJsonFile(fileName: String, context: Context) {
-    val jsonString = this.toJson()
-    context.openFileOutput(fileName, Context.MODE_PRIVATE).use {
-        it.write(jsonString.toByteArray())
+fun String.saveAsJsonFile(fileName: String, context: Context) {
+    try {
+        val jsonObject = JSONObject(this)
+        val jsonString = jsonObject.toString()
+        context.openFileOutput(fileName, Context.MODE_PRIVATE).use { stream ->
+            stream.write(jsonString.toByteArray())
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
     }
 }
 

@@ -51,14 +51,14 @@ class MyPageFragment : Fragment() {
     private fun displayUserInfo(userInfoBundle: UserInfoBundle) {
         binding.ivProfilePicture.load(userInfoBundle.profileImage) {
             crossfade(true)
-            error(R.drawable.ic_default_image) // 에러 시 보여줄 이미지 설정
+            error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
         binding.tvId.text = userInfoBundle.userName
         binding.tvName.text = userInfoBundle.nickName
         binding.tvMBTI.text = userInfoBundle.mbti
         val selfDescription = userInfoBundle.self_description
-        binding.tvSelfDescription.text = if (selfDescription.isNotEmpty()) selfDescription else "상태메시지를 작성해주세요."
+        binding.tvSelfDescription.text = selfDescription.ifEmpty {getString(R.string.if_desc_empty)}
     }
 
 
@@ -77,7 +77,7 @@ class MyPageFragment : Fragment() {
     }
 
 
-    fun saveAutoLogin(autoLogin: Boolean) {
+    private fun saveAutoLogin(autoLogin: Boolean) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("AutoLogin", autoLogin)
         editor.apply()

@@ -64,21 +64,6 @@ class SignupActivity : AppCompatActivity() {
             if (errorMessage != null) {
                 Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
             } else {
-                // 서버로 전송할 데이터 생성
-                val signUpRequest = RequestSignUpDto(username = userName, password = password, nickname = nickName)
-
-                // 따로 저장할 데이터 생성
-                val userInfoJson = UserInfo(
-                    profileImage = "https://avatars.githubusercontent.com/u/127238018?v=4", // 임시 데이터
-                    mbti = binding.etSignUpInputMBTI.text.toString().uppercase(),
-                    birthday = defaultUserInfo.birthday, // 임시 데이터
-                    self_description = binding.root.context.getString(R.string.test_text) // 임시 데이터
-                )
-
-                // Json 데이터 저장
-                userInfoJson.saveAsJsonFile("$userName.json", this)
-
-                // 서버로 데이터 전송
                 authService.signUp(RequestSignUpDto(userName, password, nickName))
                     .enqueue(object : Callback<Unit> {
                         override fun onResponse(
@@ -87,6 +72,16 @@ class SignupActivity : AppCompatActivity() {
                         ) {
                             when (response.code()) {
                                 201 -> {
+                                    val userInfo = UserInfo(
+                                        profileImage = "https://avatars.githubusercontent.com/u/127238018?v=4", // 임시 데이터
+                                        mbti = binding.etSignUpInputMBTI.text.toString().uppercase(),
+                                        birthday = defaultUserInfo.birthday, // 임시 데이터
+                                        self_description = binding.root.context.getString(R.string.test_text) // 임시 데이터
+                                    )
+
+                                    val userInfoJson = userInfo.toJson()
+                                    userInfoJson.saveAsJsonFile("user_info.json", this@SignupActivity)
+
                                     binding.root.showSnackbar(getString(R.string.signup_success_message))
                                     val intent = Intent(this@SignupActivity, SigninActivity::class.java)
                                     startActivity(intent)

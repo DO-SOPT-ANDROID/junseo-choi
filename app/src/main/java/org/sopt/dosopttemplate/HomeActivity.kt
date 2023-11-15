@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import org.sopt.dosopttemplate.databinding.ActivityHomeBinding
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,15 +29,20 @@ class HomeActivity : AppCompatActivity() {
         id = intent.getIntExtra("id", -1)
         authService = ServicePool.authService
         friendService = ServicePool.friendService
-        sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE) // Add this line
+        sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE)
+        val viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
 
         userInfo = "user_info.json".getUserInfoFromJson(this) ?: defaultUserInfo
-        getUserInfoFromServer(id)
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
+
         if (currentFragment == null) {
-            replaceFragment(HomeFragment())
+            getUserInfoFromServer(id)
             binding.bnvHome.selectedItemId = R.id.menu_home
+        }
+
+        viewModel.toastMessage.observe(this) { message ->
+            showToast(message)
         }
 
         clickBottomNavigation()
@@ -54,9 +60,9 @@ class HomeActivity : AppCompatActivity() {
                     when (response.code()) {
                         200 -> {
                             val data: ResponseGetUserInfoDto? = response.body()
-
                             if (data != null) {
                                 receivedUserInfo = data
+                                replaceFragment(HomeFragment())
                             }
                         }
 
@@ -97,7 +103,6 @@ class HomeActivity : AppCompatActivity() {
 
     private fun doubleClickBottomNavigation() {
         binding.bnvHome.setOnItemReselectedListener {
-            // setOnNavigationItemReselectedListener 안쓴다네용 o0o
             when (it.itemId) {
                 R.id.menu_home -> {
                     val homeFragment =

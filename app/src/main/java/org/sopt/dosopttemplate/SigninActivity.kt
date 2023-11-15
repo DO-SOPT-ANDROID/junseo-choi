@@ -40,7 +40,7 @@ class SigninActivity : AppCompatActivity() {
                 binding.etSignInInputid.setText(savedUserName)
                 binding.etSignInInputpw.setText(savedPassword)
 
-                performSignIn(savedUserName, savedPassword, autoLogin = true)
+                performSignIn(savedUserName, savedPassword)
             }
         }
 
@@ -53,7 +53,7 @@ class SigninActivity : AppCompatActivity() {
             val inputPw = binding.etSignInInputpw.text.toString()
 
             if (inputId.isNotEmpty() && inputPw.isNotEmpty()) {
-                performSignIn(inputId, inputPw, autoLogin = false)
+                performSignIn(inputId, inputPw)
             }
         }
 
@@ -63,7 +63,7 @@ class SigninActivity : AppCompatActivity() {
                 val inputPw = binding.etSignInInputpw.text.toString()
 
                 if (inputId.isNotEmpty() && inputPw.isNotEmpty()) {
-                    performSignIn(inputId, inputPw, autoLogin = false)
+                    performSignIn(inputId, inputPw)
                 }
                 true
             } else {
@@ -79,7 +79,8 @@ class SigninActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
-    private fun performSignIn(userName: String, password: String, autoLogin: Boolean) {
+    private fun performSignIn(userName: String, password: String) {
+        val isAutoLogin = binding.chkSignInAutologin.isChecked
         authService.signIn(RequestSignInDto(userName, password))
             .enqueue(object : Callback<ResponseSignInDto> {
                 override fun onResponse(
@@ -89,14 +90,15 @@ class SigninActivity : AppCompatActivity() {
                     when (response.code()) {
                         200 -> {
                             val data: ResponseSignInDto = response.body()!!
-                            val userName = data.username
+                            val username = data.username
                             val id = data.id
 
-                            if (autoLogin) {
-                                saveAutoLoginInfo(userName, password)
+                            if (isAutoLogin) {
+                                saveAutoLoginInfo(username, password)
                             }
-                            binding.root.showSnackbar(getString(R.string.login_success))
+
                             val intent = Intent(this@SigninActivity, HomeActivity::class.java)
+                            showToast("$username${getString(R.string.login_success)}")
                             intent.putExtra("id", id)
                             startActivity(intent)
                             finish()
