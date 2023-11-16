@@ -18,8 +18,8 @@ android {
         versionCode 1
         versionName "1.0"
 
-        buildConfigField "String", "AUTH_BASE_URL", properties["authbase.url"] // ip 정보
-        buildConfigField "String", "FRIEND_BASE_URL", properties["friendbase.url"]
+        buildConfigField "String", "AUTH_BASE_URL", properties["auth.base.url"] // ip 정보
+        buildConfigField "String", "FRIEND_BASE_URL", properties["friend.base.url"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildFeatures {
