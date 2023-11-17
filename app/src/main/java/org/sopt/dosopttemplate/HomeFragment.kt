@@ -21,7 +21,8 @@ class HomeFragment : Fragment(), ScrollableFragment {
     private val friendAdapter: FriendAdapter by lazy {
         FriendAdapter(
             requireContext(),
-            arguments?.extractUserData()!!
+            arguments?.extractUserData()!!,
+            this::onProfileClicked
         )
     }
 
@@ -86,5 +87,13 @@ class HomeFragment : Fragment(), ScrollableFragment {
         super.onConfigurationChanged(newConfig)
 
         updateRecyclerViewLayout()
+    }
+
+    private fun onProfileClicked(friend: Friend) {
+        val friendPageFragment = FriendPageFragment.newInstance(friend)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fcv_home, friendPageFragment)
+            .addToBackStack(null)
+            .commit()
     }
 }

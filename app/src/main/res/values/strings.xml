@@ -56,4 +56,7 @@
     // MyPageFragment.kt
     <string name="if_desc_empty">상태메시지를 작성해주세요.</string>
 
+    // fragment_friend_page.xml
+    <string name="friend_email">e-mail</string>
+
 </resources>

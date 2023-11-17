@@ -120,9 +120,11 @@
             android:id="@+id/tv_lower_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="80dp"
             android:gravity="center"
             android:text="&quot;"
             android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_self_description" />
 
 

@@ -15,6 +15,7 @@ import org.sopt.dosopttemplate.databinding.ItemMineHorizontalBinding
 class FriendAdapter(
     private val context: Context,
     private val userData: UserInfoBundle,
+    private val onProfileClickListener: (Friend) -> Unit,
 ) : ListAdapter<Friend, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
 
@@ -60,6 +61,10 @@ class FriendAdapter(
             is FriendViewHolder -> {
                 val friend = getItem(position)
                 friend?.let { holder.onBind(it) }
+
+                holder.itemView.setOnClickListener {
+                    friend?.let { onProfileClickListener.invoke(it) }
+                }
             }
 
             is MineHorizontalViewHolder -> {
@@ -69,6 +74,10 @@ class FriendAdapter(
             is FriendHorizontalViewHolder -> {
                 val friend = getItem(position)
                 friend?.let { holder.onBind(it) }
+
+                holder.itemView.setOnClickListener {
+                    friend?.let { onProfileClickListener.invoke(it) }
+                }
             }
         }
     }
