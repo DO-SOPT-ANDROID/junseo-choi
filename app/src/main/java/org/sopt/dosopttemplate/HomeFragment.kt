@@ -18,8 +18,17 @@ class HomeFragment : Fragment(), ScrollableFragment {
     private var _binding: FragmentHomeBinding? = null
     private val viewModel by viewModels<HomeViewModel>()
 
-    private val binding: FragmentHomeBinding
-        get() = requireNotNull(_binding) { "바인딩 객체가 생성되지 않았다. 생성하고 불러라 임마!" }
+    private val friendAdapter: FriendAdapter by lazy {
+        FriendAdapter(
+            requireContext(),
+            arguments?.extractUserData()!!
+        )
+    }
+
+    private val binding: FragmentHomeBinding by lazy {
+        FragmentHomeBinding.inflate(layoutInflater)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,10 +42,6 @@ class HomeFragment : Fragment(), ScrollableFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val friendAdapter = FriendAdapter(
-            requireContext(),
-            arguments?.extractUserData()!!
-        )
         binding.rvFriends.adapter = friendAdapter
 
         binding.rvFriends.layoutManager = LinearLayoutManager(
@@ -63,8 +68,23 @@ class HomeFragment : Fragment(), ScrollableFragment {
         binding.rvFriends.smoothScrollToPosition(0)
     }
 
+    private fun updateRecyclerViewLayout() {
+        val layoutManager = LinearLayoutManager(
+            requireContext(),
+            if (isScreenInPortraitMode()) LinearLayoutManager.VERTICAL else LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        binding.rvFriends.layoutManager = layoutManager
+    }
+
     private fun isScreenInPortraitMode(): Boolean {
         val orientation = resources.configuration.orientation
         return orientation == Configuration.ORIENTATION_PORTRAIT
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        updateRecyclerViewLayout()
     }
 }

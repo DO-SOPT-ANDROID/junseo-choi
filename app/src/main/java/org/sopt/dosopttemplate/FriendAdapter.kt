@@ -1,6 +1,7 @@
 package org.sopt.dosopttemplate
 
 import android.content.Context
+import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,7 +11,6 @@ import org.sopt.dosopttemplate.databinding.ItemFriendBinding
 import org.sopt.dosopttemplate.databinding.ItemFriendHorizontalBinding
 import org.sopt.dosopttemplate.databinding.ItemMineBinding
 import org.sopt.dosopttemplate.databinding.ItemMineHorizontalBinding
-import android.content.res.Configuration
 
 class FriendAdapter(
     private val context: Context,
@@ -31,18 +31,22 @@ class FriendAdapter(
                 val binding = ItemMineBinding.inflate(inflater, parent, false)
                 MineViewHolder(binding)
             }
+
             VIEW_TYPE_FRIEND -> {
                 val binding = ItemFriendBinding.inflate(inflater, parent, false)
                 FriendViewHolder(binding)
             }
+
             VIEW_TYPE_FRIEND_HORIZONTAL -> {
                 val binding = ItemFriendHorizontalBinding.inflate(inflater, parent, false)
                 FriendHorizontalViewHolder(binding)
             }
+
             VIEW_TYPE_MINE_HORIZONTAL -> {
                 val binding = ItemMineHorizontalBinding.inflate(inflater, parent, false)
                 MineHorizontalViewHolder(binding)
             }
+
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
@@ -57,6 +61,15 @@ class FriendAdapter(
                 val friend = getItem(position)
                 friend?.let { holder.onBind(it) }
             }
+
+            is MineHorizontalViewHolder -> {
+                holder.onBind(userData)
+            }
+
+            is FriendHorizontalViewHolder -> {
+                val friend = getItem(position)
+                friend?.let { holder.onBind(it) }
+            }
         }
     }
 
@@ -66,6 +79,7 @@ class FriendAdapter(
                 if (isScreenInPortraitMode()) VIEW_TYPE_MINE
                 else VIEW_TYPE_MINE_HORIZONTAL
             }
+
             else -> {
                 if (isScreenInPortraitMode()) VIEW_TYPE_FRIEND
                 else VIEW_TYPE_FRIEND_HORIZONTAL
@@ -78,7 +92,6 @@ class FriendAdapter(
         val orientation = context.resources.configuration.orientation
         return orientation == Configuration.ORIENTATION_PORTRAIT
     }
-
 
 
     fun setFriendsList(allFriends: List<FriendDto>) {
