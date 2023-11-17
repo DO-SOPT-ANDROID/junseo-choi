@@ -7,10 +7,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import org.sopt.dosopttemplate.databinding.ItemFriendBinding
+import org.sopt.dosopttemplate.databinding.ItemFriendHorizontalBinding
 import org.sopt.dosopttemplate.databinding.ItemMineBinding
+import org.sopt.dosopttemplate.databinding.ItemMineHorizontalBinding
+import android.content.res.Configuration
 
 class FriendAdapter(
-    context: Context,
+    private val context: Context,
     private val userData: UserInfoBundle,
 ) : ListAdapter<Friend, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
@@ -18,8 +21,9 @@ class FriendAdapter(
     companion object {
         const val VIEW_TYPE_MINE = 0
         const val VIEW_TYPE_FRIEND = 1
+        const val VIEW_TYPE_MINE_HORIZONTAL = 2
+        const val VIEW_TYPE_FRIEND_HORIZONTAL = 3
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -27,12 +31,18 @@ class FriendAdapter(
                 val binding = ItemMineBinding.inflate(inflater, parent, false)
                 MineViewHolder(binding)
             }
-
             VIEW_TYPE_FRIEND -> {
                 val binding = ItemFriendBinding.inflate(inflater, parent, false)
                 FriendViewHolder(binding)
             }
-
+            VIEW_TYPE_FRIEND_HORIZONTAL -> {
+                val binding = ItemFriendHorizontalBinding.inflate(inflater, parent, false)
+                FriendHorizontalViewHolder(binding)
+            }
+            VIEW_TYPE_MINE_HORIZONTAL -> {
+                val binding = ItemMineHorizontalBinding.inflate(inflater, parent, false)
+                MineHorizontalViewHolder(binding)
+            }
             else -> throw IllegalArgumentException("Invalid view type")
         }
     }
@@ -52,10 +62,24 @@ class FriendAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
-            0 -> VIEW_TYPE_MINE
-            else -> VIEW_TYPE_FRIEND
+            0 -> {
+                if (isScreenInPortraitMode()) VIEW_TYPE_MINE
+                else VIEW_TYPE_MINE_HORIZONTAL
+            }
+            else -> {
+                if (isScreenInPortraitMode()) VIEW_TYPE_FRIEND
+                else VIEW_TYPE_FRIEND_HORIZONTAL
+            }
         }
     }
+
+
+    private fun isScreenInPortraitMode(): Boolean {
+        val orientation = context.resources.configuration.orientation
+        return orientation == Configuration.ORIENTATION_PORTRAIT
+    }
+
+
 
     fun setFriendsList(allFriends: List<FriendDto>) {
         val newList = mutableListOf<Friend>()

@@ -1,11 +1,13 @@
 package org.sopt.dosopttemplate
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
 
 interface ScrollableFragment {
@@ -37,6 +39,12 @@ class HomeFragment : Fragment(), ScrollableFragment {
         )
         binding.rvFriends.adapter = friendAdapter
 
+        binding.rvFriends.layoutManager = LinearLayoutManager(
+            requireContext(),
+            if (isScreenInPortraitMode()) LinearLayoutManager.VERTICAL else LinearLayoutManager.HORIZONTAL,
+            false
+        )
+
         viewModel.allFriends.observe(viewLifecycleOwner) { allFriends ->
             friendAdapter.setFriendsList(allFriends)
         }
@@ -53,5 +61,10 @@ class HomeFragment : Fragment(), ScrollableFragment {
 
     override fun scrollToTop() {
         binding.rvFriends.smoothScrollToPosition(0)
+    }
+
+    private fun isScreenInPortraitMode(): Boolean {
+        val orientation = resources.configuration.orientation
+        return orientation == Configuration.ORIENTATION_PORTRAIT
     }
 }
