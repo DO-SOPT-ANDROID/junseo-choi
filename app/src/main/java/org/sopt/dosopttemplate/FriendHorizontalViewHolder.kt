@@ -3,11 +3,11 @@ package org.sopt.dosopttemplate
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
-import org.sopt.dosopttemplate.databinding.ItemFriendBinding
+import org.sopt.dosopttemplate.databinding.ItemFriendHorizontalBinding
 
 
-class FriendViewHolder(
-    private val binding: ItemFriendBinding,
+class FriendHorizontalViewHolder(
+    private val binding: ItemFriendHorizontalBinding,
 ) :
     RecyclerView.ViewHolder(binding.root) {
 

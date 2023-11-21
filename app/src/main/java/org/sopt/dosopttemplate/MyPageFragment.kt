@@ -10,11 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import coil.load
 import coil.transform.RoundedCornersTransformation
-import org.sopt.dosopttemplate.databinding.ActivityMyPageBinding
+import org.sopt.dosopttemplate.databinding.FragmentMyPageBinding
 
 class MyPageFragment : Fragment() {
-    private var _binding: ActivityMyPageBinding? = null
-    private val binding: ActivityMyPageBinding
+    private var _binding: FragmentMyPageBinding? = null
+    private val binding: FragmentMyPageBinding
         get() = requireNotNull(_binding) { "바인딩 객체가 생성되지 않았다. 생성하고 불러라 임마!" }
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -24,7 +24,7 @@ class MyPageFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = ActivityMyPageBinding.inflate(inflater, container, false)
+        _binding = FragmentMyPageBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -36,9 +36,9 @@ class MyPageFragment : Fragment() {
             AppCompatActivity.MODE_PRIVATE
         )
 
-        val userInfo = arguments.extractUserInfo()
+        val userInfoBundle = arguments.extractUserData()
 
-        displayUserInfo(userInfo)
+        displayUserInfo(userInfoBundle!!)
 
         setupSignOutButton()
     }
@@ -48,16 +48,18 @@ class MyPageFragment : Fragment() {
         _binding = null
     }
 
-    private fun displayUserInfo(userInfo: UserInfo) {
-        binding.ivProfilePicture.load(userInfo.profileImage) {
+    private fun displayUserInfo(userInfoBundle: UserInfoBundle) {
+        binding.ivProfilePicture.load(userInfoBundle.profileImage) {
             crossfade(true)
-            error(R.drawable.ic_default_image) // 에러 시 보여줄 이미지 설정
+            error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
-        binding.tvId.text = userInfo.userId
-        binding.tvName.text = userInfo.nickName
-        binding.tvMBTI.text = userInfo.MBTI
-        binding.tvSelfDescription.text = userInfo.self_description
+        binding.tvId.text = userInfoBundle.userName
+        binding.tvName.text = userInfoBundle.nickName
+        binding.tvMBTI.text = userInfoBundle.mbti
+        val selfDescription = userInfoBundle.self_description
+        binding.tvSelfDescription.text =
+            selfDescription.ifEmpty { getString(R.string.if_desc_empty) }
     }
 
 

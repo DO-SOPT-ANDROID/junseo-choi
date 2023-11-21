@@ -1,5 +1,8 @@
 <resources>
 
+    // Default
+    <string name="server_error">서버와의 접속이 원활하지 않습니다.</string>
+
     // activity_main.xml
     <string name="app_name">DoSoptTemplate</string>
     <string name="greeting">Hello World!</string>
@@ -31,13 +34,13 @@
     <string name="auto_login_label">자동 로그인</string>
     <string name="login_button">로그인 하기</string>
 
-    // MainActivity.kt
+    // HomeActivity.kt
     <string name="double_back_to_exit">뒤로가기를 한 번 더 누르면 종료합니다.</string>
 
     // SigninActivity.kt
     <string name="invalid_id">아이디가 잘못되었습니다.</string>
     <string name="invalid_password">비밀번호가 잘못되었습니다.</string>
-    <string name="login_success">성공적으로 로그인되었습니다!</string>
+    <string name="login_success">님, 환영합니다!</string>
     <string name="login_failed">회원님의 정보가 일치하지 않습니다.</string>
 
     // SignupActivity.kt
@@ -48,6 +51,12 @@
     <string name="mbti_error">유효한 MBTI를 적어주세요. (예시: ENTJ)</string>
     <string name="empty_field_message">아직 입력되지 않은 칸이 있습니다.</string>
     <string name="signup_success_message">성공적으로 회원가입이 완료되었습니다!</string>
+    <string name="signup_failed">회원가입에 실패하였습니다.</string>
 
+    // MyPageFragment.kt
+    <string name="if_desc_empty">상태메시지를 작성해주세요.</string>
+
+    // fragment_friend_page.xml
+    <string name="friend_email">e-mail</string>
 
 </resources>

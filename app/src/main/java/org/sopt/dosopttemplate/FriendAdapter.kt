@@ -1,26 +1,29 @@
 package org.sopt.dosopttemplate
 
 import android.content.Context
+import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.sopt.dosopttemplate.databinding.ItemBirthdayBinding
 import org.sopt.dosopttemplate.databinding.ItemFriendBinding
+import org.sopt.dosopttemplate.databinding.ItemFriendHorizontalBinding
 import org.sopt.dosopttemplate.databinding.ItemMineBinding
+import org.sopt.dosopttemplate.databinding.ItemMineHorizontalBinding
 
 class FriendAdapter(
-    context: Context,
-    private val userInfo: UserInfo,
-    private val viewModel: HomeViewModel,
+    private val context: Context,
+    private val userData: UserInfoBundle,
+    private val onProfileClickListener: (Friend) -> Unit,
 ) : ListAdapter<Friend, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
 
     companion object {
         const val VIEW_TYPE_MINE = 0
         const val VIEW_TYPE_FRIEND = 1
-        const val VIEW_TYPE_BIRTHDAY = 2
+        const val VIEW_TYPE_MINE_HORIZONTAL = 2
+        const val VIEW_TYPE_FRIEND_HORIZONTAL = 3
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -35,9 +38,14 @@ class FriendAdapter(
                 FriendViewHolder(binding)
             }
 
-            VIEW_TYPE_BIRTHDAY -> {
-                val binding = ItemBirthdayBinding.inflate(inflater, parent, false)
-                BirthdayViewHolder(binding)
+            VIEW_TYPE_FRIEND_HORIZONTAL -> {
+                val binding = ItemFriendHorizontalBinding.inflate(inflater, parent, false)
+                FriendHorizontalViewHolder(binding)
+            }
+
+            VIEW_TYPE_MINE_HORIZONTAL -> {
+                val binding = ItemMineHorizontalBinding.inflate(inflater, parent, false)
+                MineHorizontalViewHolder(binding)
             }
 
             else -> throw IllegalArgumentException("Invalid view type")
@@ -47,29 +55,28 @@ class FriendAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MineViewHolder -> {
-                holder.onBind(userInfo)
+                holder.onBind(userData)
             }
 
             is FriendViewHolder -> {
-                if (position == 0) {
-                    // 뿜빰
-                } else {
-                    val birthdayFriends = viewModel.getBirthdayFriends()
-                    val otherFriends = viewModel.getOtherFriends()
-                    val friend = if (position <= birthdayFriends.size) {
-                        birthdayFriends.getOrNull(position - 1)
-                    } else {
-                        otherFriends.getOrNull(position - birthdayFriends.size - 1)
-                    }
+                val friend = getItem(position)
+                friend?.let { holder.onBind(it) }
 
-                    friend?.let { holder.onBind(it) }
+                holder.itemView.setOnClickListener {
+                    friend?.let { onProfileClickListener.invoke(it) }
                 }
             }
 
-            is BirthdayViewHolder -> {
-                if (position <= viewModel.getBirthdayFriends().size) {
-                    val birthdayFriend = viewModel.getBirthdayFriends()[position - 1]
-                    holder.onBind(birthdayFriend)
+            is MineHorizontalViewHolder -> {
+                holder.onBind(userData)
+            }
+
+            is FriendHorizontalViewHolder -> {
+                val friend = getItem(position)
+                friend?.let { holder.onBind(it) }
+
+                holder.itemView.setOnClickListener {
+                    friend?.let { onProfileClickListener.invoke(it) }
                 }
             }
         }
@@ -77,26 +84,46 @@ class FriendAdapter(
 
     override fun getItemViewType(position: Int): Int {
         return when (position) {
-            0 -> VIEW_TYPE_MINE
-            in 1..viewModel.getBirthdayFriends().size -> VIEW_TYPE_BIRTHDAY
-            else -> VIEW_TYPE_FRIEND
+            0 -> {
+                if (isScreenInPortraitMode()) VIEW_TYPE_MINE
+                else VIEW_TYPE_MINE_HORIZONTAL
+            }
+
+            else -> {
+                if (isScreenInPortraitMode()) VIEW_TYPE_FRIEND
+                else VIEW_TYPE_FRIEND_HORIZONTAL
+            }
         }
     }
 
-    fun setFriendsLists(birthdayFriends: List<Friend>, otherFriends: List<Friend>) {
+
+    private fun isScreenInPortraitMode(): Boolean {
+        val orientation = context.resources.configuration.orientation
+        return orientation == Configuration.ORIENTATION_PORTRAIT
+    }
+
+
+    fun setFriendsList(allFriends: List<FriendDto>) {
         val newList = mutableListOf<Friend>()
         val userInfoFriend = Friend(
-            profileImage = userInfo.profileImage,
-            userId = userInfo.userId,
-            name = userInfo.nickName,
-            self_description = userInfo.self_description,
-            birthday = userInfo.birthday
+            profileImage = userData.profileImage,
+            userId = userData.userName,
+            name = userData.nickName,
+            description = userData.self_description,
         )
 
         newList.add(userInfoFriend)
-        newList.addAll(birthdayFriends)
-        newList.addAll(otherFriends)
+        newList.addAll(allFriends.map { it.toFriend() })
         submitList(newList)
+    }
+
+    fun FriendDto.toFriend(): Friend {
+        return Friend(
+            profileImage = this.avatar,
+            userId = this.email,
+            name = this.firstName,
+            description = "",
+        )
     }
 }
 

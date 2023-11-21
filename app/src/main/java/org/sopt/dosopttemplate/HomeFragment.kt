@@ -1,11 +1,13 @@
 package org.sopt.dosopttemplate
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
 
 interface ScrollableFragment {
@@ -16,15 +18,24 @@ class HomeFragment : Fragment(), ScrollableFragment {
     private var _binding: FragmentHomeBinding? = null
     private val viewModel by viewModels<HomeViewModel>()
 
-    private val binding: FragmentHomeBinding
-        get() = requireNotNull(_binding) { "바인딩 객체가 생성되지 않았다. 생성하고 불러라 임마!" }
+    private val friendAdapter: FriendAdapter by lazy {
+        FriendAdapter(
+            requireContext(),
+            arguments?.extractUserData()!!,
+            this::onProfileClicked
+        )
+    }
+
+    private val binding: FragmentHomeBinding by lazy {
+        FragmentHomeBinding.inflate(layoutInflater)
+    }
 
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -32,15 +43,17 @@ class HomeFragment : Fragment(), ScrollableFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userInfo = arguments.extractUserInfo()
-
-        val friendAdapter = FriendAdapter(requireContext(), userInfo, viewModel)
         binding.rvFriends.adapter = friendAdapter
 
-        val birthdayFriends = viewModel.getBirthdayFriends()
-        val otherFriends = viewModel.getOtherFriends()
+        binding.rvFriends.layoutManager = LinearLayoutManager(
+            requireContext(),
+            if (isScreenInPortraitMode()) LinearLayoutManager.VERTICAL else LinearLayoutManager.HORIZONTAL,
+            false
+        )
 
-        friendAdapter.setFriendsLists(birthdayFriends, otherFriends)
+        viewModel.allFriends.observe(viewLifecycleOwner) { allFriends ->
+            friendAdapter.setFriendsList(allFriends)
+        }
 
         binding.fabHomeEdit.setOnClickListener {
             binding.root.showSnackbar("3주차 과제 완료 ^0^")
@@ -54,5 +67,33 @@ class HomeFragment : Fragment(), ScrollableFragment {
 
     override fun scrollToTop() {
         binding.rvFriends.smoothScrollToPosition(0)
+    }
+
+    private fun updateRecyclerViewLayout() {
+        val layoutManager = LinearLayoutManager(
+            requireContext(),
+            if (isScreenInPortraitMode()) LinearLayoutManager.VERTICAL else LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        binding.rvFriends.layoutManager = layoutManager
+    }
+
+    private fun isScreenInPortraitMode(): Boolean {
+        val orientation = resources.configuration.orientation
+        return orientation == Configuration.ORIENTATION_PORTRAIT
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+
+        updateRecyclerViewLayout()
+    }
+
+    private fun onProfileClicked(friend: Friend) {
+        val friendPageFragment = FriendPageFragment.newInstance(friend)
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.fcv_home, friendPageFragment)
+            .addToBackStack(null)
+            .commit()
     }
 }
