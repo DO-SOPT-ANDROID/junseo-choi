@@ -2,6 +2,7 @@ package org.sopt.dosopttemplate.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -9,7 +10,6 @@ import com.google.android.material.snackbar.Snackbar
 import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.ActivitySignupBinding
 import org.sopt.dosopttemplate.ui.signin.SigninActivity
-import org.sopt.dosopttemplate.util.OnBackPressedCallback
 import org.sopt.dosopttemplate.util.hideKeyboard
 import org.sopt.dosopttemplate.util.showSnackbar
 
@@ -26,11 +26,7 @@ class SignupActivity : AppCompatActivity() {
             hideKeyboard(this, binding.root)
         }
 
-        OnBackPressedCallback {
-            val intent = Intent(this@SignupActivity, SigninActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
         binding.btnSignUpInbutton.setOnClickListener {
             validateInputAndSignUp()
@@ -65,8 +61,12 @@ class SignupActivity : AppCompatActivity() {
         viewModel.isSignUpSuccessful.observe(this) { isSuccess ->
             if (isSuccess) {
                 binding.root.showSnackbar(getString(R.string.signup_success_message))
+                val intent =
+                    Intent(this@SignupActivity, SigninActivity::class.java)
+                startActivity(intent)
+                finish()
             } else {
-                viewModel.signUpError.observe(this) { isSignUpError ->
+                viewModel.isSignUpError.observe(this) { isSignUpError ->
                     if (isSignUpError) {
                         binding.root.showSnackbar(getString(R.string.signup_failed))
                     } else {
@@ -99,5 +99,13 @@ class SignupActivity : AppCompatActivity() {
         val alert = dialogBuilder.create()
         alert.setTitle("알림")
         alert.show()
+    }
+
+    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            val intent = Intent(this@SignupActivity, SigninActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }
