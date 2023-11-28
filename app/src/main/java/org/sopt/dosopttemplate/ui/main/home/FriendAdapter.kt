@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.ui.main.home
 
 import android.content.Context
 import android.content.res.Configuration
@@ -7,6 +7,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import org.sopt.dosopttemplate.domain.model.Friend
+import org.sopt.dosopttemplate.domain.model.FriendDto
+import org.sopt.dosopttemplate.FriendHorizontalViewHolder
+import org.sopt.dosopttemplate.FriendViewHolder
+import org.sopt.dosopttemplate.MineHorizontalViewHolder
+import org.sopt.dosopttemplate.MineViewHolder
+import org.sopt.dosopttemplate.domain.model.UserInfoBundle
 import org.sopt.dosopttemplate.databinding.ItemFriendBinding
 import org.sopt.dosopttemplate.databinding.ItemFriendHorizontalBinding
 import org.sopt.dosopttemplate.databinding.ItemMineBinding

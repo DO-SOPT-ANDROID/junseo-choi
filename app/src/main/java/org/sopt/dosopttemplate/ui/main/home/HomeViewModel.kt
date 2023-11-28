@@ -1,8 +1,12 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.ui.main.home
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import org.sopt.dosopttemplate.domain.model.FriendDto
+import org.sopt.dosopttemplate.domain.model.OpenApiResponse
+import org.sopt.dosopttemplate.R
+import org.sopt.dosopttemplate.network.ServicePool
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.util
 
 import android.content.Context
 import android.os.Bundle
@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import org.json.JSONObject
+import org.sopt.dosopttemplate.domain.model.UserInfo
+import org.sopt.dosopttemplate.domain.model.UserInfoBundle
 
 // 키보드 감추기
 fun hideKeyboard(context: Context, view: View?) {

@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.ui.auth
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -6,7 +6,15 @@ import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import org.sopt.dosopttemplate.ui.main.MainActivity
+import org.sopt.dosopttemplate.R
+import org.sopt.dosopttemplate.domain.model.RequestSignInDto
+import org.sopt.dosopttemplate.domain.model.ResponseSignInDto
+import org.sopt.dosopttemplate.network.ServicePool
 import org.sopt.dosopttemplate.databinding.ActivitySigninBinding
+import org.sopt.dosopttemplate.util.hideKeyboard
+import org.sopt.dosopttemplate.util.showSnackbar
+import org.sopt.dosopttemplate.util.showToast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -139,7 +147,7 @@ class SigninActivity : AppCompatActivity() {
                     saveAutoLoginInfo(username, password)
                 }
 
-                val intent = Intent(this@SigninActivity, HomeActivity::class.java)
+                val intent = Intent(this@SigninActivity, MainActivity::class.java)
                 showToast("$username${getString(R.string.login_success)}")
                 intent.putExtra("id", id)
                 startActivity(intent)

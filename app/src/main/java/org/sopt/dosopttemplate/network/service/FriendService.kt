@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.network.service
 
 import android.util.Log
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -7,32 +7,23 @@ import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.sopt.dosopttemplate.BuildConfig
+import org.sopt.dosopttemplate.domain.model.FriendDto
+import org.sopt.dosopttemplate.domain.model.OpenApiResponse
 import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.Query
 
-interface AuthService {
-    @POST("api/v1/members/sign-in")
-    fun signIn(
-        @Body request: RequestSignInDto,
-    ): Call<ResponseSignInDto>
-
-    @POST("api/v1/members")
-    fun signUp(
-        @Body request: RequestSignUpDto,
-    ): Call<Unit>
-
-    @GET("api/v1/members/{memberId}")
-    fun getUserInfo(
-        @Path("memberId") id: Int,
-    ): Call<ResponseGetUserInfoDto>
+interface FriendService {
+    @GET("api/users")
+    fun getFriendList(
+        @Query("page") page: Int,
+    ): Call<OpenApiResponse<List<FriendDto>>>
 }
 
-object AuthApiFactory {
-    private const val AUTH_BASE_URL = BuildConfig.AUTH_BASE_URL
+object FriendApiFactory {
+    private const val FRIEND_BASE_URL = BuildConfig.FRIEND_BASE_URL
 
     private fun getLogOkHttpClient(): Interceptor {
         val loggingInterceptor = HttpLoggingInterceptor { message ->
@@ -46,13 +37,13 @@ object AuthApiFactory {
         .addInterceptor(getLogOkHttpClient())
         .build()
 
-    val authRetrofit: Retrofit by lazy {
+    val friendRetrofit: Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(AUTH_BASE_URL)
+            .baseUrl(FRIEND_BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
             .build()
     }
 
-    inline fun <reified T> create(): T = authRetrofit.create<T>(T::class.java)
+    inline fun <reified T> create(): T = friendRetrofit.create<T>(T::class.java)
 }

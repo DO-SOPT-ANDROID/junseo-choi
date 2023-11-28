@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.domain.model
 
 import android.os.Parcel
 import android.os.Parcelable

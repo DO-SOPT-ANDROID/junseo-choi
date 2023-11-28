@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.ui.main.home
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +8,8 @@ import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import coil.load
 import coil.transform.RoundedCornersTransformation
+import org.sopt.dosopttemplate.domain.model.Friend
+import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.FragmentFriendPageBinding
 
 class FriendPageFragment : Fragment() {

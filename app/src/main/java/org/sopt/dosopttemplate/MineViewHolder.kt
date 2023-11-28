@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
 import org.sopt.dosopttemplate.databinding.ItemMineBinding
+import org.sopt.dosopttemplate.domain.model.UserInfoBundle
 
 
 class MineViewHolder(private val binding: ItemMineBinding) :

@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.ui.main.mypage
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -10,7 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import coil.load
 import coil.transform.RoundedCornersTransformation
+import org.sopt.dosopttemplate.R
+import org.sopt.dosopttemplate.domain.model.UserInfoBundle
 import org.sopt.dosopttemplate.databinding.FragmentMyPageBinding
+import org.sopt.dosopttemplate.ui.auth.SharedPreferencesKeys
+import org.sopt.dosopttemplate.ui.auth.SigninActivity
+import org.sopt.dosopttemplate.util.extractUserData
 
 class MyPageFragment : Fragment() {
     private var _binding: FragmentMyPageBinding? = null

@@ -4,6 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
 import org.sopt.dosopttemplate.databinding.ItemFriendHorizontalBinding
+import org.sopt.dosopttemplate.domain.model.Friend
 
 
 class FriendHorizontalViewHolder(

@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.ui.main
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -7,12 +7,26 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import org.sopt.dosopttemplate.network.service.AuthService
+import org.sopt.dosopttemplate.network.service.FriendService
+import org.sopt.dosopttemplate.ui.main.mypage.MyPageFragment
+import org.sopt.dosopttemplate.R
+import org.sopt.dosopttemplate.domain.model.ResponseGetUserInfoDto
+import org.sopt.dosopttemplate.network.ServicePool
+import org.sopt.dosopttemplate.domain.model.UserInfo
 import org.sopt.dosopttemplate.databinding.ActivityHomeBinding
+import org.sopt.dosopttemplate.ui.auth.SigninActivity
+import org.sopt.dosopttemplate.ui.main.doandroid.DoAndroidFragment
+import org.sopt.dosopttemplate.ui.main.home.HomeFragment
+import org.sopt.dosopttemplate.ui.main.home.HomeViewModel
+import org.sopt.dosopttemplate.util.defaultUserInfo
+import org.sopt.dosopttemplate.util.getUserInfoFromJson
+import org.sopt.dosopttemplate.util.showToast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class HomeActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var userInfo: UserInfo
     private lateinit var authService: AuthService
@@ -177,7 +191,7 @@ class HomeActivity : AppCompatActivity() {
         showToast(getString(R.string.server_error))
         saveAutoLogin(false)
 
-        val intent = Intent(this@HomeActivity, SigninActivity::class.java)
+        val intent = Intent(this@MainActivity, SigninActivity::class.java)
         startActivity(intent)
         finish()
     }

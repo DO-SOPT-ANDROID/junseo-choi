@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.ui.main.home
 
 import android.content.res.Configuration
 import android.os.Bundle
@@ -8,7 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import org.sopt.dosopttemplate.domain.model.Friend
+import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
+import org.sopt.dosopttemplate.util.extractUserData
+import org.sopt.dosopttemplate.util.showSnackbar
 
 interface ScrollableFragment {
     fun scrollToTop()
