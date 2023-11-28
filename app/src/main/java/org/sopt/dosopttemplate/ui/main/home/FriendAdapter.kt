@@ -7,17 +7,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import org.sopt.dosopttemplate.domain.model.Friend
-import org.sopt.dosopttemplate.domain.model.FriendDto
-import org.sopt.dosopttemplate.FriendHorizontalViewHolder
-import org.sopt.dosopttemplate.FriendViewHolder
-import org.sopt.dosopttemplate.MineHorizontalViewHolder
-import org.sopt.dosopttemplate.MineViewHolder
-import org.sopt.dosopttemplate.domain.model.UserInfoBundle
+import coil.load
+import coil.transform.RoundedCornersTransformation
+import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.ItemFriendBinding
 import org.sopt.dosopttemplate.databinding.ItemFriendHorizontalBinding
 import org.sopt.dosopttemplate.databinding.ItemMineBinding
 import org.sopt.dosopttemplate.databinding.ItemMineHorizontalBinding
+import org.sopt.dosopttemplate.domain.model.Friend
+import org.sopt.dosopttemplate.domain.model.FriendDto
+import org.sopt.dosopttemplate.domain.model.UserInfoBundle
 
 class FriendAdapter(
     private val context: Context,
@@ -141,5 +140,70 @@ class DiffCallback : DiffUtil.ItemCallback<Friend>() {
 
     override fun areContentsTheSame(oldItem: Friend, newItem: Friend): Boolean {
         return oldItem == newItem
+    }
+}
+
+class FriendViewHolder(
+    private val binding: ItemFriendBinding,
+) :
+    RecyclerView.ViewHolder(binding.root) {
+
+    fun onBind(friendData: Friend) {
+        binding.ivProfilePicture.load(friendData.profileImage) {
+            crossfade(true)
+            error(R.drawable.ic_default_image)
+            transformations(RoundedCornersTransformation())
+        }
+
+        binding.tvName.text = friendData.name
+        binding.tvSelfDescription.text = friendData.description
+    }
+}
+
+
+class FriendHorizontalViewHolder(
+    private val binding: ItemFriendHorizontalBinding,
+) :
+    RecyclerView.ViewHolder(binding.root) {
+
+    fun onBind(friendData: Friend) {
+        binding.ivProfilePicture.load(friendData.profileImage) {
+            crossfade(true)
+            error(R.drawable.ic_default_image)
+            transformations(RoundedCornersTransformation())
+        }
+
+        binding.tvName.text = friendData.name
+        binding.tvSelfDescription.text = friendData.description
+    }
+}
+
+class MineViewHolder(private val binding: ItemMineBinding) :
+    RecyclerView.ViewHolder(binding.root) {
+
+    fun onBind(userData: UserInfoBundle) {
+        binding.ivProfilePicture.load(userData.profileImage) {
+            crossfade(true)
+            error(R.drawable.ic_default_image)
+            transformations(RoundedCornersTransformation())
+        }
+        binding.tvName.text = userData.nickName
+        binding.tvSelfDescription.text = userData.self_description
+    }
+}
+
+class MineHorizontalViewHolder(
+    private val binding: ItemMineHorizontalBinding
+) :
+    RecyclerView.ViewHolder(binding.root) {
+
+    fun onBind(userData: UserInfoBundle) {
+        binding.ivProfilePicture.load(userData.profileImage) {
+            crossfade(true)
+            error(R.drawable.ic_default_image)
+            transformations(RoundedCornersTransformation())
+        }
+        binding.tvName.text = userData.nickName
+        binding.tvSelfDescription.text = userData.self_description
     }
 }
