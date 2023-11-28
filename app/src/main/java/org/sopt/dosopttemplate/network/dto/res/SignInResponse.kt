@@ -1,15 +1,15 @@
-package org.sopt.dosopttemplate.network.dto
+package org.sopt.dosopttemplate.network.dto.res
 
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SignUpRequest(
+data class SignInResponse(
+    @SerialName("id")
+    val id: Int = 0,
     @SerialName("nickname")
     val nickname: String = "",
-    @SerialName("password")
-    val password: String = "",
     @SerialName("username")
     val username: String = ""
 )

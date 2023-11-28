@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate.network.dto
+package org.sopt.dosopttemplate.network.dto.res
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
