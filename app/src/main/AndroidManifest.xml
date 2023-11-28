@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".ui.auth.SigninActivity"
+            android:name=".ui.signin.SigninActivity"
             android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>

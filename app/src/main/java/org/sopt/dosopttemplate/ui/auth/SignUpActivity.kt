@@ -2,30 +2,19 @@ package org.sopt.dosopttemplate.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import org.sopt.dosopttemplate.R
-import org.sopt.dosopttemplate.domain.model.RequestSignUpDto
-import org.sopt.dosopttemplate.network.ServicePool.authService
-import org.sopt.dosopttemplate.domain.model.UserInfo
 import org.sopt.dosopttemplate.databinding.ActivitySignupBinding
-import org.sopt.dosopttemplate.util.defaultUserInfo
+import org.sopt.dosopttemplate.ui.signin.SigninActivity
+import org.sopt.dosopttemplate.util.OnBackPressedCallback
 import org.sopt.dosopttemplate.util.hideKeyboard
-import org.sopt.dosopttemplate.util.saveAsJsonFile
 import org.sopt.dosopttemplate.util.showSnackbar
-import org.sopt.dosopttemplate.util.toJson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-
-
-enum class MBTIType {
-    INFP, ENFP, ESFJ, ISFJ, ISFP, ESFP, INTP, INFJ, ENFJ, ENTP, ESTJ, ISTJ, INTJ, ISTP, ESTP, ENTJ
-}
 
 class SignupActivity : AppCompatActivity() {
+    private val viewModel by viewModels<SignUpViewModel>()
     private lateinit var binding: ActivitySignupBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,76 +26,53 @@ class SignupActivity : AppCompatActivity() {
             hideKeyboard(this, binding.root)
         }
 
-        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+        OnBackPressedCallback {
+            val intent = Intent(this@SignupActivity, SigninActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         binding.btnSignUpInbutton.setOnClickListener {
-            val userName = binding.etSignUpInputid.text.toString()
-            val password = binding.etSignUpInputpw.text.toString()
-            val nickName = binding.etSignUpInputNick.text.toString()
-            if (userName.isEmpty() || password.isEmpty() || nickName.isEmpty()) {
-                showEmptyFieldDialog()
-                return@setOnClickListener
-            }
+            validateInputAndSignUp()
+        }
+    }
 
-            val errorMessage = when {
-                !isUserNameValid(userName) -> getString(R.string.user_id_error)
-                !isPasswordValid(password) -> getString(R.string.password_error)
-                !isNickNameValid(nickName) -> getString(R.string.nickname_error)
-                !isMBTIValid(
-                    binding.etSignUpInputMBTI.text.toString().uppercase()
-                ) -> getString(R.string.mbti_error)
+    private fun validateInputAndSignUp() {
+        val userName = binding.etSignUpInputid.text.toString()
+        val password = binding.etSignUpInputpw.text.toString()
+        val nickName = binding.etSignUpInputNick.text.toString()
+        if (userName.isEmpty() || password.isEmpty() || nickName.isEmpty()) {
+            showEmptyFieldDialog()
+            return
+        }
 
-                binding.etSignUpInputMBTI.text.toString()
-                    .uppercase() == "SEXY" -> getString(R.string.sexy_error)
+        val errorMessage = when {
+            !isUserNameValid(userName) -> getString(R.string.user_id_error)
+            !isPasswordValid(password) -> getString(R.string.password_error)
+            !isNickNameValid(nickName) -> getString(R.string.nickname_error)
+            else -> null
+        }
 
-                else -> null
-            }
+        if (errorMessage != null) {
+            Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
+        } else {
+            viewModel.signUp(userName, password, nickName)
+            observeSignUpResult()
+        }
+    }
 
-            if (errorMessage != null) {
-                Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_SHORT).show()
+    private fun observeSignUpResult() {
+        viewModel.isSignUpSuccessful.observe(this) { isSuccess ->
+            if (isSuccess) {
+                binding.root.showSnackbar(getString(R.string.signup_success_message))
             } else {
-                authService.signUp(RequestSignUpDto(userName, password, nickName))
-                    .enqueue(object : Callback<Unit> {
-                        override fun onResponse(
-                            call: Call<Unit>,
-                            response: Response<Unit>,
-                        ) {
-                            when (response.code()) {
-                                201 -> {
-                                    val userInfo = UserInfo(
-                                        profileImage = "https://avatars.githubusercontent.com/u/127238018?v=4", // 임시 데이터
-                                        mbti = binding.etSignUpInputMBTI.text.toString()
-                                            .uppercase(),
-                                        birthday = defaultUserInfo.birthday, // 임시 데이터
-                                        self_description = binding.root.context.getString(R.string.test_text) // 임시 데이터
-                                    )
-
-                                    val userInfoJson = userInfo.toJson()
-                                    userInfoJson.saveAsJsonFile(
-                                        "user_info.json",
-                                        this@SignupActivity
-                                    )
-
-                                    binding.root.showSnackbar(getString(R.string.signup_success_message))
-                                    val intent =
-                                        Intent(this@SignupActivity, SigninActivity::class.java)
-                                    startActivity(intent)
-                                    finish()
-                                }
-
-                                400 -> {
-                                    val errorResponse = response.errorBody()?.string()
-                                    binding.root.showSnackbar(
-                                        errorResponse ?: getString(R.string.signup_failed)
-                                    )
-                                }
-                            }
-                        }
-
-                        override fun onFailure(call: Call<Unit>, t: Throwable) {
-                            binding.root.showSnackbar(getString(R.string.server_error))
-                        }
-                    })
+                viewModel.signUpError.observe(this) { isSignUpError ->
+                    if (isSignUpError) {
+                        binding.root.showSnackbar(getString(R.string.signup_failed))
+                    } else {
+                        binding.root.showSnackbar(getString(R.string.server_error))
+                    }
+                }
             }
         }
     }
@@ -116,15 +82,11 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun isPasswordValid(password: String): Boolean {
-        return password.length in 8..12 && !password.contains(" ")
+        return password.length in 6..12 && !password.contains(" ")
     }
 
     private fun isNickNameValid(nickName: String): Boolean {
         return nickName.length in 1..12 && !nickName.all { it.isWhitespace() }
-    }
-
-    private fun isMBTIValid(MBTI: String): Boolean {
-        return MBTIType.values().any { it.name == MBTI }
     }
 
     private fun showEmptyFieldDialog() {
@@ -138,13 +100,4 @@ class SignupActivity : AppCompatActivity() {
         alert.setTitle("알림")
         alert.show()
     }
-
-    private val onBackPressedCallback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            val intent = Intent(this@SignupActivity, SigninActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
-    }
 }
-

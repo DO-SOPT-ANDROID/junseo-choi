@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate.ui.auth
+package org.sopt.dosopttemplate.ui.signin
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -12,6 +12,7 @@ import org.sopt.dosopttemplate.domain.model.RequestSignInDto
 import org.sopt.dosopttemplate.domain.model.ResponseSignInDto
 import org.sopt.dosopttemplate.network.ServicePool
 import org.sopt.dosopttemplate.databinding.ActivitySigninBinding
+import org.sopt.dosopttemplate.ui.auth.SignupActivity
 import org.sopt.dosopttemplate.util.hideKeyboard
 import org.sopt.dosopttemplate.util.showSnackbar
 import org.sopt.dosopttemplate.util.showToast
