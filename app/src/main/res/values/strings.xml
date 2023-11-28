@@ -51,7 +51,7 @@
     <string name="mbti_error">유효한 MBTI를 적어주세요. (예시: ENTJ)</string>
     <string name="empty_field_message">아직 입력되지 않은 칸이 있습니다.</string>
     <string name="signup_success_message">성공적으로 회원가입이 완료되었습니다!</string>
-    <string name="signup_failed">회원가입에 실패하였습니다.</string>
+    <string name="signup_failed">이미 존재하는 ID입니다.</string>
 
     // MyPageFragment.kt
     <string name="if_desc_empty">상태메시지를 작성해주세요.</string>

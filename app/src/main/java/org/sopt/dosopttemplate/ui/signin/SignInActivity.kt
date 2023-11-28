@@ -5,20 +5,15 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import org.sopt.dosopttemplate.ui.main.MainActivity
 import org.sopt.dosopttemplate.R
-import org.sopt.dosopttemplate.domain.model.RequestSignInDto
-import org.sopt.dosopttemplate.domain.model.ResponseSignInDto
-import org.sopt.dosopttemplate.network.ServicePool
 import org.sopt.dosopttemplate.databinding.ActivitySigninBinding
 import org.sopt.dosopttemplate.ui.auth.SignupActivity
+import org.sopt.dosopttemplate.ui.main.MainActivity
 import org.sopt.dosopttemplate.util.hideKeyboard
 import org.sopt.dosopttemplate.util.showSnackbar
 import org.sopt.dosopttemplate.util.showToast
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 object SharedPreferencesKeys {
     const val USER_INFO = "UserInfo"
@@ -27,9 +22,9 @@ object SharedPreferencesKeys {
 }
 
 class SigninActivity : AppCompatActivity() {
+    private val viewModel by viewModels<SignInViewModel>()
     private lateinit var binding: ActivitySigninBinding
     private lateinit var sharedPreferences: SharedPreferences
-    private val authService = ServicePool.authService
 
     private var backPressedTime = 0L
 
@@ -114,58 +109,36 @@ class SigninActivity : AppCompatActivity() {
         }
     }
 
+
     private fun performSignIn(userName: String, password: String) {
         val isAutoLogin = binding.chkSignInAutologin.isChecked
-        authService.signIn(RequestSignInDto(userName, password))
-            .enqueue(object : Callback<ResponseSignInDto> {
-                override fun onResponse(
-                    call: Call<ResponseSignInDto>,
-                    response: Response<ResponseSignInDto>,
-                ) {
-                    handleSignInResponse(response, isAutoLogin, password)
-                }
+        viewModel.signIn(userName, password)
 
-                override fun onFailure(call: Call<ResponseSignInDto>, t: Throwable) {
-                    binding.root.showSnackbar(getString(R.string.server_error))
-                }
-            })
-
-        hideKeyboard(this, binding.root)
-    }
-
-    private fun handleSignInResponse(
-        response: Response<ResponseSignInDto>,
-        isAutoLogin: Boolean,
-        password: String,
-    ) {
-        when (response.code()) {
-            200 -> {
-                val data: ResponseSignInDto = response.body()!!
-                val username = data.username
-                val id = data.id
-
+        viewModel.isSignUpSuccessful.observe(this) { isSuccess ->
+            if (isSuccess) {
+                binding.root.showSnackbar(getString(R.string.login_success))
                 if (isAutoLogin) {
-                    saveAutoLoginInfo(username, password)
+                    saveAutoLoginInfo(userName, password)
                 }
 
-                val intent = Intent(this@SigninActivity, MainActivity::class.java)
-                showToast("$username${getString(R.string.login_success)}")
-                intent.putExtra("id", id)
-                startActivity(intent)
-                finish()
-            }
-
-            400 -> {
-                val errorResponse = response.errorBody()?.string()
-                binding.root.showSnackbar(
-                    errorResponse ?: getString(R.string.login_failed)
-                )
-            }
-
-            else -> {
-                binding.root.showSnackbar(response.code().toString())
+                viewModel.userInfo.observe(this) {
+                    val signInId = viewModel.userInfo.value?.id ?: 0
+                    val intent = Intent(this@SigninActivity, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                    showToast("$signInId${getString(R.string.login_success)}")
+                }
+            } else {
+                viewModel.isSignInError.observe(this) { isSignUpError ->
+                    if (isSignUpError) {
+                        binding.root.showSnackbar(getString(R.string.login_failed))
+                    } else {
+                        binding.root.showSnackbar(getString(R.string.server_error))
+                    }
+                }
             }
         }
+        hideKeyboard(this, binding.root)
     }
 
     private fun saveAutoLoginInfo(userName: String, password: String) {
