@@ -1,11 +1,10 @@
 package org.sopt.dosopttemplate.network.service
 
-import org.sopt.dosopttemplate.domain.model.RequestSignUpDto
-import org.sopt.dosopttemplate.network.dto.BaseResponse
-import org.sopt.dosopttemplate.network.dto.SignInRequest
-import org.sopt.dosopttemplate.network.dto.SignInResponse
-import org.sopt.dosopttemplate.network.dto.SignUpRequest
-import org.sopt.dosopttemplate.network.dto.UserInfoResponse
+import org.sopt.dosopttemplate.network.dto.res.BaseResponse
+import org.sopt.dosopttemplate.network.dto.req.SignInRequest
+import org.sopt.dosopttemplate.network.dto.res.SignInResponse
+import org.sopt.dosopttemplate.network.dto.req.SignUpRequest
+import org.sopt.dosopttemplate.network.dto.res.UserInfoResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

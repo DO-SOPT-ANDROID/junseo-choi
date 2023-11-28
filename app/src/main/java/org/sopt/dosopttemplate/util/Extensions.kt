@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
@@ -68,7 +69,6 @@ val defaultUserInfo = UserInfo(
 )
 
 // Bundle 데이터 받아오기
-
 fun Bundle?.extractUserData(): UserInfoBundle? {
     if (this == null) {
         return null

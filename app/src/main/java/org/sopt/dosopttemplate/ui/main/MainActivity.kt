@@ -15,7 +15,7 @@ import org.sopt.dosopttemplate.domain.model.ResponseGetUserInfoDto
 import org.sopt.dosopttemplate.network.ServicePool
 import org.sopt.dosopttemplate.domain.model.UserInfo
 import org.sopt.dosopttemplate.databinding.ActivityHomeBinding
-import org.sopt.dosopttemplate.ui.auth.SigninActivity
+import org.sopt.dosopttemplate.ui.signin.SigninActivity
 import org.sopt.dosopttemplate.ui.main.doandroid.DoAndroidFragment
 import org.sopt.dosopttemplate.ui.main.home.HomeFragment
 import org.sopt.dosopttemplate.ui.main.home.HomeViewModel

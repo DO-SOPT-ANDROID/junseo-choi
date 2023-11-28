@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import org.sopt.dosopttemplate.network.ServicePool
-import org.sopt.dosopttemplate.network.dto.SignUpRequest
+import org.sopt.dosopttemplate.network.dto.req.SignUpRequest
 import retrofit2.HttpException
 
 
@@ -15,8 +15,8 @@ class SignUpViewModel : ViewModel() {
     private val _isSignUpSuccessful = MutableLiveData<Boolean>()
     val isSignUpSuccessful: LiveData<Boolean> get() = _isSignUpSuccessful
 
-    private val _signUpError = MutableLiveData<Boolean>()
-    val signUpError: LiveData<Boolean> get() = _signUpError
+    private val _isSignUpError = MutableLiveData<Boolean>()
+    val isSignUpError: LiveData<Boolean> get() = _isSignUpError
 
     fun signUp(userName: String, password: String, nickName: String) {
         viewModelScope.launch {
@@ -27,7 +27,7 @@ class SignUpViewModel : ViewModel() {
             }.onFailure { exception ->
                 Log.e("NetworkTest", "error:$exception")
                 _isSignUpSuccessful.value = false
-                _signUpError.value = exception is HttpException && exception.code() == 400
+                _isSignUpError.value = exception is HttpException && exception.code() == 400
             }
         }
     }
