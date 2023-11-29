@@ -3,45 +3,43 @@ package org.sopt.dosopttemplate.ui.main.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import org.sopt.dosopttemplate.domain.model.FriendDto
-import org.sopt.dosopttemplate.domain.model.OpenApiResponse
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.network.ServicePool
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import org.sopt.dosopttemplate.network.dto.res.FriendListResponse
+import org.sopt.dosopttemplate.network.dto.res.UserInfoResponse
 
 class HomeViewModel : ViewModel() {
-    private val friendService = ServicePool.friendService
-    private val _allFriends = MutableLiveData<List<FriendDto>>()
     private val _toastMessage = MutableLiveData<String>()
+    private val _userInfo = MutableLiveData<UserInfoResponse>()
+    private val _friendList = MutableLiveData<List<FriendListResponse>>()
+
     val toastMessage: LiveData<String> get() = _toastMessage
-    val allFriends: LiveData<List<FriendDto>> get() = _allFriends
+    val userInfo: LiveData<UserInfoResponse> get() = _userInfo
+    val friendList: LiveData<List<FriendListResponse>> get() = _friendList
 
-    init {
-        fetchFriendsData()
-    }
-
-    private fun fetchFriendsData() {
-        val call = friendService.getFriendList(1)
-
-        call.enqueue(object : Callback<OpenApiResponse<List<FriendDto>>> {
-            override fun onResponse(
-                call: Call<OpenApiResponse<List<FriendDto>>>,
-                response: Response<OpenApiResponse<List<FriendDto>>>,
-            ) {
-                if (response.isSuccessful) {
-                    val data = response.body()?.data
-                    data?.let { _allFriends.value = it }
-                } else {
-                    ifServerError()
-                }
-            }
-
-            override fun onFailure(call: Call<OpenApiResponse<List<FriendDto>>>, t: Throwable) {
+    private fun getUserInfo(id: Int) {
+        viewModelScope.launch {
+            runCatching {
+                ServicePool.authService.getUserInfo(id)
+            }.onSuccess { response ->
+                _userInfo.value = response.data ?: UserInfoResponse()
+            }.onFailure {
                 ifServerError()
             }
-        })
+        }
+    }
+    private fun getFriendInfo(page: Int = 1) {
+        viewModelScope.launch {
+            runCatching {
+                ServicePool.friendService.getFriendList(page)
+            }.onSuccess { response ->
+                _friendList.value
+            }.onFailure {
+                ifServerError()
+            }
+        }
     }
 
     private fun ifServerError() {

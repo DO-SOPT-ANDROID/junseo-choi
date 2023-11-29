@@ -6,90 +6,37 @@ import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import org.sopt.dosopttemplate.network.service.AuthService
-import org.sopt.dosopttemplate.network.service.FriendService
-import org.sopt.dosopttemplate.ui.main.mypage.MyPageFragment
 import org.sopt.dosopttemplate.R
-import org.sopt.dosopttemplate.domain.model.ResponseGetUserInfoDto
-import org.sopt.dosopttemplate.network.ServicePool
-import org.sopt.dosopttemplate.domain.model.UserInfo
 import org.sopt.dosopttemplate.databinding.ActivityHomeBinding
-import org.sopt.dosopttemplate.ui.signin.SigninActivity
+import org.sopt.dosopttemplate.domain.model.UserInfo
 import org.sopt.dosopttemplate.ui.main.doandroid.DoAndroidFragment
 import org.sopt.dosopttemplate.ui.main.home.HomeFragment
-import org.sopt.dosopttemplate.ui.main.home.HomeViewModel
+import org.sopt.dosopttemplate.ui.main.mypage.MyPageFragment
+import org.sopt.dosopttemplate.ui.signin.SigninActivity
 import org.sopt.dosopttemplate.util.defaultUserInfo
 import org.sopt.dosopttemplate.util.getUserInfoFromJson
 import org.sopt.dosopttemplate.util.showToast
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
-    private lateinit var userInfo: UserInfo
-    private lateinit var authService: AuthService
-    private lateinit var friendService: FriendService
     private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var receivedUserInfo: ResponseGetUserInfoDto
-    private var id: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        id = intent.getIntExtra("id", -1)
-        authService = ServicePool.authService
-        friendService = ServicePool.friendService
         sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE)
-        val viewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-
-        userInfo = "user_info.json".getUserInfoFromJson(this) ?: defaultUserInfo
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
 
         if (currentFragment == null) {
-            getUserInfoFromServer(id)
+            replaceFragment(HomeFragment())
             binding.bnvHome.selectedItemId = R.id.menu_home
-        }
-
-        viewModel.toastMessage.observe(this) { message ->
-            showToast(message)
         }
 
         clickBottomNavigation()
         doubleClickBottomNavigation()
         setupOnBackPressedCallback()
-    }
-
-    private fun getUserInfoFromServer(id: Int) {
-        authService.getUserInfo(id)
-            .enqueue(object : Callback<ResponseGetUserInfoDto> {
-                override fun onResponse(
-                    call: Call<ResponseGetUserInfoDto>,
-                    response: Response<ResponseGetUserInfoDto>,
-                ) {
-                    when (response.code()) {
-                        200 -> {
-                            val data: ResponseGetUserInfoDto? = response.body()
-                            if (data != null) {
-                                receivedUserInfo = data
-                                replaceFragment(HomeFragment())
-                            }
-                        }
-
-                        400 -> {
-                            kickToSignIn()
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<ResponseGetUserInfoDto>, t: Throwable) {
-                    kickToSignIn()
-                }
-            })
     }
 
     private fun clickBottomNavigation() {
@@ -134,16 +81,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        if (::receivedUserInfo.isInitialized) {
-            val userInfoBundle =
-                createUserInfoBundle(userInfo, receivedUserInfo.username, receivedUserInfo.nickname)
-            fragment.arguments = userInfoBundle
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.fcv_home, fragment)
-                .commit()
-        } else {
-            getUserInfoFromServer(id)
-        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fcv_home, fragment)
+            .commit()
     }
 
     private fun setupOnBackPressedCallback() {
@@ -161,30 +101,6 @@ class MainActivity : AppCompatActivity() {
                 showToast(getString(R.string.double_back_to_exit))
             }
         }
-    }
-
-    object BundleKeys {
-        const val PROFILE_IMAGE = "profileImage"
-        const val USER_NAME = "userName"
-        const val NICK_NAME = "nickName"
-        const val MBTI = "mbti"
-        const val BIRTHDAY = "birthday"
-        const val SELF_DESCRIPTION = "self_description"
-    }
-
-    private fun createUserInfoBundle(
-        userInfo: UserInfo,
-        userName: String,
-        nickName: String,
-    ): Bundle {
-        val bundle = Bundle()
-        bundle.putString(BundleKeys.PROFILE_IMAGE, userInfo.profileImage)
-        bundle.putString(BundleKeys.USER_NAME, userName)
-        bundle.putString(BundleKeys.NICK_NAME, nickName)
-        bundle.putString(BundleKeys.MBTI, userInfo.mbti)
-        bundle.putString(BundleKeys.BIRTHDAY, userInfo.birthday)
-        bundle.putString(BundleKeys.SELF_DESCRIPTION, userInfo.self_description)
-        return bundle
     }
 
     private fun kickToSignIn() {
