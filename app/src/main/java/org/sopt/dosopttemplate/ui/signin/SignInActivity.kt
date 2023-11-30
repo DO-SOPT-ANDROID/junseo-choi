@@ -64,8 +64,8 @@ class SignInActivity : AppCompatActivity() {
         val savedPassword = sharedPreferences.getString(SharedPreferencesKeys.PASSWORD, "")
 
         if (!savedUserName.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
-            binding.etSignInInputid.setText(savedUserName)
-            binding.etSignInInputpw.setText(savedPassword)
+            binding.etSignInIdInput.setText(savedUserName)
+            binding.etSignInPwInput.setText(savedPassword)
 
             performSignIn(savedUserName, savedPassword)
         }
@@ -77,18 +77,18 @@ class SignInActivity : AppCompatActivity() {
         }
 
         binding.btnSignInInbutton.setOnClickListener {
-            val inputId = binding.etSignInInputid.text.toString()
-            val inputPw = binding.etSignInInputpw.text.toString()
+            val inputId = binding.etSignInIdInput.text.toString()
+            val inputPw = binding.etSignInPwInput.text.toString()
 
             if (inputId.isNotEmpty() && inputPw.isNotEmpty()) {
                 performSignIn(inputId, inputPw)
             }
         }
 
-        binding.etSignInInputpw.setOnEditorActionListener { _, actionId, _ ->
+        binding.etSignInPwInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val inputId = binding.etSignInInputid.text.toString()
-                val inputPw = binding.etSignInInputpw.text.toString()
+                val inputId = binding.etSignInIdInput.text.toString()
+                val inputPw = binding.etSignInPwInput.text.toString()
 
                 if (inputId.isNotEmpty() && inputPw.isNotEmpty()) {
                     performSignIn(inputId, inputPw)
