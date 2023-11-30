@@ -28,15 +28,15 @@ class SignUpActivity : AppCompatActivity() {
 
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
 
-        binding.btnSignUpInbutton.setOnClickListener {
+        binding.btnSignUpFinish.setOnClickListener {
             validateInputAndSignUp()
         }
     }
 
     private fun validateInputAndSignUp() {
-        val userName = binding.etSignUpInputid.text.toString()
-        val password = binding.etSignUpInputpw.text.toString()
-        val nickName = binding.etSignUpInputNick.text.toString()
+        val userName = binding.etSignUpIdInput.text.toString()
+        val password = binding.etSignUpPwInput.text.toString()
+        val nickName = binding.etSignUpNickInput.text.toString()
         if (userName.isEmpty() || password.isEmpty() || nickName.isEmpty()) {
             showEmptyFieldDialog()
             return
