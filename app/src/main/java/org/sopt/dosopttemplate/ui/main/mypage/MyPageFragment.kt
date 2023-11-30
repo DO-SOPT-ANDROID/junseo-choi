@@ -15,6 +15,7 @@ import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.FragmentMyPageBinding
 import org.sopt.dosopttemplate.ui.main.MainActivity
 import org.sopt.dosopttemplate.ui.main.home.HomeViewModel
+import org.sopt.dosopttemplate.ui.signin.SharedPreferencesKeys
 import org.sopt.dosopttemplate.ui.signin.SignInActivity
 import org.sopt.dosopttemplate.util.showToast
 
@@ -39,6 +40,11 @@ class MyPageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        sharedPreferences = requireActivity().getSharedPreferences(
+            SharedPreferencesKeys.USERNAME,
+            AppCompatActivity.MODE_PRIVATE
+        )
 
         viewModel.getUserInfo(mainActivity.getUserId())
 
@@ -67,7 +73,6 @@ class MyPageFragment : Fragment() {
             (activity as AppCompatActivity).showToast(toastMessage)
         }
     }
-
 
     private fun setupSignOutButton() {
         binding.tvSignout.setOnClickListener {
