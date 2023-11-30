@@ -130,15 +130,15 @@ class FriendViewHolder(
     private val binding: ItemFriendBinding,
     private val itemClickListener: (FriendListResponse.Data) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun onBind(friendData: FriendListResponse.Data) {
-        binding.root.setOnClickListener { itemClickListener(friendData) }
-        binding.ivProfilePicture.load(friendData.avatar) {
+    fun onBind(friendInfo: FriendListResponse.Data) {
+        binding.root.setOnClickListener { itemClickListener(friendInfo) }
+        binding.ivProfilePicture.load(friendInfo.avatar) {
             crossfade(true)
             error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
 
-        binding.tvName.text = friendData.firstName
+        binding.tvName.text = friendInfo.firstName
         binding.tvSelfDescription.text = ""
     }
 }
@@ -148,15 +148,15 @@ class FriendHorizontalViewHolder(
     private val binding: ItemFriendHorizontalBinding,
     private val itemClickListener: (FriendListResponse.Data) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun onBind(friendData: FriendListResponse.Data) {
-        binding.root.setOnClickListener { itemClickListener(friendData) }
-        binding.ivProfilePicture.load(friendData.avatar) {
+    fun onBind(friendInfo: FriendListResponse.Data) {
+        binding.root.setOnClickListener { itemClickListener(friendInfo) }
+        binding.ivProfilePicture.load(friendInfo.avatar) {
             crossfade(true)
             error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
 
-        binding.tvName.text = friendData.firstName
+        binding.tvName.text = friendInfo.firstName
         binding.tvSelfDescription.text = ""
     }
 }

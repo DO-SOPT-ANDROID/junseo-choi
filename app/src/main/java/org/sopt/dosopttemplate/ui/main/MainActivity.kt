@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
                     homeFragment?.scrollToTop()
                 }
 
+                // 아직 미구현 부분입니당!!
                 R.id.menu_do_android -> {
                 }
 
@@ -99,21 +100,6 @@ class MainActivity : AppCompatActivity() {
                 showToast(getString(R.string.double_back_to_exit))
             }
         }
-    }
-
-    private fun kickToSignIn() {
-        showToast(getString(R.string.server_error))
-        editAutoLogin(false)
-
-        val intent = Intent(this@MainActivity, SignInActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    private fun editAutoLogin(autoLogin: Boolean) {
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("AutoLogin", autoLogin)
-        editor.apply()
     }
 
     fun getUserId(): Int {

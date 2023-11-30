@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +16,7 @@ import org.sopt.dosopttemplate.ui.main.MainActivity
 import org.sopt.dosopttemplate.ui.main.friendpage.FriendAdapter
 import org.sopt.dosopttemplate.ui.main.friendpage.FriendPageFragment
 import org.sopt.dosopttemplate.util.showSnackbar
+import org.sopt.dosopttemplate.util.showToast
 
 interface ScrollableFragment {
     fun scrollToTop()
@@ -26,8 +28,8 @@ class HomeFragment : Fragment(), ScrollableFragment {
     private val mainActivity by lazy { activity as MainActivity }
 
     private val friendAdapter: FriendAdapter by lazy {
-        FriendAdapter(requireContext()) { friendData ->
-            val fragment = FriendPageFragment.newInstance(friendData.id)
+        FriendAdapter(requireContext()) { friendInfo ->
+            val fragment = FriendPageFragment.newInstance(friendInfo.id)
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fcv_home, fragment)
                 .addToBackStack(null)
@@ -54,12 +56,15 @@ class HomeFragment : Fragment(), ScrollableFragment {
         fetchData()
         setupFriendList()
         observeData()
-        setupFabClick()
+        finishThirdHomework()
     }
 
     private fun fetchData() {
         viewModel.getFriendInfo()
         viewModel.getUserInfo(mainActivity.getUserId())
+        viewModel.toastMessage.observe(viewLifecycleOwner) { toastMessage ->
+            (activity as AppCompatActivity).showToast(toastMessage)
+        }
     }
 
     private fun setupFriendList() {
@@ -82,7 +87,7 @@ class HomeFragment : Fragment(), ScrollableFragment {
         }
     }
 
-    private fun setupFabClick() {
+    private fun finishThirdHomework() {
         binding.fabHomeEdit.setOnClickListener {
             binding.root.showSnackbar("3주차 과제 완료 ^0^")
         }
