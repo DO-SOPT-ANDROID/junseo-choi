@@ -1,6 +1,5 @@
 package org.sopt.dosopttemplate.network.service
 
-import org.sopt.dosopttemplate.network.dto.res.BaseResponse
 import org.sopt.dosopttemplate.network.dto.res.FriendListResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
