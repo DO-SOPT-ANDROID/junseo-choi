@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate.ui.auth
+package org.sopt.dosopttemplate.ui.signup
 
 import android.util.Log
 import androidx.lifecycle.LiveData

@@ -40,7 +40,7 @@
     // SigninActivity.kt
     <string name="invalid_id">아이디가 잘못되었습니다.</string>
     <string name="invalid_password">비밀번호가 잘못되었습니다.</string>
-    <string name="login_success">님, 환영합니다!</string>
+    <string name="login_success">%s님, 환영합니다!</string>
     <string name="login_failed">회원님의 정보가 일치하지 않습니다.</string>
 
     // SignupActivity.kt

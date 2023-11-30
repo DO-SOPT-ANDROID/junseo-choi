@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate.ui.auth
+package org.sopt.dosopttemplate.ui.signup
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,11 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.ActivitySignupBinding
-import org.sopt.dosopttemplate.ui.signin.SigninActivity
+import org.sopt.dosopttemplate.ui.signin.SignInActivity
 import org.sopt.dosopttemplate.util.hideKeyboard
 import org.sopt.dosopttemplate.util.showSnackbar
 
-class SignupActivity : AppCompatActivity() {
+class SignUpActivity : AppCompatActivity() {
     private val viewModel by viewModels<SignUpViewModel>()
     private lateinit var binding: ActivitySignupBinding
 
@@ -62,7 +62,7 @@ class SignupActivity : AppCompatActivity() {
             if (isSuccess) {
                 binding.root.showSnackbar(getString(R.string.signup_success_message))
                 val intent =
-                    Intent(this@SignupActivity, SigninActivity::class.java)
+                    Intent(this@SignUpActivity, SignInActivity::class.java)
                 startActivity(intent)
                 finish()
             } else {
@@ -103,7 +103,7 @@ class SignupActivity : AppCompatActivity() {
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            val intent = Intent(this@SignupActivity, SigninActivity::class.java)
+            val intent = Intent(this@SignUpActivity, SignInActivity::class.java)
             startActivity(intent)
             finish()
         }

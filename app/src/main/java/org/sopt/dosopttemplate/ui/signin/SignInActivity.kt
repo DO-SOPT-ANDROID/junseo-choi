@@ -9,19 +9,18 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.ActivitySigninBinding
-import org.sopt.dosopttemplate.ui.auth.SignupActivity
+import org.sopt.dosopttemplate.ui.signup.SignUpActivity
 import org.sopt.dosopttemplate.ui.main.MainActivity
 import org.sopt.dosopttemplate.util.hideKeyboard
 import org.sopt.dosopttemplate.util.showSnackbar
 import org.sopt.dosopttemplate.util.showToast
 
 object SharedPreferencesKeys {
-    const val USER_INFO = "UserInfo"
     const val USERNAME = "UserName"
     const val PASSWORD = "Password"
 }
 
-class SigninActivity : AppCompatActivity() {
+class SignInActivity : AppCompatActivity() {
     private val viewModel by viewModels<SignInViewModel>()
     private lateinit var binding: ActivitySigninBinding
     private lateinit var sharedPreferences: SharedPreferences
@@ -44,7 +43,7 @@ class SigninActivity : AppCompatActivity() {
         binding = ActivitySigninBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        sharedPreferences = getSharedPreferences(SharedPreferencesKeys.USER_INFO, MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences(SharedPreferencesKeys.USERNAME, MODE_PRIVATE)
 
         setupAutoLogin()
 
@@ -103,7 +102,7 @@ class SigninActivity : AppCompatActivity() {
         }
 
         binding.tvSignUpButton.setOnClickListener {
-            val intent = Intent(this, SignupActivity::class.java)
+            val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
             finish()
         }
@@ -116,17 +115,16 @@ class SigninActivity : AppCompatActivity() {
 
         viewModel.isSignUpSuccessful.observe(this) { isSuccess ->
             if (isSuccess) {
-                binding.root.showSnackbar(getString(R.string.login_success))
                 if (isAutoLogin) {
                     saveAutoLoginInfo(userName, password)
                 }
 
                 viewModel.userInfo.observe(this) {
-                    val signInId = viewModel.userInfo.value?.id ?: 0
-                    val intent = Intent(this@SigninActivity, MainActivity::class.java)
+                    val signInId = viewModel.userInfo.value?.id ?: -1
+                    val intent = Intent(this@SignInActivity, MainActivity::class.java)
                     startActivity(intent)
                     finish()
-                    showToast("$signInId${getString(R.string.login_success)}")
+                    showToast(getString(R.string.login_success), signInId)
                 }
             } else {
                 viewModel.isSignInError.observe(this) { isSignUpError ->
