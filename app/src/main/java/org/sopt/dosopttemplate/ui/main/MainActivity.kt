@@ -1,6 +1,5 @@
 package org.sopt.dosopttemplate.ui.main
 
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
@@ -11,7 +10,6 @@ import org.sopt.dosopttemplate.databinding.ActivityHomeBinding
 import org.sopt.dosopttemplate.ui.main.doandroid.DoAndroidFragment
 import org.sopt.dosopttemplate.ui.main.home.HomeFragment
 import org.sopt.dosopttemplate.ui.main.mypage.MyPageFragment
-import org.sopt.dosopttemplate.ui.signin.SignInActivity
 import org.sopt.dosopttemplate.util.showToast
 
 class MainActivity : AppCompatActivity() {
@@ -24,19 +22,20 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE)
-
         userId = intent.getIntExtra("userId", -1)
 
-        val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
+        setupPrimitiveFragment()
+        clickBottomNavigation()
+        doubleClickBottomNavigation()
+        setupOnBackPressedCallback()
+    }
 
+    private fun setupPrimitiveFragment() {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
         if (currentFragment == null) {
             replaceFragment(HomeFragment())
             binding.bnvHome.selectedItemId = R.id.menu_home
         }
-
-        clickBottomNavigation()
-        doubleClickBottomNavigation()
-        setupOnBackPressedCallback()
     }
 
     private fun clickBottomNavigation() {
@@ -71,7 +70,6 @@ class MainActivity : AppCompatActivity() {
                     homeFragment?.scrollToTop()
                 }
 
-                // 아직 미구현 부분입니당!!
                 R.id.menu_do_android -> {
                 }
 
