@@ -16,6 +16,7 @@ import org.sopt.dosopttemplate.network.dto.res.UserInfoResponse
 import org.sopt.dosopttemplate.ui.main.MainActivity
 import org.sopt.dosopttemplate.ui.main.home.friendpage.FriendAdapter
 import org.sopt.dosopttemplate.ui.main.home.friendpage.FriendPageFragment
+import org.sopt.dosopttemplate.ui.main.mypage.MyPageFragment
 import org.sopt.dosopttemplate.util.showSnackbar
 
 interface ScrollableFragment {
@@ -28,9 +29,13 @@ class HomeFragment : Fragment(), ScrollableFragment {
     private val mainActivity by lazy { activity as MainActivity }
 
     private val friendAdapter: FriendAdapter by lazy {
-        FriendAdapter(
-            requireContext(),
-        )
+        FriendAdapter(requireContext()) { friendData ->
+            val fragment = FriendPageFragment.newInstance(friendData.id)
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fcv_home, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     private val binding: FragmentHomeBinding by lazy {

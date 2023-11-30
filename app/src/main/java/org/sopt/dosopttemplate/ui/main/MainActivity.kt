@@ -121,5 +121,4 @@ class MainActivity : AppCompatActivity() {
     fun getUserId(): Int {
         return userId
     }
-
 }

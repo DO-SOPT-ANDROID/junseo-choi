@@ -19,6 +19,7 @@ import org.sopt.dosopttemplate.network.dto.res.UserInfoResponse
 
 class FriendAdapter(
     private val context: Context,
+    private val itemClickListener: (FriendListResponse.Data) -> Unit
 ) : ListAdapter<FriendListResponse.Data, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
 
@@ -40,12 +41,12 @@ class FriendAdapter(
 
             VIEW_TYPE_FRIEND -> {
                 val binding = ItemFriendBinding.inflate(inflater, parent, false)
-                FriendViewHolder(binding)
+                FriendViewHolder(binding, itemClickListener)
             }
 
             VIEW_TYPE_FRIEND_HORIZONTAL -> {
                 val binding = ItemFriendHorizontalBinding.inflate(inflater, parent, false)
-                FriendHorizontalViewHolder(binding)
+                FriendHorizontalViewHolder(binding, itemClickListener)
             }
 
             VIEW_TYPE_MINE_HORIZONTAL -> {
@@ -121,10 +122,10 @@ class DiffCallback : DiffUtil.ItemCallback<FriendListResponse.Data>() {
 
 class FriendViewHolder(
     private val binding: ItemFriendBinding,
-) :
-    RecyclerView.ViewHolder(binding.root) {
-
+    private val itemClickListener: (FriendListResponse.Data) -> Unit
+) : RecyclerView.ViewHolder(binding.root) {
     fun onBind(friendData: FriendListResponse.Data) {
+        binding.root.setOnClickListener { itemClickListener(friendData) }
         binding.ivProfilePicture.load(friendData.avatar) {
             crossfade(true)
             error(R.drawable.ic_default_image)
@@ -139,10 +140,10 @@ class FriendViewHolder(
 
 class FriendHorizontalViewHolder(
     private val binding: ItemFriendHorizontalBinding,
-) :
-    RecyclerView.ViewHolder(binding.root) {
-
+    private val itemClickListener: (FriendListResponse.Data) -> Unit
+) : RecyclerView.ViewHolder(binding.root) {
     fun onBind(friendData: FriendListResponse.Data) {
+        binding.root.setOnClickListener { itemClickListener(friendData) }
         binding.ivProfilePicture.load(friendData.avatar) {
             crossfade(true)
             error(R.drawable.ic_default_image)

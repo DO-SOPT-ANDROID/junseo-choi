@@ -1,6 +1,7 @@
 package org.sopt.dosopttemplate.network.dto.res
 
 
+import android.os.Parcelable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
