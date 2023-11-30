@@ -21,6 +21,7 @@ import org.sopt.dosopttemplate.ui.signin.SharedPreferencesKeys
 import org.sopt.dosopttemplate.ui.signin.SignInActivity
 import org.sopt.dosopttemplate.ui.signin.SignInViewModel
 import org.sopt.dosopttemplate.util.extractUserData
+import org.sopt.dosopttemplate.util.showToast
 
 class MyPageFragment : Fragment() {
     private var _binding: FragmentMyPageBinding? = null
@@ -66,6 +67,9 @@ class MyPageFragment : Fragment() {
             binding.tvId.text = userInfo.username
             binding.tvName.text = userInfo.nickname
             binding.tvSelfDescription.text = getString(R.string.if_desc_empty)
+        }
+        viewModel.toastMessage.observe(viewLifecycleOwner) { toastMessage ->
+            (activity as AppCompatActivity).showToast(toastMessage)
         }
     }
 
