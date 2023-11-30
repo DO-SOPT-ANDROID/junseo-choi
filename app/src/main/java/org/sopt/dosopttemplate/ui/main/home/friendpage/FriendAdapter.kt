@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate.ui.main.home
+package org.sopt.dosopttemplate.ui.main.home.friendpage
 
 import android.content.Context
 import android.content.res.Configuration
@@ -14,16 +14,15 @@ import org.sopt.dosopttemplate.databinding.ItemFriendBinding
 import org.sopt.dosopttemplate.databinding.ItemFriendHorizontalBinding
 import org.sopt.dosopttemplate.databinding.ItemMineBinding
 import org.sopt.dosopttemplate.databinding.ItemMineHorizontalBinding
-import org.sopt.dosopttemplate.domain.model.Friend
-import org.sopt.dosopttemplate.domain.model.FriendDto
-import org.sopt.dosopttemplate.domain.model.UserInfoBundle
+import org.sopt.dosopttemplate.network.dto.res.FriendListResponse
+import org.sopt.dosopttemplate.network.dto.res.UserInfoResponse
 
 class FriendAdapter(
     private val context: Context,
-    private val userData: UserInfoBundle,
-    private val onProfileClickListener: (Friend) -> Unit,
-) : ListAdapter<Friend, RecyclerView.ViewHolder>(DiffCallback()) {
+) : ListAdapter<FriendListResponse.Data, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
+
+    private var _userInfo: UserInfoResponse? = null
 
     companion object {
         const val VIEW_TYPE_MINE = 0
@@ -61,29 +60,21 @@ class FriendAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is MineViewHolder -> {
-                holder.onBind(userData)
+                holder.onBind(_userInfo ?: UserInfoResponse())
             }
 
             is FriendViewHolder -> {
                 val friend = getItem(position)
                 friend?.let { holder.onBind(it) }
-
-                holder.itemView.setOnClickListener {
-                    friend?.let { onProfileClickListener.invoke(it) }
-                }
             }
 
             is MineHorizontalViewHolder -> {
-                holder.onBind(userData)
+                holder.onBind(_userInfo ?: UserInfoResponse())
             }
 
             is FriendHorizontalViewHolder -> {
                 val friend = getItem(position)
                 friend?.let { holder.onBind(it) }
-
-                holder.itemView.setOnClickListener {
-                    friend?.let { onProfileClickListener.invoke(it) }
-                }
             }
         }
     }
@@ -108,37 +99,22 @@ class FriendAdapter(
         return orientation == Configuration.ORIENTATION_PORTRAIT
     }
 
-
-    fun setFriendsList(allFriends: List<FriendDto>) {
-        val newList = mutableListOf<Friend>()
-        val userInfoFriend = Friend(
-            profileImage = userData.profileImage,
-            userId = userData.userName,
-            name = userData.nickName,
-            description = userData.self_description,
-        )
-
-        newList.add(userInfoFriend)
-        newList.addAll(allFriends.map { it.toFriend() })
-        submitList(newList)
+    fun setUserInfo(userInfo: UserInfoResponse) {
+        _userInfo = userInfo
+        submitList(currentList)
     }
 
-    fun FriendDto.toFriend(): Friend {
-        return Friend(
-            profileImage = this.avatar,
-            userId = this.email,
-            name = this.firstName,
-            description = "",
-        )
+    fun setFriendsList(allFriends: List<FriendListResponse.Data>) {
+        submitList(allFriends)
     }
 }
 
-class DiffCallback : DiffUtil.ItemCallback<Friend>() {
-    override fun areItemsTheSame(oldItem: Friend, newItem: Friend): Boolean {
-        return oldItem.userId == newItem.userId
+class DiffCallback : DiffUtil.ItemCallback<FriendListResponse.Data>() {
+    override fun areItemsTheSame(oldItem: FriendListResponse.Data, newItem: FriendListResponse.Data): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: Friend, newItem: Friend): Boolean {
+    override fun areContentsTheSame(oldItem: FriendListResponse.Data, newItem: FriendListResponse.Data): Boolean {
         return oldItem == newItem
     }
 }
@@ -148,15 +124,15 @@ class FriendViewHolder(
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun onBind(friendData: Friend) {
-        binding.ivProfilePicture.load(friendData.profileImage) {
+    fun onBind(friendData: FriendListResponse.Data) {
+        binding.ivProfilePicture.load(friendData.avatar) {
             crossfade(true)
             error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
 
-        binding.tvName.text = friendData.name
-        binding.tvSelfDescription.text = friendData.description
+        binding.tvName.text = friendData.firstName
+        binding.tvSelfDescription.text = ""
     }
 }
 
@@ -166,44 +142,46 @@ class FriendHorizontalViewHolder(
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun onBind(friendData: Friend) {
-        binding.ivProfilePicture.load(friendData.profileImage) {
+    fun onBind(friendData: FriendListResponse.Data) {
+        binding.ivProfilePicture.load(friendData.avatar) {
             crossfade(true)
             error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
 
-        binding.tvName.text = friendData.name
-        binding.tvSelfDescription.text = friendData.description
+        binding.tvName.text = friendData.firstName
+        binding.tvSelfDescription.text = ""
     }
 }
 
 class MineViewHolder(private val binding: ItemMineBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun onBind(userData: UserInfoBundle) {
-        binding.ivProfilePicture.load(userData.profileImage) {
+    fun onBind(userInfo: UserInfoResponse) {
+        binding.ivProfilePicture.load("") {
             crossfade(true)
             error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
-        binding.tvName.text = userData.nickName
-        binding.tvSelfDescription.text = userData.self_description
+
+        binding.tvName.text = userInfo.nickname
+        binding.tvSelfDescription.text = ""
     }
 }
 
 class MineHorizontalViewHolder(
-    private val binding: ItemMineHorizontalBinding
+    private val binding: ItemMineHorizontalBinding,
 ) :
     RecyclerView.ViewHolder(binding.root) {
 
-    fun onBind(userData: UserInfoBundle) {
-        binding.ivProfilePicture.load(userData.profileImage) {
+    fun onBind(userInfo: UserInfoResponse) {
+        binding.ivProfilePicture.load("") {
             crossfade(true)
             error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
-        binding.tvName.text = userData.nickName
-        binding.tvSelfDescription.text = userData.self_description
+
+        binding.tvName.text = userInfo.nickname
+        binding.tvSelfDescription.text = ""
     }
 }

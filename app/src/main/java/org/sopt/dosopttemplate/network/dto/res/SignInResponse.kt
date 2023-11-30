@@ -8,8 +8,8 @@ import kotlinx.serialization.Serializable
 data class SignInResponse(
     @SerialName("id")
     val id: Int = -1,
-    @SerialName("nickname")
-    val nickname: String = "",
     @SerialName("username")
-    val username: String = ""
+    val username: String = "",
+    @SerialName("nickname")
+    val nickname: String = ""
 )

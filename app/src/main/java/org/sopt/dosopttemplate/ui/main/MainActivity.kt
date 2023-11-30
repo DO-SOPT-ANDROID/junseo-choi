@@ -17,13 +17,15 @@ import org.sopt.dosopttemplate.util.showToast
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var sharedPreferences: SharedPreferences
-    private val userId = intent.getIntExtra("userId", -1)
+    private var userId: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
         sharedPreferences = getSharedPreferences("sharedPreferences", MODE_PRIVATE)
+
+        userId = intent.getIntExtra("userId", -1)
 
         val currentFragment = supportFragmentManager.findFragmentById(R.id.fcv_home)
 

@@ -3,6 +3,7 @@ package org.sopt.dosopttemplate.ui.signin
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -121,11 +122,11 @@ class SignInActivity : AppCompatActivity() {
 
                 viewModel.userInfo.observe(this) {
                     val signInId = viewModel.userInfo.value?.id ?: -1
+                    showToast(getString(R.string.login_success, signInId))
                     val intent = Intent(this@SignInActivity, MainActivity::class.java)
                     intent.putExtra("userId", signInId)
                     startActivity(intent)
                     finish()
-                    showToast(getString(R.string.login_success), signInId)
                 }
             } else {
                 viewModel.isSignInError.observe(this) { isSignUpError ->

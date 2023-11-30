@@ -27,7 +27,7 @@ class SignInViewModel : ViewModel() {
             runCatching {
                 ServicePool.authService.signIn(SignInRequest(password, userName))
             }.onSuccess { response ->
-                _userInfo.value = response.data ?: SignInResponse()
+                _userInfo.value = response
                 _isSignInSuccessful.value = true
             }.onFailure { exception ->
                 Log.e("NetworkTest", "error:$exception")

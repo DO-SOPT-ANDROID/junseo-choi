@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import org.sopt.dosopttemplate.domain.model.Friend
 import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
-import org.sopt.dosopttemplate.util.extractUserData
+import org.sopt.dosopttemplate.network.dto.res.FriendListResponse
+import org.sopt.dosopttemplate.network.dto.res.UserInfoResponse
+import org.sopt.dosopttemplate.ui.main.MainActivity
+import org.sopt.dosopttemplate.ui.main.home.friendpage.FriendAdapter
+import org.sopt.dosopttemplate.ui.main.home.friendpage.FriendPageFragment
 import org.sopt.dosopttemplate.util.showSnackbar
 
 interface ScrollableFragment {
@@ -21,19 +24,17 @@ interface ScrollableFragment {
 class HomeFragment : Fragment(), ScrollableFragment {
     private var _binding: FragmentHomeBinding? = null
     private val viewModel by viewModels<HomeViewModel>()
+    private val mainActivity by lazy { activity as MainActivity }
 
     private val friendAdapter: FriendAdapter by lazy {
         FriendAdapter(
             requireContext(),
-            arguments?.extractUserData()!!,
-            this::onProfileClicked
         )
     }
 
     private val binding: FragmentHomeBinding by lazy {
         FragmentHomeBinding.inflate(layoutInflater)
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,6 +48,8 @@ class HomeFragment : Fragment(), ScrollableFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.getFriendInfo()
+        viewModel.getUserInfo(mainActivity.getUserId())
         binding.rvFriends.adapter = friendAdapter
 
         binding.rvFriends.layoutManager = LinearLayoutManager(
@@ -55,8 +58,12 @@ class HomeFragment : Fragment(), ScrollableFragment {
             false
         )
 
-        viewModel.allFriends.observe(viewLifecycleOwner) { allFriends ->
-            friendAdapter.setFriendsList(allFriends)
+        viewModel.friendList.observe(viewLifecycleOwner) { friendList ->
+            friendAdapter.setFriendsList(friendList)
+        }
+
+        viewModel.userInfo.observe(viewLifecycleOwner) { userInfo ->
+            friendAdapter.setUserInfo(userInfo ?: UserInfoResponse())
         }
 
         binding.fabHomeEdit.setOnClickListener {
@@ -91,13 +98,5 @@ class HomeFragment : Fragment(), ScrollableFragment {
         super.onConfigurationChanged(newConfig)
 
         updateRecyclerViewLayout()
-    }
-
-    private fun onProfileClicked(friend: Friend) {
-        val friendPageFragment = FriendPageFragment.newInstance(friend)
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fcv_home, friendPageFragment)
-            .addToBackStack(null)
-            .commit()
     }
 }

@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate.ui.main.home
+package org.sopt.dosopttemplate.ui.main.home.friendpage
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,6 +11,7 @@ import coil.transform.RoundedCornersTransformation
 import org.sopt.dosopttemplate.domain.model.Friend
 import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.FragmentFriendPageBinding
+import org.sopt.dosopttemplate.network.dto.res.FriendListResponse
 
 class FriendPageFragment : Fragment() {
 
@@ -18,21 +19,12 @@ class FriendPageFragment : Fragment() {
 
     companion object {
         private const val ARG_FRIEND = "arg_friend"
-
-        fun newInstance(friend: Friend): FriendPageFragment {
-            val args = Bundle().apply {
-                putParcelable(ARG_FRIEND, friend)
-            }
-            val fragment = FriendPageFragment()
-            fragment.arguments = args
-            return fragment
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?,
+        savedInstanceState: Bundle?
     ): View {
         binding = FragmentFriendPageBinding.inflate(inflater, container, false)
         return binding.root
@@ -41,20 +33,15 @@ class FriendPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val friend = arguments?.getParcelable<Friend>(ARG_FRIEND)
-        friend?.let {
-            displayFriendInfo(it)
-        }
-
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             parentFragmentManager.popBackStack()
         }
     }
 
-    private fun displayFriendInfo(friend: Friend) {
-        binding.tvName.text = friend.name
-        binding.tvId.text = friend.userId
-        binding.ivProfilePicture.load(friend.profileImage) {
+    private fun displayFriendInfo(friend: FriendListResponse.Data) {
+        binding.tvName.text = friend.firstName
+        binding.tvId.text = friend.id.toString()
+        binding.ivProfilePicture.load(friend.avatar) {
             crossfade(true)
             error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())

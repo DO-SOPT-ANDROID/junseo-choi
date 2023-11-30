@@ -13,18 +13,18 @@ import org.sopt.dosopttemplate.network.dto.res.UserInfoResponse
 class HomeViewModel : ViewModel() {
     private val _toastMessage = MutableLiveData<String>()
     private val _userInfo = MutableLiveData<UserInfoResponse>()
-    private val _friendList = MutableLiveData<List<FriendListResponse>>()
+    private val _friendList = MutableLiveData<List<FriendListResponse.Data>>()
 
     val toastMessage: LiveData<String> get() = _toastMessage
     val userInfo: LiveData<UserInfoResponse> get() = _userInfo
-    val friendList: LiveData<List<FriendListResponse>> get() = _friendList
+    val friendList: LiveData<List<FriendListResponse.Data>> get() = _friendList
 
     fun getUserInfo(id: Int) {
         viewModelScope.launch {
             runCatching {
                 ServicePool.authService.getUserInfo(id)
             }.onSuccess { response ->
-                _userInfo.value = response.data ?: UserInfoResponse()
+                _userInfo.value = response
             }.onFailure {
                 ifServerError()
             }
@@ -35,7 +35,7 @@ class HomeViewModel : ViewModel() {
             runCatching {
                 ServicePool.friendService.getFriendList(page)
             }.onSuccess { response ->
-                _friendList.value
+                _friendList.value = response.data?.data ?: listOf()
             }.onFailure {
                 ifServerError()
             }

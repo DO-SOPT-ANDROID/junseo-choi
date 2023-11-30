@@ -14,15 +14,15 @@ interface AuthService {
     @POST("api/v1/members/sign-in")
     suspend fun signIn(
         @Body request: SignInRequest,
-    ): BaseResponse<SignInResponse>
+    ): SignInResponse
 
     @POST("api/v1/members")
     suspend fun signUp(
         @Body request: SignUpRequest,
-    ): BaseResponse<Unit>
+    ): Unit
 
     @GET("api/v1/members/{memberId}")
     suspend fun getUserInfo(
         @Path("memberId") id: Int,
-    ): BaseResponse<UserInfoResponse>
+    ): UserInfoResponse
 }
