@@ -8,18 +8,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.ActivityHomeBinding
-import org.sopt.dosopttemplate.domain.model.UserInfo
 import org.sopt.dosopttemplate.ui.main.doandroid.DoAndroidFragment
 import org.sopt.dosopttemplate.ui.main.home.HomeFragment
 import org.sopt.dosopttemplate.ui.main.mypage.MyPageFragment
-import org.sopt.dosopttemplate.ui.signin.SigninActivity
-import org.sopt.dosopttemplate.util.defaultUserInfo
-import org.sopt.dosopttemplate.util.getUserInfoFromJson
+import org.sopt.dosopttemplate.ui.signin.SignInActivity
 import org.sopt.dosopttemplate.util.showToast
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var sharedPreferences: SharedPreferences
+    private val userId = intent.getIntExtra("userId", -1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,17 +103,21 @@ class MainActivity : AppCompatActivity() {
 
     private fun kickToSignIn() {
         showToast(getString(R.string.server_error))
-        saveAutoLogin(false)
+        editAutoLogin(false)
 
-        val intent = Intent(this@MainActivity, SigninActivity::class.java)
+        val intent = Intent(this@MainActivity, SignInActivity::class.java)
         startActivity(intent)
         finish()
     }
 
-    private fun saveAutoLogin(autoLogin: Boolean) {
+    private fun editAutoLogin(autoLogin: Boolean) {
         val editor = sharedPreferences.edit()
         editor.putBoolean("AutoLogin", autoLogin)
         editor.apply()
+    }
+
+    fun getUserId(): Int {
+        return userId
     }
 
 }

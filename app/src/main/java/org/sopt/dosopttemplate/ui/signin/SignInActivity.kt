@@ -122,6 +122,7 @@ class SignInActivity : AppCompatActivity() {
                 viewModel.userInfo.observe(this) {
                     val signInId = viewModel.userInfo.value?.id ?: -1
                     val intent = Intent(this@SignInActivity, MainActivity::class.java)
+                    intent.putExtra("userId", signInId)
                     startActivity(intent)
                     finish()
                     showToast(getString(R.string.login_success), signInId)

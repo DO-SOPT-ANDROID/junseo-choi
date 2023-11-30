@@ -19,7 +19,7 @@ class HomeViewModel : ViewModel() {
     val userInfo: LiveData<UserInfoResponse> get() = _userInfo
     val friendList: LiveData<List<FriendListResponse>> get() = _friendList
 
-    private fun getUserInfo(id: Int) {
+    fun getUserInfo(id: Int) {
         viewModelScope.launch {
             runCatching {
                 ServicePool.authService.getUserInfo(id)
@@ -30,7 +30,7 @@ class HomeViewModel : ViewModel() {
             }
         }
     }
-    private fun getFriendInfo(page: Int = 1) {
+    fun getFriendInfo(page: Int = 1) {
         viewModelScope.launch {
             runCatching {
                 ServicePool.friendService.getFriendList(page)
