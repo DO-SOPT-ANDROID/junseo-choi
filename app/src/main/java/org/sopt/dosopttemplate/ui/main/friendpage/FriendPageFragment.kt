@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate.ui.main.home.friendpage
+package org.sopt.dosopttemplate.ui.main.friendpage
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -42,17 +42,28 @@ class FriendPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        handleBackPress()
+        fetchAndDisplayFriendInfo()
+    }
+
+    private fun handleBackPress() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             parentFragmentManager.popBackStack()
         }
+    }
 
+    private fun fetchAndDisplayFriendInfo() {
         val friendId = arguments?.getInt(ARG_FRIEND_ID)
         friendId?.let {
             viewModel.getFriendInfo(1)
-            viewModel.friendList.observe(viewLifecycleOwner) { friendList ->
-                friendList.find { it.id == friendId }?.let { friend ->
-                    displayFriendInfo(friend)
-                }
+            findFriendInfo(friendId)
+        }
+    }
+
+    private fun findFriendInfo(friendId: Int) {
+        viewModel.friendList.observe(viewLifecycleOwner) { friendList ->
+            friendList.find { it.id == friendId }?.let { friend ->
+                displayFriendInfo(friend)
             }
         }
     }

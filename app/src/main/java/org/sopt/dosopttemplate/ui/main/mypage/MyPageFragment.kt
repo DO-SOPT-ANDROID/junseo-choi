@@ -6,21 +6,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.load
 import coil.transform.RoundedCornersTransformation
 import org.sopt.dosopttemplate.R
-import org.sopt.dosopttemplate.domain.model.UserInfoBundle
 import org.sopt.dosopttemplate.databinding.FragmentMyPageBinding
 import org.sopt.dosopttemplate.ui.main.MainActivity
 import org.sopt.dosopttemplate.ui.main.home.HomeViewModel
-import org.sopt.dosopttemplate.ui.signin.SharedPreferencesKeys
 import org.sopt.dosopttemplate.ui.signin.SignInActivity
-import org.sopt.dosopttemplate.ui.signin.SignInViewModel
-import org.sopt.dosopttemplate.util.extractUserData
 import org.sopt.dosopttemplate.util.showToast
 
 class MyPageFragment : Fragment() {

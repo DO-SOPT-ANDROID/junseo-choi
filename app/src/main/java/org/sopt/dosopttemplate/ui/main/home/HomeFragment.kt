@@ -2,7 +2,6 @@ package org.sopt.dosopttemplate.ui.main.home
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +10,10 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
-import org.sopt.dosopttemplate.network.dto.res.FriendListResponse
 import org.sopt.dosopttemplate.network.dto.res.UserInfoResponse
 import org.sopt.dosopttemplate.ui.main.MainActivity
-import org.sopt.dosopttemplate.ui.main.home.friendpage.FriendAdapter
-import org.sopt.dosopttemplate.ui.main.home.friendpage.FriendPageFragment
-import org.sopt.dosopttemplate.ui.main.mypage.MyPageFragment
+import org.sopt.dosopttemplate.ui.main.friendpage.FriendAdapter
+import org.sopt.dosopttemplate.ui.main.friendpage.FriendPageFragment
 import org.sopt.dosopttemplate.util.showSnackbar
 
 interface ScrollableFragment {
@@ -54,8 +51,18 @@ class HomeFragment : Fragment(), ScrollableFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fetchData()
+        setupFriendList()
+        observeData()
+        setupFabClick()
+    }
+
+    private fun fetchData() {
         viewModel.getFriendInfo()
         viewModel.getUserInfo(mainActivity.getUserId())
+    }
+
+    private fun setupFriendList() {
         binding.rvFriends.adapter = friendAdapter
 
         binding.rvFriends.layoutManager = LinearLayoutManager(
@@ -63,7 +70,9 @@ class HomeFragment : Fragment(), ScrollableFragment {
             if (isScreenInPortraitMode()) LinearLayoutManager.VERTICAL else LinearLayoutManager.HORIZONTAL,
             false
         )
+    }
 
+    private fun observeData() {
         viewModel.friendList.observe(viewLifecycleOwner) { friendList ->
             friendAdapter.setFriendsList(friendList)
         }
@@ -71,7 +80,9 @@ class HomeFragment : Fragment(), ScrollableFragment {
         viewModel.userInfo.observe(viewLifecycleOwner) { userInfo ->
             friendAdapter.setUserInfo(userInfo ?: UserInfoResponse())
         }
+    }
 
+    private fun setupFabClick() {
         binding.fabHomeEdit.setOnClickListener {
             binding.root.showSnackbar("3주차 과제 완료 ^0^")
         }

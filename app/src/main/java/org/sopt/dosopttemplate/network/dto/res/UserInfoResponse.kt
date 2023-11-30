@@ -9,5 +9,5 @@ data class UserInfoResponse(
     @SerialName("nickname")
     val nickname: String = "",
     @SerialName("username")
-    val username: String = ""
+    val username: String = "",
 )

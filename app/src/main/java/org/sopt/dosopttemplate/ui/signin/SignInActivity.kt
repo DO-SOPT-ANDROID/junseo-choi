@@ -3,15 +3,14 @@ package org.sopt.dosopttemplate.ui.signin
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.ActivitySigninBinding
-import org.sopt.dosopttemplate.ui.signup.SignUpActivity
 import org.sopt.dosopttemplate.ui.main.MainActivity
+import org.sopt.dosopttemplate.ui.signup.SignUpActivity
 import org.sopt.dosopttemplate.util.hideKeyboard
 import org.sopt.dosopttemplate.util.showSnackbar
 import org.sopt.dosopttemplate.util.showToast

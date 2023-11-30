@@ -1,7 +1,6 @@
 package org.sopt.dosopttemplate.network.dto.res
 
 
-import android.os.Parcelable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -18,7 +17,7 @@ data class FriendListResponse(
     @SerialName("total")
     val total: Int = 0,
     @SerialName("total_pages")
-    val totalPages: Int = 0
+    val totalPages: Int = 0,
 ) {
     @Serializable
     data class Data(
@@ -31,7 +30,7 @@ data class FriendListResponse(
         @SerialName("id")
         val id: Int = 0,
         @SerialName("last_name")
-        val lastName: String = ""
+        val lastName: String = "",
     )
 
     @Serializable
@@ -39,6 +38,6 @@ data class FriendListResponse(
         @SerialName("text")
         val text: String = "",
         @SerialName("url")
-        val url: String = ""
+        val url: String = "",
     )
 }

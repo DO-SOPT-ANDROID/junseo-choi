@@ -11,5 +11,5 @@ data class SignInResponse(
     @SerialName("username")
     val username: String = "",
     @SerialName("nickname")
-    val nickname: String = ""
+    val nickname: String = "",
 )

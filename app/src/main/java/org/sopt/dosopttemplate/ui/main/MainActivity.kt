@@ -81,9 +81,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fcv_home, fragment)
-            .commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fcv_home, fragment).commit()
     }
 
     private fun setupOnBackPressedCallback() {

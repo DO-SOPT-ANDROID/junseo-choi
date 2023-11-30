@@ -30,6 +30,7 @@ class HomeViewModel : ViewModel() {
             }
         }
     }
+
     fun getFriendInfo(page: Int = 1) {
         viewModelScope.launch {
             runCatching {

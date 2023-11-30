@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate.ui.main.home.friendpage
+package org.sopt.dosopttemplate.ui.main.friendpage
 
 import android.content.Context
 import android.content.res.Configuration
@@ -19,7 +19,7 @@ import org.sopt.dosopttemplate.network.dto.res.UserInfoResponse
 
 class FriendAdapter(
     private val context: Context,
-    private val itemClickListener: (FriendListResponse.Data) -> Unit
+    private val itemClickListener: (FriendListResponse.Data) -> Unit,
 ) : ListAdapter<FriendListResponse.Data, RecyclerView.ViewHolder>(DiffCallback()) {
     private val inflater by lazy { LayoutInflater.from(context) }
 
@@ -111,18 +111,24 @@ class FriendAdapter(
 }
 
 class DiffCallback : DiffUtil.ItemCallback<FriendListResponse.Data>() {
-    override fun areItemsTheSame(oldItem: FriendListResponse.Data, newItem: FriendListResponse.Data): Boolean {
+    override fun areItemsTheSame(
+        oldItem: FriendListResponse.Data,
+        newItem: FriendListResponse.Data,
+    ): Boolean {
         return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: FriendListResponse.Data, newItem: FriendListResponse.Data): Boolean {
+    override fun areContentsTheSame(
+        oldItem: FriendListResponse.Data,
+        newItem: FriendListResponse.Data,
+    ): Boolean {
         return oldItem == newItem
     }
 }
 
 class FriendViewHolder(
     private val binding: ItemFriendBinding,
-    private val itemClickListener: (FriendListResponse.Data) -> Unit
+    private val itemClickListener: (FriendListResponse.Data) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun onBind(friendData: FriendListResponse.Data) {
         binding.root.setOnClickListener { itemClickListener(friendData) }
@@ -140,7 +146,7 @@ class FriendViewHolder(
 
 class FriendHorizontalViewHolder(
     private val binding: ItemFriendHorizontalBinding,
-    private val itemClickListener: (FriendListResponse.Data) -> Unit
+    private val itemClickListener: (FriendListResponse.Data) -> Unit,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun onBind(friendData: FriendListResponse.Data) {
         binding.root.setOnClickListener { itemClickListener(friendData) }
