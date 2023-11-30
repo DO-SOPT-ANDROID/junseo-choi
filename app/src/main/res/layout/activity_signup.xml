@@ -40,7 +40,6 @@
             android:id="@+id/et_sign_up_id_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/signup_id_hint"
             android:imeOptions="actionNext"
             android:lines="1"
             android:singleLine="true"
@@ -54,11 +53,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="-5dp"
-        android:text="@string/new_pw_label"
+        android:layout_marginTop="3dp"
         android:textColor="#ff7575"
         android:textSize="15sp"
-        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tl_sign_up_id_layout" />
 
@@ -67,11 +64,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:text="@string/new_pw_label"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tl_sign_up_id_layout" />
+        app:layout_constraintTop_toBottomOf="@id/tv_sign_up_id_warning" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tl_sign_up_pw_layout"
@@ -86,7 +83,6 @@
             android:id="@+id/et_sign_up_pw_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/signup_password_hint"
             android:imeOptions="actionNext"
             android:inputType="textPassword"
             android:lines="1"
@@ -101,10 +97,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:text="@string/new_pw_label"
+        android:layout_marginTop="3dp"
         android:textColor="#ff7575"
         android:textSize="15sp"
-        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tl_sign_up_pw_layout" />
 
@@ -113,11 +108,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="15dp"
         android:text="@string/nickname_label"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tl_sign_up_pw_layout" />
+        app:layout_constraintTop_toBottomOf="@id/tv_sign_up_pw_warning" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tl_sign_up_nick_layout"
@@ -132,7 +127,6 @@
             android:id="@+id/et_sign_up_nick_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/signup_nickname_hint"
             android:imeOptions="actionNext"
             android:lines="1"
             android:singleLine="true"
@@ -146,11 +140,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="25dp"
-        android:layout_marginTop="-5dp"
-        android:text="@string/new_pw_label"
+        android:layout_marginTop="3dp"
         android:textColor="#ff7575"
         android:textSize="15sp"
-        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tl_sign_up_nick_layout" />
 

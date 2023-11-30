@@ -18,12 +18,9 @@
     <string name="new_pw_label">New PW</string>
     <string name="nickname_label">NickName</string>
     <string name="signup_button_label">회원가입 하기</string>
-    <string name="signup_id_hint">아이디를 입력해주세요</string>
-    <string name="signup_password_hint">비밀번호를 입력해주세요</string>
-    <string name="signup_nickname_hint">닉네임을 입력해주세요</string>
     <string name="signup_id_warning">아이디는 6글자 이상, 10글자 이하만 가능합니다.</string>
-    <string name="signup_pw_warning">비밀번호는 영문, 숫자, 특수문자가 포함된 6글자 이상, 12글자 이하만 가능합니다.</string>
-    <string name="signup_nick_warning">닉네임은 1글자 이상, 12글자 이하만 가능합니다.</string>
+    <string name="signup_pw_warning">비밀번호는 영문, 숫자, 특수문자가 포함되어야 하며,\n6글자 이상, 12글자 이하만 가능합니다.</string>
+    <string name="signup_nick_warning">닉네임은 2글자 이상, 12글자 이하만 가능합니다.</string>
 
     // activity_signin.xml
     <string name="welcome_message">Welcome to Sopt</string>

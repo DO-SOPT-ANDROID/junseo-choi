@@ -46,9 +46,7 @@ class SignInActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences(SharedPreferencesKeys.USERNAME, MODE_PRIVATE)
 
         setupAutoLogin()
-
         setupClickListeners()
-
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
@@ -134,10 +132,10 @@ class SignInActivity : AppCompatActivity() {
                     } else {
                         binding.root.showSnackbar(getString(R.string.server_error))
                     }
+                    hideKeyboard(this, binding.root)
                 }
             }
         }
-        hideKeyboard(this, binding.root)
     }
 
     private fun saveAutoLoginInfo(userName: String, password: String) {
