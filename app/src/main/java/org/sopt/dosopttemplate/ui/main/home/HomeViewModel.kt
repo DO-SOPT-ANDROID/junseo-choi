@@ -35,7 +35,7 @@ class HomeViewModel : ViewModel() {
             runCatching {
                 ServicePool.friendService.getFriendList(page)
             }.onSuccess { response ->
-                _friendList.value = response.data?.data ?: listOf()
+                _friendList.value = response.data
             }.onFailure {
                 ifServerError()
             }

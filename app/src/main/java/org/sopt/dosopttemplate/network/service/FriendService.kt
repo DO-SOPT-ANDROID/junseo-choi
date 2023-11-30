@@ -9,5 +9,5 @@ interface FriendService {
     @GET("api/users")
     suspend fun getFriendList(
         @Query("page") page: Int,
-    ): BaseResponse<FriendListResponse>
+    ): FriendListResponse
 }
