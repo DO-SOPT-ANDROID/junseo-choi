@@ -115,6 +115,7 @@ class SignUpActivity : AppCompatActivity() {
         viewModel.isSignUpSuccessful.observe(this) { isSuccess ->
             if (isSuccess) {
                 navigateToSignInActivity()
+                showToast(getString(R.string.signup_success_message))
             } else {
                 handleSignUpError()
             }
@@ -122,7 +123,6 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun navigateToSignInActivity() {
-        showToast(getString(R.string.signup_success_message))
         val intent = Intent(this@SignUpActivity, SignInActivity::class.java)
         startActivity(intent)
         finish()
