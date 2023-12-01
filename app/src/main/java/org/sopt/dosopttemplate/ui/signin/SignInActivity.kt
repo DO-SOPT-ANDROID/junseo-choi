@@ -82,6 +82,8 @@ class SignInActivity : AppCompatActivity() {
 
             if (inputId.isNotEmpty() && inputPw.isNotEmpty()) {
                 performSignIn(inputId, inputPw)
+            } else {
+                showEmptyFieldDialog()
             }
         }
 
@@ -126,8 +128,8 @@ class SignInActivity : AppCompatActivity() {
                     finish()
                 }
             } else {
-                viewModel.isSignInError.observe(this) { isSignUpError ->
-                    if (isSignUpError) {
+                viewModel.isSignInError.observe(this) { isSignInError ->
+                    if (isSignInError) {
                         binding.root.showSnackbar(getString(R.string.login_failed))
                     } else {
                         binding.root.showSnackbar(getString(R.string.server_error))
@@ -144,5 +146,9 @@ class SignInActivity : AppCompatActivity() {
         editor.putString(SharedPreferencesKeys.USERNAME, userName)
         editor.putString(SharedPreferencesKeys.PASSWORD, password)
         editor.apply()
+    }
+
+    private fun showEmptyFieldDialog() {
+        binding.root.showSnackbar(getString(R.string.empty_field_message))
     }
 }

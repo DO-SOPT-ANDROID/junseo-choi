@@ -5,17 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.network.ServicePool
 import org.sopt.dosopttemplate.network.dto.res.FriendListResponse
 import org.sopt.dosopttemplate.network.dto.res.UserInfoResponse
 
 class HomeViewModel : ViewModel() {
-    private val _toastMessage = MutableLiveData<String>()
+    private val _isServerError = MutableLiveData<Boolean>()
     private val _userInfo = MutableLiveData<UserInfoResponse>()
     private val _friendList = MutableLiveData<List<FriendListResponse.Data>>()
 
-    val toastMessage: LiveData<String> get() = _toastMessage
+    val isServerError: LiveData<Boolean> get() = _isServerError
     val userInfo: LiveData<UserInfoResponse> get() = _userInfo
     val friendList: LiveData<List<FriendListResponse.Data>> get() = _friendList
 
@@ -24,6 +23,7 @@ class HomeViewModel : ViewModel() {
             runCatching {
                 ServicePool.authService.getUserInfo(id)
             }.onSuccess { response ->
+                _isServerError.value = false
                 _userInfo.value = response
             }.onFailure {
                 ifServerError()
@@ -36,6 +36,7 @@ class HomeViewModel : ViewModel() {
             runCatching {
                 ServicePool.friendService.getFriendList(page)
             }.onSuccess { response ->
+                _isServerError.value = false
                 _friendList.value = response.data
             }.onFailure {
                 ifServerError()
@@ -44,6 +45,6 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun ifServerError() {
-        _toastMessage.value = R.string.server_error.toString()
+        _isServerError.value = true
     }
 }
