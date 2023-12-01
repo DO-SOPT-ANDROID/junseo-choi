@@ -1,5 +1,7 @@
 package org.sopt.dosopttemplate.ui.main.home
 
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +15,8 @@ class HomeViewModel : ViewModel() {
     private val _isServerError = MutableLiveData<Boolean>()
     private val _userInfo = MutableLiveData<UserInfoResponse>()
     private val _friendList = MutableLiveData<List<FriendListResponse.Data>>()
+
+    private val handler = Handler(Looper.getMainLooper())
 
     val isServerError: LiveData<Boolean> get() = _isServerError
     val userInfo: LiveData<UserInfoResponse> get() = _userInfo
@@ -46,5 +50,8 @@ class HomeViewModel : ViewModel() {
 
     private fun ifServerError() {
         _isServerError.value = true
+        handler.postDelayed({
+            _isServerError.value = false
+        }, 300)
     }
 }

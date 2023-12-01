@@ -9,7 +9,7 @@
     <string name="your_id">Your ID</string>
     <string name="your_mbti">Your MBTI</string>
     <string name="logout">LogOut</string>
-    <string name="test_nickname">Test</string>
+    <string name="test_nickname">Unknown</string>
     <string name="test_text">안녕하세요. 말하는 감자입니다 :)</string>
 
     // activity_signup.xml

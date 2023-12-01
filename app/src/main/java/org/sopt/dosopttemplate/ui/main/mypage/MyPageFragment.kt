@@ -69,8 +69,8 @@ class MyPageFragment : Fragment() {
             binding.tvName.text = userInfo.nickname
             binding.tvSelfDescription.text = getString(R.string.if_desc_empty)
         }
-        viewModel.isServerError.observe(viewLifecycleOwner) {
-            (activity as AppCompatActivity).showToast(getString(R.string.server_error))
+        viewModel.isServerError.observe(viewLifecycleOwner) { ifServerError ->
+            if (ifServerError) (activity as AppCompatActivity).showToast(getString(R.string.server_error))
         }
     }
 

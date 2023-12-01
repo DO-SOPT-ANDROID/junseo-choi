@@ -59,8 +59,8 @@ class FriendPageFragment : Fragment() {
         friendId?.let {
             viewModel.getFriendInfo(1)
             findFriendInfo(friendId)
-            viewModel.isServerError.observe(viewLifecycleOwner) {
-                (activity as AppCompatActivity).showToast(getString(R.string.server_error))
+            viewModel.isServerError.observe(viewLifecycleOwner) { ifServerError ->
+                if (ifServerError) (activity as AppCompatActivity).showToast(getString(R.string.server_error))
             }
         }
     }

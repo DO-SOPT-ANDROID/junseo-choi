@@ -62,8 +62,8 @@ class HomeFragment : Fragment(), ScrollableFragment {
     private fun fetchData() {
         viewModel.getFriendInfo()
         viewModel.getUserInfo(mainActivity.getUserId())
-        viewModel.isServerError.observe(viewLifecycleOwner) {
-            (activity as AppCompatActivity).showToast(getString(R.string.server_error))
+        viewModel.isServerError.observe(viewLifecycleOwner) { ifServerError ->
+            if (ifServerError) (activity as AppCompatActivity).showToast(getString(R.string.server_error))
         }
     }
 
