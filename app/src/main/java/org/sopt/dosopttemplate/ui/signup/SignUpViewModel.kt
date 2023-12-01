@@ -27,34 +27,27 @@ class SignUpViewModel : ViewModel() {
     private val _isNickNameValid = MutableLiveData<Boolean>()
     val isNickNameValid: LiveData<Boolean> get() = _isNickNameValid
 
+    private val _isAllValueEmpty = MutableLiveData<Boolean>()
+    val isAllValueEmpty: LiveData<Boolean> get() = _isAllValueEmpty
+
     fun validateInput(userName: String, password: String, nickName: String) {
+        _isAllValueEmpty.value = userName.isNotEmpty() || password.isNotEmpty() || nickName.isNotEmpty()
+
         _isUserNameValid.value = isUserNameValid(userName)
         _isPasswordValid.value = isPasswordValid(password)
         _isNickNameValid.value = isNickNameValid(nickName)
     }
 
     private fun isUserNameValid(userName: String): Boolean {
-        return if (userName.isEmpty()) {
-            true
-        } else {
-            userName.length in 6..10
-        }
+        return userName.isEmpty() || userName.length in 6..10
     }
 
     private fun isPasswordValid(password: String): Boolean {
-        return if (password.isEmpty()) {
-            true
-        } else {
-            password.length in 6..12 && password.matches(Regex("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@\$!%*#?&])[a-zA-Z\\d@\$!%*#?&]+\$"))
-        }
+        return password.isEmpty() || (password.length in 6..12 && password.matches(Regex("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[@\$!%*#?&])[a-zA-Z\\d@\$!%*#?&]+\$")))
     }
 
     private fun isNickNameValid(nickName: String): Boolean {
-        return if (nickName.isEmpty()) {
-            true
-        } else {
-            nickName.length in 2..12
-        }
+        return nickName.isEmpty() || nickName.length in 2..12
     }
 
     fun signUp(userName: String, password: String, nickName: String) {

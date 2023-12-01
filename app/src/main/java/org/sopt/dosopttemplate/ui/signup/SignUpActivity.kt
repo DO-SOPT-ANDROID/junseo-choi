@@ -9,7 +9,6 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputLayout
 import org.sopt.dosopttemplate.R
@@ -32,7 +31,7 @@ class SignUpActivity : AppCompatActivity() {
 
             viewModel.validateInput(userName, password, nickName)
 
-            handler.postDelayed(this, 2000)
+            handler.postDelayed(this, 1000)
         }
     }
 
@@ -40,7 +39,7 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         initializeView()
         setEventListeners()
-        observeData()
+        observeInputInfo()
     }
 
     private fun initializeView() {
@@ -58,7 +57,7 @@ class SignUpActivity : AppCompatActivity() {
         binding.btnSignUpFinish.setOnClickListener { handleSignUp() }
     }
 
-    private fun observeData() {
+    private fun observeInputInfo() {
         viewModel.isUserNameValid.observe(this) { isValid ->
             updateInputLayoutState(
                 binding.tlSignUpIdLayout,
@@ -85,6 +84,7 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
+
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(validationRunnable)
@@ -101,13 +101,9 @@ class SignUpActivity : AppCompatActivity() {
 
         viewModel.validateInput(userName, password, nickName)
 
-        if (userName.isEmpty() || password.isEmpty() || nickName.isEmpty()) {
-            showEmptyFieldDialog()
-        } else {
-            if (isUserNameValid && isPasswordValid && isNickNameValid) {
-                viewModel.signUp(userName, password, nickName)
-                observeSignUpResult()
-            }
+        if (isUserNameValid && isPasswordValid && isNickNameValid) {
+            viewModel.signUp(userName, password, nickName)
+            observeSignUpResult()
         }
     }
 
@@ -138,18 +134,6 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private fun showEmptyFieldDialog() {
-        val dialogBuilder = AlertDialog.Builder(this)
-        dialogBuilder.setMessage(getString(R.string.empty_field_message))
-            .setCancelable(false)
-            .setPositiveButton("확인") { dialog, _ ->
-                dialog.dismiss()
-            }
-        val alert = dialogBuilder.create()
-        alert.setTitle("알림")
-        alert.show()
-    }
-
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             navigateToSignInActivity()
@@ -160,21 +144,25 @@ class SignUpActivity : AppCompatActivity() {
         inputLayout: TextInputLayout,
         warningTextView: TextView,
         isValid: Boolean,
-        warning: String
+        warning: String,
     ) {
-        if (isValid) {
-            inputLayout.apply {
-                boxStrokeColor = Color.parseColor("#79747e")
-                warningTextView.text = null
-                binding.btnSignUpFinish.isEnabled = true
-                binding.btnSignUpFinish.setBackgroundColor(Color.parseColor("#6750a4"))
-            }
-        } else {
-            inputLayout.apply {
-                boxStrokeColor = Color.parseColor("#ff2222")
-                warningTextView.text = warning
+        viewModel.isAllValueEmpty.observe(this) { isAllEmpty ->
+            if (isAllEmpty) {
+                if (isValid) {
+                    inputLayout.apply {
+                        boxStrokeColor = Color.parseColor("#79747e")
+                        warningTextView.text = null
+                    }
+                    binding.btnSignUpFinish.isEnabled = true
+                } else {
+                    inputLayout.apply {
+                        boxStrokeColor = Color.parseColor("#ff2222")
+                        warningTextView.text = warning
+                    }
+                    binding.btnSignUpFinish.isEnabled = false
+                }
+            } else {
                 binding.btnSignUpFinish.isEnabled = false
-                binding.btnSignUpFinish.setBackgroundColor(android.R.drawable.btn_default)
             }
         }
     }
