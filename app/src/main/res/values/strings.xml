@@ -45,7 +45,6 @@
     <string name="user_id_error">아이디는 6~10글자이며, 공백 및 특수문자가 포함되면 안됩니다.</string>
     <string name="password_error">비밀번호는 8~12글자이며, 공백이 포함되면 안됩니다.</string>
     <string name="nickname_error">닉네임은 1~12글자이며, 공백으로만 이루어질 수 없습니다.</string>
-    <string name="empty_field_message">가입 정보가 입력되지 않았습니다.</string>
     <string name="signup_success_message">성공적으로 회원가입이 완료되었습니다!</string>
     <string name="signup_failed">이미 존재하는 ID입니다.</string>
 
