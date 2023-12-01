@@ -27,15 +27,21 @@ class SignUpViewModel : ViewModel() {
     private val _isNickNameValid = MutableLiveData<Boolean>()
     val isNickNameValid: LiveData<Boolean> get() = _isNickNameValid
 
-    private val _isAllValueEmpty = MutableLiveData<Boolean>()
-    val isAllValueEmpty: LiveData<Boolean> get() = _isAllValueEmpty
+    private val _isSomeValueNotEmpty = MutableLiveData<Boolean>()
+    val isSomeValueNotEmpty: LiveData<Boolean> get() = _isSomeValueNotEmpty
+
+    private val _isAllValueEmptyAndValid = MutableLiveData<Boolean>()
+    val isAllValueEmptyAndValid: LiveData<Boolean> get() = _isAllValueEmptyAndValid
 
     fun validateInput(userName: String, password: String, nickName: String) {
-        _isAllValueEmpty.value = userName.isNotEmpty() || password.isNotEmpty() || nickName.isNotEmpty()
-
         _isUserNameValid.value = isUserNameValid(userName)
         _isPasswordValid.value = isPasswordValid(password)
         _isNickNameValid.value = isNickNameValid(nickName)
+
+        _isSomeValueNotEmpty.value =
+            userName.isNotEmpty() || password.isNotEmpty() || nickName.isNotEmpty()
+        _isAllValueEmptyAndValid.value =
+            isUserNameValid(userName) && isPasswordValid(password) && isNickNameValid(nickName) && userName.isNotEmpty() && password.isNotEmpty() && nickName.isNotEmpty()
     }
 
     private fun isUserNameValid(userName: String): Boolean {

@@ -146,14 +146,16 @@ class SignUpActivity : AppCompatActivity() {
         isValid: Boolean,
         warning: String,
     ) {
-        viewModel.isAllValueEmpty.observe(this) { isAllEmpty ->
-            if (isAllEmpty) {
+        viewModel.isSomeValueNotEmpty.observe(this) { isSomeValueNotEmpty ->
+            if (isSomeValueNotEmpty) {
                 if (isValid) {
                     inputLayout.apply {
                         boxStrokeColor = Color.parseColor("#79747e")
                         warningTextView.text = null
                     }
-                    binding.btnSignUpFinish.isEnabled = true
+                    viewModel.isAllValueEmptyAndValid.observe(this) { isAllValid ->
+                        binding.btnSignUpFinish.isEnabled = isAllValid
+                    }
                 } else {
                     inputLayout.apply {
                         boxStrokeColor = Color.parseColor("#ff2222")
