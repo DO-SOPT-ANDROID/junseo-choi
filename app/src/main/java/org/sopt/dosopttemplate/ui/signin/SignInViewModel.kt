@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import org.sopt.dosopttemplate.domain.model.SignInStatus
 import org.sopt.dosopttemplate.network.ServicePool
 import org.sopt.dosopttemplate.network.dto.req.SignInRequest
 import org.sopt.dosopttemplate.network.dto.res.SignInResponse
@@ -34,10 +35,4 @@ class SignInViewModel : ViewModel() {
             }
         }
     }
-}
-
-enum class SignInStatus {
-    SUCCESS,
-    FAILURE,
-    SERVER_ERROR
 }
