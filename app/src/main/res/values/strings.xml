@@ -41,7 +41,6 @@
     <string name="login_success">%d번째 손님, 환영합니다!</string>
     <string name="login_failed">회원님의 정보가 일치하지 않습니다.</string>
     <string name="empty_field_message">회원님의 정보를 모두 입력해주세요!</string>
-    <string name="unknown_error">알 수 없는 오류입니다.</string>
 
     // SignupActivity.kt
     <string name="user_id_error">아이디는 6~10글자이며, 공백 및 특수문자가 포함되면 안됩니다.</string>

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.ActivitySigninBinding
+import org.sopt.dosopttemplate.domain.model.SignInStatus
 import org.sopt.dosopttemplate.ui.main.MainActivity
 import org.sopt.dosopttemplate.ui.signup.SignUpActivity
 import org.sopt.dosopttemplate.util.hideKeyboard
@@ -142,9 +143,7 @@ class SignInActivity : AppCompatActivity() {
                     hideKeyboard(this, binding.root)
                 }
 
-                else -> {
-                    binding.root.showSnackbar(getString(R.string.unknown_error))
-                }
+                else -> {}
             }
         }.launchIn(lifecycleScope)
     }
