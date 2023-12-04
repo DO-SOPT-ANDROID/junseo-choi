@@ -1,6 +1,5 @@
 package org.sopt.dosopttemplate.ui.signin
 
-import SignInViewModel
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -117,29 +116,35 @@ class SignInActivity : AppCompatActivity() {
         val isAutoLogin = binding.chkSignInAutologin.isChecked
         viewModel.signIn(userName, password)
 
-        viewModel.isSignInSuccessful.onEach { isSuccess ->
-            if (isSuccess) {
-                if (isAutoLogin) {
-                    saveAutoLoginInfo(userName, password)
+        viewModel.signInStatus.onEach { status ->
+            when (status) {
+                SignInStatus.SUCCESS -> {
+                    if (isAutoLogin) {
+                        saveAutoLoginInfo(userName, password)
+                    }
+                    viewModel.userInfo.onEach {
+                        val signInId = it?.id ?: -1
+                        showToast(getString(R.string.login_success, signInId))
+                        val intent = Intent(this@SignInActivity, MainActivity::class.java)
+                        intent.putExtra("userId", signInId)
+                        startActivity(intent)
+                        finish()
+                    }.launchIn(lifecycleScope)
                 }
 
-                viewModel.userInfo.onEach {
-                    val signInId = it?.id ?: -1
-                    showToast(getString(R.string.login_success, signInId))
-                    val intent = Intent(this@SignInActivity, MainActivity::class.java)
-                    intent.putExtra("userId", signInId)
-                    startActivity(intent)
-                    finish()
-                }.launchIn(lifecycleScope)
-            } else {
-                viewModel.isSignInError.onEach { isSignInError ->
-                    if (isSignInError) {
-                        binding.root.showSnackbar(getString(R.string.login_failed))
-                    } else {
-                        binding.root.showSnackbar(getString(R.string.server_error))
-                    }
+                SignInStatus.FAILURE -> {
+                    binding.root.showSnackbar(getString(R.string.login_failed))
                     hideKeyboard(this, binding.root)
-                }.launchIn(lifecycleScope)
+                }
+
+                SignInStatus.SERVER_ERROR -> {
+                    binding.root.showSnackbar(getString(R.string.server_error))
+                    hideKeyboard(this, binding.root)
+                }
+
+                else -> {
+                    binding.root.showSnackbar(getString(R.string.unknown_error))
+                }
             }
         }.launchIn(lifecycleScope)
     }
