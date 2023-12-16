@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -26,44 +25,81 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_sign_in_title" />
 
-    <EditText
-        android:id="@+id/et_sign_in_inputid"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tl_sign_in_id_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:hint="@string/id_hint"
-        android:lines="1"
-        android:singleLine="true"
-        android:textSize="20sp"
-        android:windowSoftInputMode="adjustResize"
-        app:layout_constraintStart_toStartOf="@id/tv_sign_in_id"
-        app:layout_constraintTop_toBottomOf="@id/tv_sign_in_id" />
+        android:layout_marginTop="7dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_sign_in_id">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_sign_in_id_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionNext"
+            android:lines="1"
+            android:singleLine="true"
+            android:textSize="20sp"
+            android:windowSoftInputMode="adjustResize" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tv_sign_in_id_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="3dp"
+        android:textColor="#ff7575"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tl_sign_in_id_layout" />
 
     <TextView
         android:id="@+id/tv_sign_in_pw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="15dp"
         android:text="@string/pw_label"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_sign_in_inputid" />
+        app:layout_constraintTop_toBottomOf="@id/tv_sign_in_id_warning" />
 
-    <EditText
-        android:id="@+id/et_sign_in_inputpw"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tl_sign_in_pw_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
-        android:hint="@string/pw_hint"
-        android:imeOptions="actionDone"
-        android:inputType="textPassword"
-        android:lines="1"
-        android:singleLine="true"
-        android:textSize="20sp"
-        android:windowSoftInputMode="adjustResize"
+        android:layout_marginTop="7dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_sign_in_pw" />
+        app:layout_constraintTop_toBottomOf="@id/tv_sign_in_pw">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_sign_in_pw_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:lines="1"
+            android:singleLine="true"
+            android:textSize="20sp"
+            android:windowSoftInputMode="adjustResize" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/tv_sign_in_pw_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="3dp"
+        android:textColor="#ff7575"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tl_sign_in_pw_layout" />
 
     <TextView
         android:id="@+id/tv_sign_up_button"
@@ -75,20 +111,20 @@
         android:textColor="#808080"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_sign_in_inputpw" />
+        app:layout_constraintTop_toBottomOf="@id/tl_sign_in_pw_layout" />
 
     <CheckBox
         android:id="@+id/chk_sign_in_autologin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="23dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="-6dp"
         android:buttonTint="#808080"
         android:text="@string/auto_login_label"
         android:textColor="#808080"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/et_sign_in_inputpw" />
+        app:layout_constraintTop_toBottomOf="@id/tl_sign_in_pw_layout" />
 
     <Button
         android:id="@+id/btn_sign_in_inbutton"
@@ -98,6 +134,5 @@
         android:layout_marginBottom="30dp"
         android:text="@string/login_button"
         app:layout_constraintBottom_toBottomOf="parent" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

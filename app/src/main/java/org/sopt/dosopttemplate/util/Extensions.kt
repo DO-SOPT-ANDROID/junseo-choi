@@ -15,11 +15,12 @@ fun hideKeyboard(context: Context, view: View?) {
     }
 }
 
-// 스낵바 및 토스트 출력
+// 스낵바 출력
 fun View.showSnackbar(message: String, duration: Int = Snackbar.LENGTH_SHORT) {
     Snackbar.make(this, message, duration).show()
 }
 
+// 토스트 출력
 fun AppCompatActivity.showToast(message: String, duration: Int = Toast.LENGTH_SHORT) {
     Toast.makeText(this, message, duration).show()
 }

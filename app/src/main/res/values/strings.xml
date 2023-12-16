@@ -9,7 +9,7 @@
     <string name="your_id">Your ID</string>
     <string name="your_mbti">Your MBTI</string>
     <string name="logout">LogOut</string>
-    <string name="test_nickname">Test</string>
+    <string name="test_nickname">Unknown</string>
     <string name="test_text">안녕하세요. 말하는 감자입니다 :)</string>
 
     // activity_signup.xml
@@ -17,12 +17,10 @@
     <string name="new_id_label">New ID</string>
     <string name="new_pw_label">New PW</string>
     <string name="nickname_label">NickName</string>
-    <string name="mbti_label">MBTI</string>
     <string name="signup_button_label">회원가입 하기</string>
-    <string name="signup_id_hint">아이디를 입력해주세요</string>
-    <string name="signup_password_hint">비밀번호를 입력해주세요</string>
-    <string name="signup_nickname_hint">닉네임을 입력해주세요</string>
-    <string name="signup_mbti_hint">본인의 MBTI를 입력해주세요</string>
+    <string name="signup_id_warning">아이디는 6글자 이상, 10글자 이하만 가능합니다.</string>
+    <string name="signup_pw_warning">비밀번호는 영문, 숫자, 특수문자가 포함되어야 하며,\n6글자 이상, 12글자 이하만 가능합니다.</string>
+    <string name="signup_nick_warning">닉네임은 2글자 이상, 12글자 이하만 가능합니다.</string>
 
     // activity_signin.xml
     <string name="welcome_message">Welcome to Sopt</string>
@@ -42,14 +40,12 @@
     <string name="invalid_password">비밀번호가 잘못되었습니다.</string>
     <string name="login_success">%d번째 손님, 환영합니다!</string>
     <string name="login_failed">회원님의 정보가 일치하지 않습니다.</string>
+    <string name="empty_field_message">회원님의 정보를 모두 입력해주세요!</string>
 
     // SignupActivity.kt
     <string name="user_id_error">아이디는 6~10글자이며, 공백 및 특수문자가 포함되면 안됩니다.</string>
     <string name="password_error">비밀번호는 8~12글자이며, 공백이 포함되면 안됩니다.</string>
     <string name="nickname_error">닉네임은 1~12글자이며, 공백으로만 이루어질 수 없습니다.</string>
-    <string name="sexy_error">당신은 SEXY하시군요! 하지만 저는 넘어가지 않는답니다 :)</string>
-    <string name="mbti_error">유효한 MBTI를 적어주세요. (예시: ENTJ)</string>
-    <string name="empty_field_message">아직 입력되지 않은 칸이 있습니다.</string>
     <string name="signup_success_message">성공적으로 회원가입이 완료되었습니다!</string>
     <string name="signup_failed">이미 존재하는 ID입니다.</string>
 

@@ -15,6 +15,7 @@ import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.FragmentMyPageBinding
 import org.sopt.dosopttemplate.ui.main.MainActivity
 import org.sopt.dosopttemplate.ui.main.home.HomeViewModel
+import org.sopt.dosopttemplate.ui.signin.SharedPreferencesKeys
 import org.sopt.dosopttemplate.ui.signin.SignInActivity
 import org.sopt.dosopttemplate.util.showToast
 
@@ -40,6 +41,11 @@ class MyPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        sharedPreferences = requireActivity().getSharedPreferences(
+            SharedPreferencesKeys.USERNAME,
+            AppCompatActivity.MODE_PRIVATE
+        )
+
         viewModel.getUserInfo(mainActivity.getUserId())
 
         displayUserInfo()
@@ -63,11 +69,10 @@ class MyPageFragment : Fragment() {
             binding.tvName.text = userInfo.nickname
             binding.tvSelfDescription.text = getString(R.string.if_desc_empty)
         }
-        viewModel.toastMessage.observe(viewLifecycleOwner) { toastMessage ->
-            (activity as AppCompatActivity).showToast(toastMessage)
+        viewModel.isServerError.observe(viewLifecycleOwner) { ifServerError ->
+            if (ifServerError) (activity as AppCompatActivity).showToast(getString(R.string.server_error))
         }
     }
-
 
     private fun setupSignOutButton() {
         binding.tvSignout.setOnClickListener {

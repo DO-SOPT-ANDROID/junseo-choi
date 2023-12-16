@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import coil.load
@@ -13,6 +14,7 @@ import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.FragmentFriendPageBinding
 import org.sopt.dosopttemplate.network.dto.res.FriendListResponse
 import org.sopt.dosopttemplate.ui.main.home.HomeViewModel
+import org.sopt.dosopttemplate.util.showToast
 
 class FriendPageFragment : Fragment() {
     private lateinit var binding: FragmentFriendPageBinding
@@ -57,6 +59,9 @@ class FriendPageFragment : Fragment() {
         friendId?.let {
             viewModel.getFriendInfo(1)
             findFriendInfo(friendId)
+            viewModel.isServerError.observe(viewLifecycleOwner) { ifServerError ->
+                if (ifServerError) (activity as AppCompatActivity).showToast(getString(R.string.server_error))
+            }
         }
     }
 

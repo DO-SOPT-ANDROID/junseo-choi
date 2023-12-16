@@ -46,9 +46,7 @@ class SignInActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences(SharedPreferencesKeys.USERNAME, MODE_PRIVATE)
 
         setupAutoLogin()
-
         setupClickListeners()
-
         onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }
 
@@ -66,8 +64,8 @@ class SignInActivity : AppCompatActivity() {
         val savedPassword = sharedPreferences.getString(SharedPreferencesKeys.PASSWORD, "")
 
         if (!savedUserName.isNullOrEmpty() && !savedPassword.isNullOrEmpty()) {
-            binding.etSignInInputid.setText(savedUserName)
-            binding.etSignInInputpw.setText(savedPassword)
+            binding.etSignInIdInput.setText(savedUserName)
+            binding.etSignInPwInput.setText(savedPassword)
 
             performSignIn(savedUserName, savedPassword)
         }
@@ -79,18 +77,20 @@ class SignInActivity : AppCompatActivity() {
         }
 
         binding.btnSignInInbutton.setOnClickListener {
-            val inputId = binding.etSignInInputid.text.toString()
-            val inputPw = binding.etSignInInputpw.text.toString()
+            val inputId = binding.etSignInIdInput.text.toString()
+            val inputPw = binding.etSignInPwInput.text.toString()
 
             if (inputId.isNotEmpty() && inputPw.isNotEmpty()) {
                 performSignIn(inputId, inputPw)
+            } else {
+                showEmptyFieldDialog()
             }
         }
 
-        binding.etSignInInputpw.setOnEditorActionListener { _, actionId, _ ->
+        binding.etSignInPwInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                val inputId = binding.etSignInInputid.text.toString()
-                val inputPw = binding.etSignInInputpw.text.toString()
+                val inputId = binding.etSignInIdInput.text.toString()
+                val inputPw = binding.etSignInPwInput.text.toString()
 
                 if (inputId.isNotEmpty() && inputPw.isNotEmpty()) {
                     performSignIn(inputId, inputPw)
@@ -128,16 +128,16 @@ class SignInActivity : AppCompatActivity() {
                     finish()
                 }
             } else {
-                viewModel.isSignInError.observe(this) { isSignUpError ->
-                    if (isSignUpError) {
+                viewModel.isSignInError.observe(this) { isSignInError ->
+                    if (isSignInError) {
                         binding.root.showSnackbar(getString(R.string.login_failed))
                     } else {
                         binding.root.showSnackbar(getString(R.string.server_error))
                     }
+                    hideKeyboard(this, binding.root)
                 }
             }
         }
-        hideKeyboard(this, binding.root)
     }
 
     private fun saveAutoLoginInfo(userName: String, password: String) {
@@ -146,5 +146,9 @@ class SignInActivity : AppCompatActivity() {
         editor.putString(SharedPreferencesKeys.USERNAME, userName)
         editor.putString(SharedPreferencesKeys.PASSWORD, password)
         editor.apply()
+    }
+
+    private fun showEmptyFieldDialog() {
+        binding.root.showSnackbar(getString(R.string.empty_field_message))
     }
 }
