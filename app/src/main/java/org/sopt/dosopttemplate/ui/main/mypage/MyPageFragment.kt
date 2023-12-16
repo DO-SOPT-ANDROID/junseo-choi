@@ -1,4 +1,4 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.ui.main.mypage
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -8,9 +8,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import coil.load
 import coil.transform.RoundedCornersTransformation
+import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.FragmentMyPageBinding
+import org.sopt.dosopttemplate.ui.main.MainActivity
+import org.sopt.dosopttemplate.ui.main.home.HomeViewModel
+import org.sopt.dosopttemplate.ui.signin.SignInActivity
+import org.sopt.dosopttemplate.util.showToast
 
 class MyPageFragment : Fragment() {
     private var _binding: FragmentMyPageBinding? = null
@@ -18,6 +24,9 @@ class MyPageFragment : Fragment() {
         get() = requireNotNull(_binding) { "바인딩 객체가 생성되지 않았다. 생성하고 불러라 임마!" }
 
     private lateinit var sharedPreferences: SharedPreferences
+
+    private val viewModel by viewModels<HomeViewModel>()
+    private val mainActivity by lazy { activity as MainActivity }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,14 +40,9 @@ class MyPageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        sharedPreferences = requireContext().getSharedPreferences(
-            SharedPreferencesKeys.USER_INFO,
-            AppCompatActivity.MODE_PRIVATE
-        )
+        viewModel.getUserInfo(mainActivity.getUserId())
 
-        val userInfoBundle = arguments.extractUserData()
-
-        displayUserInfo(userInfoBundle!!)
+        displayUserInfo()
 
         setupSignOutButton()
     }
@@ -48,18 +52,20 @@ class MyPageFragment : Fragment() {
         _binding = null
     }
 
-    private fun displayUserInfo(userInfoBundle: UserInfoBundle) {
-        binding.ivProfilePicture.load(userInfoBundle.profileImage) {
+    private fun displayUserInfo() {
+        binding.ivProfilePicture.load("") {
             crossfade(true)
             error(R.drawable.ic_default_image)
             transformations(RoundedCornersTransformation())
         }
-        binding.tvId.text = userInfoBundle.userName
-        binding.tvName.text = userInfoBundle.nickName
-        binding.tvMBTI.text = userInfoBundle.mbti
-        val selfDescription = userInfoBundle.self_description
-        binding.tvSelfDescription.text =
-            selfDescription.ifEmpty { getString(R.string.if_desc_empty) }
+        viewModel.userInfo.observe(viewLifecycleOwner) { userInfo ->
+            binding.tvId.text = userInfo.username
+            binding.tvName.text = userInfo.nickname
+            binding.tvSelfDescription.text = getString(R.string.if_desc_empty)
+        }
+        viewModel.toastMessage.observe(viewLifecycleOwner) { toastMessage ->
+            (activity as AppCompatActivity).showToast(toastMessage)
+        }
     }
 
 
@@ -72,7 +78,7 @@ class MyPageFragment : Fragment() {
     private fun handleSignOut() {
         saveAutoLogin(false)
 
-        val intent = Intent(requireContext(), SigninActivity::class.java)
+        val intent = Intent(requireContext(), SignInActivity::class.java)
         startActivity(intent)
         requireActivity().finish()
     }

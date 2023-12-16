@@ -1,14 +1,22 @@
-package org.sopt.dosopttemplate
+package org.sopt.dosopttemplate.ui.main.home
 
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.FragmentHomeBinding
+import org.sopt.dosopttemplate.network.dto.res.UserInfoResponse
+import org.sopt.dosopttemplate.ui.main.MainActivity
+import org.sopt.dosopttemplate.ui.main.friendpage.FriendAdapter
+import org.sopt.dosopttemplate.ui.main.friendpage.FriendPageFragment
+import org.sopt.dosopttemplate.util.showSnackbar
+import org.sopt.dosopttemplate.util.showToast
 
 interface ScrollableFragment {
     fun scrollToTop()
@@ -17,19 +25,21 @@ interface ScrollableFragment {
 class HomeFragment : Fragment(), ScrollableFragment {
     private var _binding: FragmentHomeBinding? = null
     private val viewModel by viewModels<HomeViewModel>()
+    private val mainActivity by lazy { activity as MainActivity }
 
     private val friendAdapter: FriendAdapter by lazy {
-        FriendAdapter(
-            requireContext(),
-            arguments?.extractUserData()!!,
-            this::onProfileClicked
-        )
+        FriendAdapter(requireContext()) { friendInfo ->
+            val fragment = FriendPageFragment.newInstance(friendInfo.id)
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fcv_home, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     private val binding: FragmentHomeBinding by lazy {
         FragmentHomeBinding.inflate(layoutInflater)
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,6 +53,21 @@ class HomeFragment : Fragment(), ScrollableFragment {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        fetchData()
+        setupFriendList()
+        observeData()
+        finishThirdHomework()
+    }
+
+    private fun fetchData() {
+        viewModel.getFriendInfo()
+        viewModel.getUserInfo(mainActivity.getUserId())
+        viewModel.toastMessage.observe(viewLifecycleOwner) { toastMessage ->
+            (activity as AppCompatActivity).showToast(toastMessage)
+        }
+    }
+
+    private fun setupFriendList() {
         binding.rvFriends.adapter = friendAdapter
 
         binding.rvFriends.layoutManager = LinearLayoutManager(
@@ -50,11 +75,19 @@ class HomeFragment : Fragment(), ScrollableFragment {
             if (isScreenInPortraitMode()) LinearLayoutManager.VERTICAL else LinearLayoutManager.HORIZONTAL,
             false
         )
+    }
 
-        viewModel.allFriends.observe(viewLifecycleOwner) { allFriends ->
-            friendAdapter.setFriendsList(allFriends)
+    private fun observeData() {
+        viewModel.friendList.observe(viewLifecycleOwner) { friendList ->
+            friendAdapter.setFriendsList(friendList)
         }
 
+        viewModel.userInfo.observe(viewLifecycleOwner) { userInfo ->
+            friendAdapter.setUserInfo(userInfo ?: UserInfoResponse())
+        }
+    }
+
+    private fun finishThirdHomework() {
         binding.fabHomeEdit.setOnClickListener {
             binding.root.showSnackbar("3주차 과제 완료 ^0^")
         }
@@ -87,13 +120,5 @@ class HomeFragment : Fragment(), ScrollableFragment {
         super.onConfigurationChanged(newConfig)
 
         updateRecyclerViewLayout()
-    }
-
-    private fun onProfileClicked(friend: Friend) {
-        val friendPageFragment = FriendPageFragment.newInstance(friend)
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fcv_home, friendPageFragment)
-            .addToBackStack(null)
-            .commit()
     }
 }
