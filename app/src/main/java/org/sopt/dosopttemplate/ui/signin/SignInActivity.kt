@@ -7,8 +7,12 @@ import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import org.sopt.dosopttemplate.R
 import org.sopt.dosopttemplate.databinding.ActivitySigninBinding
+import org.sopt.dosopttemplate.domain.model.SignInStatus
 import org.sopt.dosopttemplate.ui.main.MainActivity
 import org.sopt.dosopttemplate.ui.signup.SignUpActivity
 import org.sopt.dosopttemplate.util.hideKeyboard
@@ -113,31 +117,35 @@ class SignInActivity : AppCompatActivity() {
         val isAutoLogin = binding.chkSignInAutologin.isChecked
         viewModel.signIn(userName, password)
 
-        viewModel.isSignUpSuccessful.observe(this) { isSuccess ->
-            if (isSuccess) {
-                if (isAutoLogin) {
-                    saveAutoLoginInfo(userName, password)
+        viewModel.signInStatus.onEach { status ->
+            when (status) {
+                SignInStatus.SUCCESS -> {
+                    if (isAutoLogin) {
+                        saveAutoLoginInfo(userName, password)
+                    }
+                    viewModel.userInfo.onEach {
+                        val signInId = it?.id ?: -1
+                        showToast(getString(R.string.login_success, signInId))
+                        val intent = Intent(this@SignInActivity, MainActivity::class.java)
+                        intent.putExtra("userId", signInId)
+                        startActivity(intent)
+                        finish()
+                    }.launchIn(lifecycleScope)
                 }
 
-                viewModel.userInfo.observe(this) {
-                    val signInId = viewModel.userInfo.value?.id ?: -1
-                    showToast(getString(R.string.login_success, signInId))
-                    val intent = Intent(this@SignInActivity, MainActivity::class.java)
-                    intent.putExtra("userId", signInId)
-                    startActivity(intent)
-                    finish()
-                }
-            } else {
-                viewModel.isSignInError.observe(this) { isSignInError ->
-                    if (isSignInError) {
-                        binding.root.showSnackbar(getString(R.string.login_failed))
-                    } else {
-                        binding.root.showSnackbar(getString(R.string.server_error))
-                    }
+                SignInStatus.FAILURE -> {
+                    binding.root.showSnackbar(getString(R.string.login_failed))
                     hideKeyboard(this, binding.root)
                 }
+
+                SignInStatus.SERVER_ERROR -> {
+                    binding.root.showSnackbar(getString(R.string.server_error))
+                    hideKeyboard(this, binding.root)
+                }
+
+                else -> {}
             }
-        }
+        }.launchIn(lifecycleScope)
     }
 
     private fun saveAutoLoginInfo(userName: String, password: String) {
